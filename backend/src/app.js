@@ -1,9 +1,8 @@
 import express from 'express';
-import { configDotenv } from 'dotenv';
 
 import authRouter from './routes/auth.route.js';
 
-configDotenv();
+
 const app = express();
 
 app.use(express.json());
