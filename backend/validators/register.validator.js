@@ -1,7 +1,7 @@
 // validators/authValidator.js
-import { body } from('express-validator');
+import { body } from 'express-validator';
 
-export const registerValidationMiddleware = [
+export const registerValidator = [
 	body('name')
 		.trim()
 		.notEmpty()
@@ -22,5 +22,7 @@ export const registerValidationMiddleware = [
 		.notEmpty()
 		.withMessage('Password is required')
 		.isLength({ min: 6 })
-		.withMessage('Password must be at least 6 characters'),
+		.withMessage('Password must be at least 6 characters')
+		.matches(/^[a-zA-Z0-9\-_\@#*&.]+$/)
+		.withMessage('Password can only contain letters, numbers, and - _ @ # * & .'),
 ];

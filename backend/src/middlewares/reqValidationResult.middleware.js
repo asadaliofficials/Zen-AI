@@ -1,12 +1,11 @@
-// middlewares/validate.js
-const { validationResult } = require('express-validator');
+import { validationResult } from 'express-validator';
 
 export const reqValidationResult = (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(422).json({
-      mess
-    });
-  }
-  next(); // go to controller
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({
+			errors: errors.array(),
+		});
+	}
+	next();
 };
