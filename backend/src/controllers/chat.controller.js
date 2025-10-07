@@ -28,3 +28,7 @@ export const chatController = async (socket, msg, id) => {
 		console.error('Error in chatController:', error);
 	}
 };
+
+export const createChatController = async (req, res) => {
+	res.send({ message: 'Create chat endpoint - to be implemented' });
+};
