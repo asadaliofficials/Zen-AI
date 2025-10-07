@@ -1,4 +1,4 @@
-import { setupSocket } from './src/sockets/chat.socket.js';
+import { setupSocket } from './src/sockets/server.socket.js';
 
 import http from 'http';
 
