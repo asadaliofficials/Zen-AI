@@ -44,3 +44,13 @@ export const loginController = async (req, res) => {
 		res.status(error.statusCode || 500).json({ message: error.message || 'Something went wrong' });
 	}
 };
+
+export const logoutController = (_, res) => {
+	res.clearCookie('token', {
+		httpOnly: true,
+		secure: NODE_ENV === 'production',
+		sameSite: 'strict',
+	});
+
+	res.status(200).json({ message: 'Logged out successfully' });
+};
