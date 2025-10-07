@@ -1,6 +1,6 @@
 import bcrypt from 'bcrypt';
 
-import UserModel from '../../models/auth.model.js';
+import UserModel from '../models/auth.model.js';
 import customError from '../utils/customError.util.js';
 
 export const createUser = async (name, email, password) => {
