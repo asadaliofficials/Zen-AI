@@ -1,7 +1,7 @@
-import { createUser } from '../services/createUser.service.js';
+import { createUser } from '../services/db.service.js';
 import getToken from '../utils/jwtToken.util.js';
 import { NODE_ENV } from '../config/env.config.js';
-import { loginUserService } from '../services/loginUser.service.js';
+import { loginUserService } from '../services/db.service.js';
 
 export const registerController = async (req, res) => {
 	const { name, email, password } = req.body;

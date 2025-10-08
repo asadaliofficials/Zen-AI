@@ -11,5 +11,5 @@ setupSocket(httpServer);
 
 httpServer.listen(PORT, () => {
 	console.log(`server is listening on http://localhost:${PORT}`);
-	connectToDB();
+	// connectToDB();
 });

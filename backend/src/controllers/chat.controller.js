@@ -3,7 +3,7 @@ import geminiService from '../services/gemini.service.js';
 
 export const chatController = async (socket, msg, id) => {
 	try {
-		const responce = await messageModel.find({ chatId: id });
+		const responce = (await messageModel.find({ chatId: id }).sort({ createdAt: -1 }).limit(10)).reverse();
 
 		const contents = [];
 
