@@ -2,7 +2,7 @@ import mongoose from 'mongoose';
 
 const chatSchema = new mongoose.Schema(
 	{
-		userID: {
+		userId: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: 'User',
 			required: true,
@@ -15,6 +15,6 @@ const chatSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
-const chatModel = mongoose.model('chats', chatSchema);
+const chatModel = mongoose.model('Chat', chatSchema);
 
 export default chatModel;

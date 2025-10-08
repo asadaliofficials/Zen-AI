@@ -6,17 +6,17 @@ export function setupSocket(server) {
 
 	io.on('connection', socket => {
 		socket.on('message', obj => {
-			const { message, chatID } = JSON.parse(obj);
-			if (!message || !chatID) {
-				socket.emit('responce', { message: 'Message and Chat ID are required' });
+			const { message, chatId } = JSON.parse(obj);
+			if (!message || !chatId) {
+				socket.emit('responce', { message: 'Message and Chat id are required' });
 				return;
 			}
-			const errors = messageValidator(message, chatID);
+			const errors = messageValidator(message, chatId);
 			if (errors.length > 0) {
 				socket.emit('responce', errors);
 				return;
 			}
-			chatController(socket, message, chatID);
+			chatController(socket, message, chatId);
 		});
 
 		// testing socket

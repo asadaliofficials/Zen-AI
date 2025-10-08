@@ -1,6 +1,6 @@
 // validators/messageValidator.js
 
-export function messageValidator(message, chatID) {
+export function messageValidator(message, chatId) {
 	const errors = [];
 
 	if (typeof message !== 'string' || !message.trim()) {
@@ -9,9 +9,9 @@ export function messageValidator(message, chatID) {
 		errors.push({ field: 'message', message: 'Message must be between 1 and 1000 characters' });
 	}
 
-	const isMongoId = /^[a-f\d]{24}$/i.test(chatID);
-	if (!chatID || !isMongoId) {
-		errors.push({ field: 'chatID', message: 'Invalid or missing Chat ID' });
+	const isMongoId = /^[a-f\d]{24}$/i.test(chatId);
+	if (!chatId || !isMongoId) {
+		errors.push({ field: 'chatId', message: 'Invalid or missing Chat Id' });
 	}
 
 	return errors;
