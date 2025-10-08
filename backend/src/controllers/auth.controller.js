@@ -8,7 +8,7 @@ export const registerController = async (req, res) => {
 
 	try {
 		const user = await createUser(name, email, password);
-		const token = getToken(user._id, user.email);
+		const token = getToken(user._id);
 
 		res.cookie('token', token, {
 			httpOnly: true,
@@ -30,7 +30,7 @@ export const loginController = async (req, res) => {
 
 	try {
 		const user = await loginUserService(email, password);
-		const token = getToken(user._id, user.email);
+		const token = getToken(user._id);
 
 		res.cookie('token', token, {
 			httpOnly: true,

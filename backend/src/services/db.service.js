@@ -2,6 +2,7 @@ import bcrypt from 'bcrypt';
 
 import UserModel from '../models/auth.model.js';
 import customError from '../utils/customError.util.js';
+import chatModel from '../models/chat.model.js';
 
 export const createUser = async (name, email, password) => {
 	const isUserExists = await UserModel.findOne({ email: email.toLowerCase() });
@@ -21,4 +22,13 @@ export const loginUserService = async (email, password) => {
 	if (!decodeUser) throw customError(401, 'email or password incorrect!');
 
 	return user;
+};
+
+export const createChat = async (title, userID) => {
+	try {
+		const user = await chatModel.create({ title, userID });
+		return user;
+	} catch (error) {
+		throw customError(500, 'MongoDB error');
+	}
 };

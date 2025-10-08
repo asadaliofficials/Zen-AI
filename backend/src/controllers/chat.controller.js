@@ -1,9 +1,12 @@
 import messageModel from '../models/message.model.js';
+import { createChat } from '../services/db.service.js';
 import geminiService from '../services/gemini.service.js';
 
 export const chatController = async (socket, msg, id) => {
 	try {
-		const responce = (await messageModel.find({ chatId: id }).sort({ createdAt: -1 }).limit(10)).reverse();
+		const responce = (
+			await messageModel.find({ chatId: id }).sort({ createdAt: -1 }).limit(10)
+		).reverse();
 
 		const contents = [];
 
@@ -30,5 +33,15 @@ export const chatController = async (socket, msg, id) => {
 };
 
 export const createChatController = async (req, res) => {
-	res.send({ message: 'Create chat endpoint - to be implemented' });
+	const { title } = req.body;
+	const { id } = req.user;
+
+	try {
+		const newChat = await createChat(title, id);
+		return res.status(201).json({ message: 'Chat created successfully', chat: newChat });
+	} catch (error) {
+		return res
+			.status(error.statusCode || 500)
+			.json({ message: error.message || 'Internal server error' });
+	}
 };

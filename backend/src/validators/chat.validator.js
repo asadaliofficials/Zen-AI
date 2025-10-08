@@ -2,13 +2,6 @@
 import { body } from 'express-validator';
 
 export const chatValidator = [
-	body('userID')
-		.trim()
-		.notEmpty()
-		.withMessage('User id is required')
-		.isMongoId()
-		.withMessage('Invalid user id'),
-
 	body('title')
 		.trim()
 		.notEmpty()
