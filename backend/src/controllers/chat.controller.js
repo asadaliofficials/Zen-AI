@@ -15,10 +15,10 @@ export const getAllChatsController = async (req, res) => {
 	}
 };
 
-export const chatController = async (socket, msg, id) => {
+export const chatController = async (socket, msg, chatId, userId) => {
 	try {
 		const responce = (
-			await messageModel.find({ chatId: id }).sort({ createdAt: -1 }).limit(10)
+			await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
 		).reverse();
 
 		const contents = [];
@@ -34,8 +34,8 @@ export const chatController = async (socket, msg, id) => {
 
 		const aiResponce = await geminiService(contents);
 		const chat = messageModel.create({
-			chatId: id,
-			userId: '64b8f3f4c9e77b6f8c8e4d2b',
+			chatId: chatId,
+			userId: userId,
 			userMessage: msg,
 			aiResponse: aiResponce,
 		});
