@@ -6,8 +6,14 @@ import geminiService from '../services/gemini.service.js';
 export const getAllChatsController = async (req, res) => {
 	const { id: userId } = req.user;
 	try {
-		const chats = await chatModel.find({ userId }).sort({ createdAt: -1 });
-		return res.status(200).json({ chats });
+		const chats = await chatModel.find({ userId }).sort({ createdAt: -1 }).select('-userId');
+		return res.status(200).json({
+			user: { userName: req.user.name, userEmail: req.user.email },
+			chats: {
+				contents: chats,
+				count: chats.length,
+			},
+		});
 	} catch (error) {
 		return res
 			.status(error.statusCode || 500)
