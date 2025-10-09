@@ -1,5 +1,6 @@
 import chatModel from '../models/chat.model.js';
 import messageModel from '../models/message.model.js';
+import sandboxLogModel from '../models/sandboxLog.model.js';
 import { createChat, deleteChat, saveDeletes } from '../services/db.service.js';
 import geminiService from '../services/gemini.service.js';
 
@@ -71,6 +72,23 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 			aiResponse: text,
 		});
 		socket.emit('responce', title ? { text, title } : { text });
+	} catch (error) {
+		console.error('Error in chatController:', error);
+	}
+};
+
+export const sandboxChatController = async (socket, msg) => {
+	try {
+		const contents = [];
+		contents.push({ role: 'user', parts: [{ text: msg }] });
+
+		const { text, title } = await geminiService(contents);
+
+		await sandboxLogModel.create({
+			userMessage: msg,
+			aiResponse: text,
+		});
+		socket.emit('responce', { text });
 	} catch (error) {
 		console.error('Error in chatController:', error);
 	}

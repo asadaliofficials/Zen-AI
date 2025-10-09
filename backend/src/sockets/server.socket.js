@@ -1,6 +1,6 @@
 import { Server } from 'socket.io';
 
-import { chatController } from '../controllers/chat.controller.js';
+import { chatController, sandboxChatController } from '../controllers/chat.controller.js';
 import { messageValidator } from '../validators/message.validator.js';
 import getTokenFromSocket from '../utils/getToken.util.js';
 
@@ -53,15 +53,23 @@ export function setupSocket(server) {
 	sandboxNamespace.on('connection', socket => {
 		console.log(`🧪 Sandbox user connected: ${socket.id}`);
 
-		const { message } = JSON.parse(obj);
+		socket.on('message', obj => {
+			const { message, id } = JSON.parse(obj);
 
-		// Validate message mannual
-		if (typeof message !== 'string' || !message.trim() || message.length < 1 || message.length > 1000) {
-			socket.emit('responce', {
-				message: 'Message must be between 1 and 1000 characters',
-			});
-			return;
-		}
+			// Validate message mannual
+			if (
+				typeof message !== 'string' ||
+				!message.trim() ||
+				message.length < 1 ||
+				message.length > 1000
+			) {
+				socket.emit('responce', {
+					message: 'Message must be between 1 and 1000 characters',
+				});
+				return;
+			}
+			sandboxChatController(socket, message);
+		});
 
 		socket.on('disconnect', () => {
 			console.log(`❌ Sandbox user disconnected: ${socket.id}`);
