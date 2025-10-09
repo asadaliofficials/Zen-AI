@@ -72,19 +72,11 @@ const AuthPage = () => {
 			<div className="flex justify-between items-center px-6 py-4">
 				<div className="flex items-center space-x-2">
 					<div
-						className={`w-8 h-8 rounded-lg flex items-center justify-center ${
-							isDark ? 'bg-white' : 'bg-black'
-						}`}
+						className={`w-10 h-10 rounded flex items-center justify-center `}
 					>
-						<svg
-							className={`w-5 h-5 ${isDark ? 'text-black' : 'text-white'}`}
-							fill="currentColor"
-							viewBox="0 0 24 24"
-						>
-							<path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
-						</svg>
+						<img src="images/logo.png" alt="logo" />
 					</div>
-					<span className="text-xl font-semibold">ChatGPT</span>
+					<span className="text-xl font-semibold">Zen-AI</span>
 				</div>
 
 				{/* Theme Toggle */}
@@ -122,7 +114,7 @@ const AuthPage = () => {
 					{/* Welcome Message */}
 					<div className="text-center mb-8">
 						<h1 className={`text-3xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-black'}`}>
-							Welcome to ChatGPT
+							Welcome to ZEN AI
 						</h1>
 						<p className={`text-sm ${isDark ? 'text-zinc-400' : 'text-gray-600'}`}>
 							{isSignUp ? 'Create your account to get started' : 'Sign in to your account'}
@@ -273,10 +265,11 @@ const AuthPage = () => {
 										Password
 									</label>
 									<input
-										type="password"
+										type="text"
 										id="password"
 										name="password"
 										value={formData.password}
+										// i want password should be visible what user write
 										onChange={handleInputChange}
 										required
 										className={`w-full px-4 py-3 rounded-lg border transition-colors ${
