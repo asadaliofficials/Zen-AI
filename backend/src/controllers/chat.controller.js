@@ -27,12 +27,12 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 		const contents = [];
 
 		if (!isNewChat) {
-			const responce = (
+			const response = (
 				await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
 			).reverse();
 
-			if (responce.length > 0) {
-				responce.forEach(item => {
+			if (response.length > 0) {
+				response.forEach(item => {
 					contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
 					contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
 				});
@@ -71,24 +71,37 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 			userMessage: msg,
 			aiResponse: text,
 		});
-		socket.emit('responce', title ? { text, title } : { text });
+		socket.emit('response', title ? { text, title } : { text });
 	} catch (error) {
 		console.error('Error in chatController:', error);
 	}
 };
 
-export const sandboxChatController = async (socket, msg) => {
+export const sandboxChatController = async (socket, msg, chatId) => {
 	try {
 		const contents = [];
+
+		const response = (
+			await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
+		).reverse();
+
+		if (response.length > 0) {
+			response.forEach(item => {
+				contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
+				contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
+			});
+		}
+
 		contents.push({ role: 'user', parts: [{ text: msg }] });
 
 		const { text, title } = await geminiService(contents);
 
 		await sandboxLogModel.create({
+			chatId: chatId,
 			userMessage: msg,
 			aiResponse: text,
 		});
-		socket.emit('responce', { text });
+		socket.emit('response', { content: text, chatId });
 	} catch (error) {
 		console.error('Error in chatController:', error);
 	}
@@ -133,4 +146,39 @@ export const deleteChatController = async (req, res) => {
 	}
 
 	return res.status(200).json({ message: 'Chat and messages deleted', id });
+};
+
+export const chatMessagesController = async (req, res) => {
+	const { id } = req.params;
+	const { id: userId, name } = req.user;
+	// get start index from query params
+	const start = parseInt(req.query.start) || 0;
+	const limit = 20; // fixed limit for pagination
+
+	try {
+		// Verify chat ownership
+		const chat = await chatModel.findOne({ _id: id, userId }).select('title');
+		if (!chat) return res.status(404).json({ message: 'Chat not found or unauthorized' });
+
+		const messages = await messageModel
+			.find({ chatId: id })
+			.sort({ createdAt: -1 })
+			.skip(start)
+			.limit(limit + 1);
+		const hasMore = messages.length > limit;
+		const contents = hasMore ? messages.slice(0, limit) : messages;
+
+		return res.status(200).json({
+			chat: { id: chat._id, title: chat.title, author: name },
+			messages: {
+				contents: contents.reverse(), // reverse to maintain chronological order
+				count: messages.length,
+				hasMore: hasMore,
+			},
+		});
+	} catch (error) {
+		return res
+			.status(error.statusCode || 500)
+			.json({ message: error.message || 'Internal server error' });
+	}
 };

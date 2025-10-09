@@ -3,14 +3,14 @@ import jwt from 'jsonwebtoken';
 const getTokenFromSocket = socket => {
 	try {
 		const cookieHeader = socket.handshake.headers.cookie;
-		if (!cookieHeader) return socket.emit('responce', { message: 'unauthorized' });
+		if (!cookieHeader) return socket.emit('response', { message: 'unauthorized' });
 
 		const cookies = cookie.parse(cookieHeader);
 		const token = cookies['token'];
-		if (!token) return socket.emit('responce', { message: 'unauthorized' });
+		if (!token) return socket.emit('response', { message: 'unauthorized' });
 
 		const decoded = jwt.verify(token, process.env.JWT_SECRET);
-		if (!decoded) return socket.emit('responce', { message: 'unauthorized' });
+		if (!decoded) return socket.emit('response', { message: 'unauthorized' });
 		return decoded.id;
 	} catch (error) {
 		console.log(error);

@@ -1,6 +1,10 @@
 import mongoose from 'mongoose';
 
 const sandboxLogSchema = new mongoose.Schema({
+	chatId: {
+		type: String,
+		required: true,
+	},
 	userMessage: {
 		type: String,
 		required: true,

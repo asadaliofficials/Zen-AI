@@ -1,4 +1,5 @@
 import { Server } from 'socket.io';
+import { nanoid } from 'nanoid';
 
 import { chatController, sandboxChatController } from '../controllers/chat.controller.js';
 import { messageValidator } from '../validators/message.validator.js';
@@ -18,8 +19,6 @@ export function setupSocket(server) {
 	const userNamespace = io.of('/user');
 
 	userNamespace.on('connection', socket => {
-		console.log(`🔗 User connected: ${socket.id}`);
-
 		socket.on('message', obj => {
 			const userId = getTokenFromSocket(socket);
 			const { message, chatId } = JSON.parse(obj);
@@ -28,11 +27,14 @@ export function setupSocket(server) {
 			// Validate message and chatId
 			const errors = messageValidator(message, chatId);
 			if (errors.length > 0) {
-				socket.emit('responce', errors);
+				socket.emit('response', errors);
 				return;
 			}
 
-			chatController(socket, message, chatId, userId, isNewChat);
+			// get query param if chat is temp
+			const tempChat = socket.handshake.query.temp;
+
+			chatController(socket, message, chatId, userId, isNewChat, tempChat);
 		});
 
 		// Optional test handler
@@ -54,21 +56,27 @@ export function setupSocket(server) {
 		console.log(`🧪 Sandbox user connected: ${socket.id}`);
 
 		socket.on('message', obj => {
-			const { message, id } = JSON.parse(obj);
+			let { message, chatId } = JSON.parse(obj);
+			const isNewChat = chatId === 'null';
+			console.log(message, chatId, isNewChat);
 
-			// Validate message mannual
 			if (
 				typeof message !== 'string' ||
 				!message.trim() ||
 				message.length < 1 ||
 				message.length > 1000
 			) {
-				socket.emit('responce', {
+				socket.emit('response', {
 					message: 'Message must be between 1 and 1000 characters',
 				});
 				return;
 			}
-			sandboxChatController(socket, message);
+
+			if (isNewChat) {
+				chatId = nanoid(20);
+			}
+
+			sandboxChatController(socket, message, chatId);
 		});
 
 		socket.on('disconnect', () => {
