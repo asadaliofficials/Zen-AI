@@ -10,8 +10,10 @@ export function messageValidator(message, chatId) {
 	}
 
 	const isMongoId = /^[a-f\d]{24}$/i.test(chatId);
-	if (!chatId || !isMongoId) {
-		errors.push({ field: 'chatId', message: 'Invalid or missing Chat Id' });
+	const isNullValue = chatId === null || chatId === 'null';
+
+	if (!isNullValue && !isMongoId) {
+		errors.push({ field: 'chatId', message: 'Invalid Chat Id' });
 	}
 
 	return errors;

@@ -27,8 +27,8 @@ export const loginUserService = async (email, password) => {
 
 export const createChat = async (title, userId) => {
 	try {
-		const user = await chatModel.create({ title, userId });
-		return user;
+		const chat = await chatModel.create({ title, userId });
+		return chat;
 	} catch (error) {
 		throw customError(500, 'MongoDB error');
 	}

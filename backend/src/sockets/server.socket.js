@@ -1,51 +1,70 @@
 import { Server } from 'socket.io';
-import cookie from 'cookie';
-import jwt from 'jsonwebtoken';
 
 import { chatController } from '../controllers/chat.controller.js';
 import { messageValidator } from '../validators/message.validator.js';
+import getTokenFromSocket from '../utils/getToken.util.js';
+
 export function setupSocket(server) {
-	let io = new Server(server);
+	const io = new Server(server, {
+		cors: {
+			origin: '*', // adjust in production
+			methods: ['GET', 'POST'],
+		},
+	});
 
-	io.on('connection', socket => {
-		let userId = null;
+	// ================================
+	// 🔒 /user namespace (authenticated)
+	// ================================
+	const userNamespace = io.of('/user');
+
+	userNamespace.on('connection', socket => {
+		console.log(`🔗 User connected: ${socket.id}`);
+
 		socket.on('message', obj => {
-			try {
-				const cookieHeader = socket.handshake.headers.cookie;
-				if (!cookieHeader) return socket.emit('responce', { message: 'unauthorized' });
-
-				const cookies = cookie.parse(cookieHeader);
-				const token = cookies['token'];
-				if (!token) return socket.emit('responce', { message: 'unauthorized' });
-
-				const decoded = jwt.verify(token, process.env.JWT_SECRET);
-				if (!decoded) return socket.emit('responce', { message: 'unauthorized' });
-				userId = decoded.id;
-			} catch (error) {
-				console.log(error);
-			}
-
+			const userId = getTokenFromSocket(socket);
 			const { message, chatId } = JSON.parse(obj);
-			if (!message || !chatId) {
-				socket.emit('responce', { message: 'Message and Chat id are required' });
-				return;
-			}
+			const isNewChat = chatId === 'null';
+
+			// Validate message and chatId
 			const errors = messageValidator(message, chatId);
 			if (errors.length > 0) {
 				socket.emit('responce', errors);
 				return;
 			}
-			chatController(socket, message, chatId, userId);
+
+			chatController(socket, message, chatId, userId, isNewChat);
 		});
 
-		// testing socket
+		// Optional test handler
 		socket.on('test', () => {
-			console.log(`test reply from the socket server`);
-			socket.emit('test', 'test reply from the socket server');
+			socket.emit('test', 'Reply from /user socket server');
 		});
 
 		socket.on('disconnect', () => {
-			console.log(`Client disconnected: ${socket.id}`);
+			console.log(`❌ User disconnected: ${socket.id}`);
+		});
+	});
+
+	// ================================
+	// 🧪 /sandbox namespace (guest users)
+	// ================================
+	const sandboxNamespace = io.of('/sandbox');
+
+	sandboxNamespace.on('connection', socket => {
+		console.log(`🧪 Sandbox user connected: ${socket.id}`);
+
+		const { message } = JSON.parse(obj);
+
+		// Validate message mannual
+		if (typeof message !== 'string' || !message.trim() || message.length < 1 || message.length > 1000) {
+			socket.emit('responce', {
+				message: 'Message must be between 1 and 1000 characters',
+			});
+			return;
+		}
+
+		socket.on('disconnect', () => {
+			console.log(`❌ Sandbox user disconnected: ${socket.id}`);
 		});
 	});
 }

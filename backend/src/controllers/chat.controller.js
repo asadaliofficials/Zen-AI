@@ -21,31 +21,56 @@ export const getAllChatsController = async (req, res) => {
 	}
 };
 
-export const chatController = async (socket, msg, chatId, userId) => {
+export const chatController = async (socket, msg, chatId, userId, isNewChat) => {
 	try {
-		const responce = (
-			await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
-		).reverse();
-
 		const contents = [];
 
-		if (responce.length > 0) {
-			responce.forEach(item => {
-				contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
-				contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
+		if (!isNewChat) {
+			const responce = (
+				await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
+			).reverse();
+
+			if (responce.length > 0) {
+				responce.forEach(item => {
+					contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
+					contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
+				});
+			}
+		}
+
+		// Add current user message
+		contents.push({ role: 'user', parts: [{ text: msg }] });
+
+		// Add system prompt for title generation if it's a new chat
+		if (isNewChat) {
+			contents.unshift({
+				role: 'user',
+				parts: [
+					{
+						text:
+							'After responding to the user query, also generate a short, relevant title for this conversation (maximum 5 words).' +
+							' Respond in this exact format:\n\n' +
+							'### Response:\n<your response here>\n\n' +
+							'### Title:\n<your short title here>',
+					},
+				],
 			});
 		}
 
-		contents.push({ role: 'user', parts: [{ text: msg }] });
+		const { text, title } = await geminiService(contents, isNewChat);
 
-		const aiResponce = await geminiService(contents);
-		const chat = messageModel.create({
+		// If it's a new chat, create it and get the chatId
+		if (isNewChat) {
+			const newChat = await createChat(title || 'New Chat', userId);
+			chatId = newChat._id;
+		}
+		await messageModel.create({
 			chatId: chatId,
 			userId: userId,
 			userMessage: msg,
-			aiResponse: aiResponce,
+			aiResponse: text,
 		});
-		socket.emit('responce', aiResponce);
+		socket.emit('responce', title ? { text, title } : { text });
 	} catch (error) {
 		console.error('Error in chatController:', error);
 	}
