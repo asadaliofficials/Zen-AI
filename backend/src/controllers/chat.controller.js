@@ -1,3 +1,4 @@
+import { generalInstructions } from '../constants/ai.constant.js'
 import chatModel from '../models/chat.model.js';
 import messageModel from '../models/message.model.js';
 import sandboxLogModel from '../models/sandboxLog.model.js';
@@ -25,6 +26,14 @@ export const getAllChatsController = async (req, res) => {
 export const chatController = async (socket, msg, chatId, userId, isNewChat) => {
 	try {
 		const contents = [];
+		contents.push({
+			role: 'user',
+			parts: [
+				{
+					text: generalInstructions,
+				},
+			],
+		});
 
 		if (!isNewChat) {
 			const response = (
@@ -80,6 +89,15 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 export const sandboxChatController = async (socket, msg, chatId) => {
 	try {
 		const contents = [];
+
+		contents.push({
+			role: 'user',
+			parts: [
+				{
+					text: generalInstructions,
+				},
+			],
+		});
 
 		const response = (
 			await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
