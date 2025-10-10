@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
+import { toast } from 'react-toastify';
 
 const AuthPage = () => {
+	const Navigate = useNavigate();
+
 	const [isSignUp, setIsSignUp] = useState(false);
 	const [isDark, setIsDark] = useState(false);
+	const [isLoading, setIsLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		name: '',
 		email: '',
@@ -36,20 +41,73 @@ const AuthPage = () => {
 
 	const handleSubmit = async e => {
 		e.preventDefault();
-		console.log('Form submitted:', { isSignUp, formData });
-		// Handle form submission here
-		if (isSignUp) {
-			// Sign up logic
-			const response = await axios.post('http://localhost:3000/api/v1/auth/sign-up', formData, {
-				withCredentials: true,
-			});
-			console.log('Sign Up Response:', response.data);
-		} else {
-			// Login logic
-			const response = await axios.post('http://localhost:3000/api/v1/auth/login', formData, {
-				withCredentials: true,
-			});
-			console.log('Login Response:', response.data);
+
+		if (isLoading) return; // Prevent multiple submissions
+
+		setIsLoading(true);
+		const startTime = Date.now();
+		const minLoadingTime = 1000; // 1 second minimum
+
+		try {
+			let response;
+
+			if (isSignUp) {
+				// Sign up logic
+				response = await axios.post('http://localhost:3000/api/v1/auth/sign-up', formData, {
+					withCredentials: true,
+				});
+				console.log('Sign Up Response:', response.data);
+				toast.success('Account created successfully!');
+			} else {
+				// Login logic
+				response = await axios.post('http://localhost:3000/api/v1/auth/login', formData, {
+					withCredentials: true,
+				});
+				console.log('Login Response:', response.data);
+				toast.success('Logged in successfully!');
+			}
+
+			// Ensure minimum loading time
+			const elapsedTime = Date.now() - startTime;
+			const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+
+			await new Promise(resolve => setTimeout(resolve, remainingTime));
+
+			Navigate('/');
+		} catch (error) {
+			// Ensure minimum loading time even on error
+			const elapsedTime = Date.now() - startTime;
+			const remainingTime = Math.max(0, minLoadingTime - elapsedTime);
+			await new Promise(resolve => setTimeout(resolve, remainingTime));
+
+			// Handle different types of errors
+			if (error.response) {
+				const { status, data } = error.response;
+
+				if (status === 422 && data.errors) {
+					// Validation errors
+					data.errors.forEach(errorItem => {
+						toast.error(errorItem.msg);
+					});
+				} else if (status === 409) {
+					// Email already registered
+					toast.error(data.message || 'Email already registered');
+				} else if (status === 401) {
+					// Invalid credentials
+					toast.error(data.message || 'Invalid email or password');
+				} else {
+					// Other server errors
+					toast.error(data.message || 'Something went wrong. Please try again.');
+				}
+			} else if (error.request) {
+				// Network error
+				toast.error('Network error. Please check your connection and try again.');
+			} else {
+				// Other errors
+				toast.error('An unexpected error occurred. Please try again.');
+			}
+		} finally {
+			setIsLoading(false);
 		}
 	};
 
@@ -299,13 +357,50 @@ const AuthPage = () => {
 									initial={{ opacity: 0, y: 10 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{ duration: 0.3, delay: 0.3 }}
-									className={`w-full py-3 px-4 cursor-pointer rounded-lg font-medium transition-colors ${
+									disabled={isLoading}
+									className={`w-full h-12 px-4 rounded-lg font-medium transition-colors flex items-center justify-center ${
+										isLoading ? 'cursor-not-allowed' : 'cursor-pointer'
+									} ${
 										isDark
-											? 'bg-white hover:bg-zinc-100 text-zinc-900'
+											? isLoading
+												? 'bg-white text-zinc-900'
+												: 'bg-white hover:bg-zinc-100 text-zinc-900'
+											: isLoading
+											? 'bg-black text-white'
 											: 'bg-black hover:bg-gray-800 text-white'
 									} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
 								>
-									{isSignUp ? 'Create account' : 'Sign in'}
+									{isLoading ? (
+										<svg
+											xmlns="http://www.w3.org/2000/svg"
+											width={42}
+											height={42}
+											viewBox="0 0 24 24"
+											className="animate-spin"
+										>
+											<path
+												fill="none"
+												stroke="currentColor"
+												strokeLinecap="round"
+												strokeWidth={1.3}
+												d="M12 6.99998C9.1747 6.99987 6.99997 9.24998 7 12C7.00003 14.55 9.02119 17 12 17C14.7712 17 17 14.75 17 12"
+											>
+												<animateTransform
+													attributeName="transform"
+													attributeType="XML"
+													dur="560ms"
+													from="0,12,12"
+													repeatCount="indefinite"
+													to="360,12,12"
+													type="rotate"
+												></animateTransform>
+											</path>
+										</svg>
+									) : isSignUp ? (
+										'Create account'
+									) : (
+										'Sign in'
+									)}
 								</motion.button>
 							</motion.form>
 						</AnimatePresence>
