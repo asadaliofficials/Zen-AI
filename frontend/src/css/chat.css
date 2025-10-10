@@ -1,0 +1,53 @@
+/* Custom scrollbar styles for chat */
+.scrollbar-thin {
+	scrollbar-width: thin;
+}
+
+.scrollbar-thin::-webkit-scrollbar {
+	width: 6px;
+}
+
+.scrollbar-thin::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.scrollbar-thin::-webkit-scrollbar-thumb {
+	border-radius: 3px;
+}
+
+.scrollbar-thumb-gray-600::-webkit-scrollbar-thumb {
+	background-color: rgb(75 85 99);
+}
+
+.hover\:scrollbar-thumb-gray-500:hover::-webkit-scrollbar-thumb {
+	background-color: rgb(107 114 128);
+}
+
+.scrollbar-thumb-gray-300::-webkit-scrollbar-thumb {
+	background-color: rgb(209 213 219);
+}
+
+.hover\:scrollbar-thumb-gray-400:hover::-webkit-scrollbar-thumb {
+	background-color: rgb(156 163 175);
+}
+
+/* Dark theme scrollbar track */
+.scrollbar-track-transparent::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+/* Ensure scrollbar track is always transparent or dark */
+.scrollbar-thin::-webkit-scrollbar-track {
+	background: transparent !important;
+}
+
+/* Firefox scrollbar */
+.scrollbar-thin {
+	scrollbar-width: thin;
+	scrollbar-color: rgb(75 85 99) transparent; /* thumb track */
+}
+
+/* Light theme Firefox scrollbar */
+.light .scrollbar-thin {
+	scrollbar-color: rgb(209 213 219) transparent;
+}
