@@ -71,7 +71,7 @@ export const deleteUserController = async (req, res) => {
 				deletedBy: userId,
 				originalId: deletedUser._id,
 				data: deletedUser.toObject(),
-				deletedAt: new Date()
+				deletedAt: new Date(),
 			});
 		}
 
@@ -85,7 +85,7 @@ export const deleteUserController = async (req, res) => {
 					deletedBy: userId,
 					originalId: chat._id,
 					data: chat.toObject(),
-					deletedAt: new Date()
+					deletedAt: new Date(),
 				});
 			}
 
@@ -100,7 +100,7 @@ export const deleteUserController = async (req, res) => {
 							deletedBy: userId,
 							originalId: msg._id,
 							data: msg.toObject(),
-							deletedAt: new Date()
+							deletedAt: new Date(),
 						});
 					}
 
@@ -118,7 +118,7 @@ export const deleteUserController = async (req, res) => {
 
 		return res.status(200).json({
 			message: 'User and all associated data deleted successfully',
-			user: deletedUser
+			user: deletedUser,
 		});
 	} catch (error) {
 		console.error('Error deleting user and related data:', error);

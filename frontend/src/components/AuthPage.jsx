@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,10 +34,23 @@ const AuthPage = () => {
 		});
 	};
 
-	const handleSubmit = e => {
+	const handleSubmit = async e => {
 		e.preventDefault();
 		console.log('Form submitted:', { isSignUp, formData });
 		// Handle form submission here
+		if (isSignUp) {
+			// Sign up logic
+			const response = await axios.post('http://localhost:3000/api/v1/auth/sign-up', formData, {
+				withCredentials: true,
+			});
+			console.log('Sign Up Response:', response.data);
+		} else {
+			// Login logic
+			const response = await axios.post('http://localhost:3000/api/v1/auth/login', formData, {
+				withCredentials: true,
+			});
+			console.log('Login Response:', response.data);
+		}
 	};
 
 	const toggleForm = signUp => {
@@ -71,9 +85,7 @@ const AuthPage = () => {
 			{/* Header */}
 			<div className="flex justify-between items-center px-6 py-4">
 				<div className="flex items-center space-x-2">
-					<div
-						className={`w-10 h-10 rounded flex items-center justify-center `}
-					>
+					<div className={`w-10 h-10 rounded flex items-center justify-center `}>
 						<img src="images/logo.png" alt="logo" />
 					</div>
 					<span className="text-xl font-semibold">Zen-AI</span>
@@ -131,7 +143,7 @@ const AuthPage = () => {
 						<div className="flex mb-8 border-b border-gray-200 dark:border-zinc-700">
 							<button
 								onClick={() => toggleForm(true)}
-								className={`flex-1 py-3 px-4 text-center font-medium transition-colors relative ${
+								className={`flex-1 py-3 px-4 text-center cursor-pointer font-medium transition-colors relative ${
 									isSignUp
 										? isDark
 											? 'text-blue-400'
@@ -154,7 +166,7 @@ const AuthPage = () => {
 							</button>
 							<button
 								onClick={() => toggleForm(false)}
-								className={`flex-1 py-3 px-4 text-center font-medium transition-colors relative ${
+								className={`flex-1 py-3 px-4 cursor-pointer text-center font-medium transition-colors relative ${
 									!isSignUp
 										? isDark
 											? 'text-blue-400'
@@ -287,7 +299,7 @@ const AuthPage = () => {
 									initial={{ opacity: 0, y: 10 }}
 									animate={{ opacity: 1, y: 0 }}
 									transition={{ duration: 0.3, delay: 0.3 }}
-									className={`w-full py-3 px-4 rounded-lg font-medium transition-colors ${
+									className={`w-full py-3 px-4 cursor-pointer rounded-lg font-medium transition-colors ${
 										isDark
 											? 'bg-white hover:bg-zinc-100 text-zinc-900'
 											: 'bg-black hover:bg-gray-800 text-white'
