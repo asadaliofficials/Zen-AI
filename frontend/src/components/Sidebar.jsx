@@ -1,0 +1,213 @@
+import React, { useState, useEffect } from 'react';
+// eslint-disable-next-line no-unused-vars
+import { AnimatePresence, motion } from 'framer-motion';
+
+const Sidebar = ({ isOpen, onToggle }) => {
+	const [isDark, setIsDark] = useState(false);
+	const [showProfileMenu, setShowProfileMenu] = useState(false);
+
+	// System theme detection
+	useEffect(() => {
+		const checkSystemTheme = () => {
+			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			setIsDark(prefersDark);
+		};
+
+		checkSystemTheme();
+
+		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+		mediaQuery.addEventListener('change', checkSystemTheme);
+
+		return () => mediaQuery.removeEventListener('change', checkSystemTheme);
+	}, []);
+
+	const sidebarVariants = {
+		open: { x: 0, transition: { duration: 0.3, ease: 'easeOut' } },
+		closed: { x: '-100%', transition: { duration: 0.3, ease: 'easeIn' } },
+	};
+
+	return (
+		<>
+			{/* Mobile Overlay */}
+			<AnimatePresence>
+				{isOpen && (
+					<motion.div
+						initial={{ opacity: 0 }}
+						animate={{ opacity: 1 }}
+						exit={{ opacity: 0 }}
+						className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+						onClick={onToggle}
+					/>
+				)}
+			</AnimatePresence>
+
+			{/* Sidebar */}
+			<motion.div
+				variants={sidebarVariants}
+				animate={isOpen ? 'open' : 'closed'}
+				className={`fixed lg:relative top-0 left-0 h-full w-64 z-50 ${
+					isDark ? 'bg-[#181818]' : 'bg-white'
+				}  flex flex-col`}
+			>
+				{/* Header */}
+				<div className="flex items-center justify-between p-4">
+					<div className="flex items-center space-x-2">
+						<div className="w-8 h-8 rounded flex items-center justify-center">
+							<img src="images/logo.png" alt="logo" className="w-10 h-10" />
+						</div>
+						<span className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-black'}`}>
+							Zen-AI
+						</span>
+					</div>
+					<button
+						onClick={onToggle}
+						className={`p-1.5 rounded-lg transition-colors ${
+							isDark ? 'hover:bg-[#303030]' : 'hover:bg-gray-100'
+						} lg:hidden`}
+					>
+						<svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
+							<g fill="none" fillRule="evenodd">
+								<path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"></path>
+								<path
+									fill="currentColor"
+									d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm2 0h3v14H5zm11.207 5.586L14.793 12l1.414 1.414a1 1 0 0 1-1.414 1.414l-2.121-2.12a1 1 0 0 1 0-1.415l2.121-2.121a1 1 0 1 1 1.414 1.414"
+								></path>
+							</g>
+						</svg>
+					</button>
+				</div>
+
+				{/* Navigation Buttons */}
+				<div className="p-4 space-y-2">
+					<button
+						className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
+							isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
+						}`}
+					>
+						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M12 4v16m8-8H4"
+							/>
+						</svg>
+						<span>New Chat</span>
+					</button>
+
+					<button
+						className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
+							isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
+						}`}
+					>
+						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"
+							/>
+						</svg>
+						<span>Special Personalities</span>
+					</button>
+
+					<button
+						className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
+							isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
+						}`}
+					>
+						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+							/>
+						</svg>
+						<span>Generate Content</span>
+					</button>
+				</div>
+
+				{/* Chat History */}
+				<div className="flex-1 px-4">
+					<h3 className={`text-sm font-medium mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+						Chats:
+					</h3>
+					<div className="space-y-1">
+						{['Chat 1', 'Chat 2', 'Chat 3'].map((chat, index) => (
+							<button
+								key={index}
+								className={`w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors ${
+									isDark ? 'hover:bg-[#303030] text-gray-300' : 'hover:bg-gray-100 text-gray-700'
+								}`}
+							>
+								{chat}
+							</button>
+						))}
+					</div>
+				</div>
+
+				{/* Profile Section */}
+				<div className="p-4 border-t  border-gray-200 dark:border-gray-700">
+					<div className="relative">
+						<button
+							onClick={() => setShowProfileMenu(!showProfileMenu)}
+							className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
+								isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
+							}`}
+						>
+							<div className="w-10 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+								<span className="text-white text-sm font-medium">AS</span>
+							</div>
+							<div className="flex-1 text-left">
+								<div className="text-sm font-medium">John Doe</div>
+								<div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
+									john.doe@example.com
+								</div>
+							</div>
+							<svg className="w-5 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+								<path
+									strokeLinecap="round"
+									strokeLinejoin="round"
+									strokeWidth={4}
+									d="M12 5v.01M12 12v.01M12 19v.01"
+								/>
+							</svg>
+						</button>
+
+						{/* Profile Menu */}
+						<AnimatePresence>
+							{showProfileMenu && (
+								<motion.div
+									initial={{ opacity: 0, y: 10 }}
+									animate={{ opacity: 1, y: 0 }}
+									exit={{ opacity: 0, y: 10 }}
+									className={`absolute  bottom-full left-0 right-0 mb-2 py-1 rounded-lg shadow-lg border ${
+										isDark ? 'bg-[#181818] border-gray-700' : 'bg-white border-gray-200'
+									}`}
+								>
+									<button
+										className={`w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors ${
+											isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
+										}`}
+									>
+										Logout
+									</button>
+									<button
+										className={`w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors ${
+											isDark ? 'hover:bg-[#303030] text-red-400' : 'hover:bg-gray-100 text-red-600'
+										}`}
+									>
+										Delete Account
+									</button>
+								</motion.div>
+							)}
+						</AnimatePresence>
+					</div>
+				</div>
+			</motion.div>
+		</>
+	);
+};
+
+export default Sidebar;

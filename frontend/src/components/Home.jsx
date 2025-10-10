@@ -1,29 +1,77 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import Sidebar from './Sidebar';
+import Chat from './Chat';
 
 const Home = () => {
+	const [sidebarOpen, setSidebarOpen] = useState(true);
+	const [isDark, setIsDark] = useState(false);
+
+	// System theme detection
+	useEffect(() => {
+		const checkSystemTheme = () => {
+			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+			setIsDark(prefersDark);
+		};
+
+		checkSystemTheme();
+
+		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+		mediaQuery.addEventListener('change', checkSystemTheme);
+
+		return () => mediaQuery.removeEventListener('change', checkSystemTheme);
+	}, []);
+
+	// Handle sidebar toggle
+	const toggleSidebar = () => {
+		setSidebarOpen(!sidebarOpen);
+	};
+
+	// Close sidebar on mobile when screen size changes
+	useEffect(() => {
+		const handleResize = () => {
+			if (window.innerWidth >= 1024) {
+				setSidebarOpen(true);
+			}
+		};
+
+		window.addEventListener('resize', handleResize);
+		return () => window.removeEventListener('resize', handleResize);
+	}, []);
+
 	return (
-		<>
-			<div>Home</div>
-			<svg xmlns="http://www.w3.org/2000/svg" width={84} height={84} viewBox="0 0 24 24">
-				<path
-					fill="none"
-					stroke="currentColor"
-					strokeLinecap="round"
-					strokeWidth={1.1}
-					d="M12 6.99998C9.1747 6.99987 6.99997 9.24998 7 12C7.00003 14.55 9.02119 17 12 17C14.7712 17 17 14.75 17 12"
-				>
-					<animateTransform
-						attributeName="transform"
-						attributeType="XML"
-						dur="560ms"
-						from="0,12,12"
-						repeatCount="indefinite"
-						to="360,12,12"
-						type="rotate"
-					></animateTransform>
-				</path>
-			</svg>
-		</>
+		<div className={`flex h-screen ${isDark ? 'bg-gray-900' : 'bg-white'}`}>
+			{/* Sidebar */}
+			<Sidebar isOpen={sidebarOpen} onToggle={toggleSidebar} />
+
+			{/* Chat Area */}
+			<div className="flex-1 flex flex-col min-w-0">
+				{/* Mobile Header */}
+				<div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+					<button
+						onClick={toggleSidebar}
+						className={`p-2 rounded-lg transition-colors ${
+							isDark ? 'hover:bg-gray-800' : 'hover:bg-gray-100'
+						}`}
+					>
+						<svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+							<path
+								strokeLinecap="round"
+								strokeLinejoin="round"
+								strokeWidth={2}
+								d="M4 6h16M4 12h16M4 18h16"
+							/>
+						</svg>
+					</button>
+					<h1 className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-black'}`}>
+						Zen-AI
+					</h1>
+					<div className="w-10"></div>
+				</div>
+
+				{/* Chat Component */}
+				<Chat />
+			</div>
+		</div>
 	);
 };
 
