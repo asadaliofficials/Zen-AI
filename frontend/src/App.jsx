@@ -4,22 +4,27 @@ import AppRoutes from './routes/App.routes.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+import { store } from './redux-store/store.js';
+import { Provider } from 'react-redux';
+
 const App = () => {
 	return (
 		<>
-			<AppRoutes />
-			<ToastContainer
-				position="top-right"
-				autoClose={5000}
-				hideProgressBar={false}
-				newestOnTop={false}
-				closeOnClick
-				rtl={false}
-				pauseOnFocusLoss
-				draggable
-				pauseOnHover
-				theme="colored"
-			/>
+			<Provider store={store}>
+				<AppRoutes />
+				<ToastContainer
+					position="top-right"
+					autoClose={5000}
+					hideProgressBar={false}
+					newestOnTop={false}
+					closeOnClick
+					rtl={false}
+					pauseOnFocusLoss
+					draggable
+					pauseOnHover
+					theme="colored"
+				/>
+			</Provider>
 		</>
 	);
 };
