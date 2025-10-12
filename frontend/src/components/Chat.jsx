@@ -6,7 +6,6 @@ import screenShotAudio from '../assets/sound/screenshot.mp3';
 
 import '../css/chat.css';
 const Chat = () => {
-	const [isDark, setIsDark] = useState(false);
 	const [messages, setMessages] = useState([
 		{
 			id: 1,

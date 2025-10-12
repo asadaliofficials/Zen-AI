@@ -4,7 +4,7 @@ import AppRoutes from './routes/App.routes.jsx';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { store } from './redux-store/store.js';
+import { store } from './app/store.js';
 import { Provider } from 'react-redux';
 
 const App = () => {
