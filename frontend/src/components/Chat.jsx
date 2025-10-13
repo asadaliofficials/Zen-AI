@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
+
+import screenShotAudio from '../assets/sound/screenshot.mp3';
 
 import '../css/chat.css';
 const Chat = () => {
@@ -78,6 +80,7 @@ const Chat = () => {
 		setMessages(prev => [...prev, newMessage]);
 		setInputMessage('');
 		setIsWaitingForResponse(true);
+		setIsTyping(true);
 
 		// Reset textarea height
 		const textarea = document.querySelector('textarea');
@@ -97,17 +100,19 @@ const Chat = () => {
 					'This is a simulated AI response. In a real application, this would be the actual AI response.',
 				timestamp: new Date(),
 			};
-			setMessages(prev => [...prev, aiResponse]);
-			setIsWaitingForResponse(false);
 			setIsTyping(false);
+			setIsWaitingForResponse(false);
 			setCancelRequest(null);
+			setTimeout(() => {
+				setMessages(prev => [...prev, aiResponse]);
+			}, 500);
 
 			// Scroll to bottom only if user is near bottom
 			setTimeout(() => {
 				if (isNearBottom()) {
 					scrollToBottom();
 				}
-			}, 100);
+			}, 700);
 		}, 2000);
 
 		setCancelRequest(timeoutId);
@@ -155,6 +160,7 @@ const Chat = () => {
 	};
 	const handleScreenshot = messageId => {
 		// Show success icon for 1.5 seconds
+		playSound();
 		setScreenshotStates(prev => ({ ...prev, [messageId]: true }));
 		setTimeout(() => {
 			setScreenshotStates(prev => ({ ...prev, [messageId]: false }));
@@ -193,6 +199,11 @@ const Chat = () => {
 				setReadingMessage(messageId);
 			}
 		}
+	};
+
+	const playSound = () => {
+		const audio = new Audio(screenShotAudio);
+		audio.play();
 	};
 
 	return (
@@ -413,8 +424,8 @@ const Chat = () => {
 												{copyStates[message.id] ? (
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
-														width={20}
-														height={20}
+														width={18}
+														height={18}
 														viewBox="0 0 24 24"
 													>
 														<path
@@ -425,8 +436,8 @@ const Chat = () => {
 												) : (
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
-														width={20}
-														height={20}
+														width={18}
+														height={18}
 														viewBox="0 0 15 15"
 													>
 														<path
@@ -461,8 +472,8 @@ const Chat = () => {
 												) : (
 													<svg
 														xmlns="http://www.w3.org/2000/svg"
-														width={23}
-														height={23}
+														width={20}
+														height={20}
 														viewBox="0 0 24 24"
 													>
 														<path
@@ -481,8 +492,8 @@ const Chat = () => {
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
-													width={20}
-													height={20}
+													width={18}
+													height={18}
 													viewBox="0 0 48 48"
 												>
 													<path
@@ -503,7 +514,7 @@ const Chat = () => {
 												title="Share"
 											>
 												<svg
-													className="w-6 h-6"
+													className="w-5 h-5"
 													fill="none"
 													stroke="currentColor"
 													viewBox="0 0 24 24"
@@ -531,8 +542,8 @@ const Chat = () => {
 											>
 												<svg
 													xmlns="http://www.w3.org/2000/svg"
-													width={20}
-													height={20}
+													width={18}
+													height={18}
 													viewBox="0 0 24 24"
 												>
 													<path
@@ -551,38 +562,40 @@ const Chat = () => {
 							</div>
 						</motion.div>
 					))}
-				</div>
 
-				{/* Typing Indicator */}
-				<AnimatePresence>
-					{isTyping && (
-						<motion.div
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 20 }}
-							className="flex justify-start max-w-[1000px] w-full mx-auto px-4"
-						>
-							<div className="flex space-x-3 max-w-3xl">
-								<div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
-									<span className="text-white text-sm font-medium">AI</span>
-								</div>
-								<div className={`px-4 py-3 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
-									<div className="flex space-x-1">
-										<div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
-										<div
-											className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-											style={{ animationDelay: '0.1s' }}
-										></div>
-										<div
-											className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
-											style={{ animationDelay: '0.2s' }}
-										></div>
+					{/* Typing Indicator */}
+					<AnimatePresence>
+						{isTyping && (
+							<motion.div
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: 10 }}
+								className="flex justify-start"
+							>
+								<div className="flex space-x-3 max-w-3xl">
+									<div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+										<span className="text-white text-sm font-medium">AI</span>
+									</div>
+									<div
+										className={`px-4 py-3 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}
+									>
+										<div className="flex space-x-1">
+											<div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></div>
+											<div
+												className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+												style={{ animationDelay: '0.1s' }}
+											></div>
+											<div
+												className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+												style={{ animationDelay: '0.2s' }}
+											></div>
+										</div>
 									</div>
 								</div>
-							</div>
-						</motion.div>
-					)}
-				</AnimatePresence>
+							</motion.div>
+						)}
+					</AnimatePresence>
+				</div>
 			</div>
 
 			{/* Input Area */}
@@ -648,9 +661,7 @@ const Chat = () => {
 									type="button"
 									onClick={handleCancelRequest}
 									className={`p-2 cursor-pointer rounded-lg transition-colors ${
-										isDark
-											? 'bg-red-600 hover:bg-red-700 text-white'
-											: 'bg-red-500 hover:bg-red-600 text-white'
+										isDark ? 'bg-white  text-black' : 'bg-black  text-white'
 									}`}
 									title="Cancel Request"
 								>
@@ -692,7 +703,6 @@ const Chat = () => {
 					</div>
 				</form>
 			</div>
-			<p>Designed and developed by asad ali</p>
 		</div>
 	);
 };
