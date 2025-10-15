@@ -1,7 +1,13 @@
+// app/store.js
 import { configureStore } from '@reduxjs/toolkit';
+import themeReducer from '../features/theme/themeSlice';
+import messagesReducer from '../features/messages/messagesSlice';
+import uiReducer from '../features/ui/uiSlice';
 
-// reducers
-import { toggleTheme } from '../features/theme/themeSlice.js';
 export const store = configureStore({
-	reducer: { toggleTheme },
+	reducer: {
+		theme: themeReducer,
+		messages: messagesReducer,
+		ui: uiReducer,
+	},
 });

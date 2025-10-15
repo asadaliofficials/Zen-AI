@@ -1,0 +1,97 @@
+import React from 'react';
+import { AnimatePresence, motion as Motion } from 'framer-motion';
+import ResponceActions from './ResponceActions';
+
+const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
+	return (
+		<div
+			className={`messages-container flex-1 overflow-y-auto p-4 space-y-6 ${
+				isDark
+					? 'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500'
+					: 'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400'
+			}`}
+		>
+			<div className="max-w-[1000px] w-full mx-auto">
+				<AnimatePresence initial={false}>
+					{messages.map(message => (
+						<Motion.div
+							key={message.id}
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: 10 }}
+							layout
+							className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+						>
+							<div
+								className={`max-w-3xl flex ${
+									message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+								} space-x-3`}
+							>
+								{/* Message Content */}
+								<div className="flex flex-col">
+									<div
+										className={`px-4 py-3 rounded-2xl ${
+											message.role === 'user'
+												? isDark
+													? 'bg-[#303030] text-white'
+													: 'bg-[#303030] text-white'
+												: isDark
+												? 'bg-transparent text-white'
+												: 'bg-transparent text-black'
+										}`}
+									>
+										<p className="whitespace-pre-wrap">{message.content}</p>
+									</div>
+
+									{/* Message Actions (only for AI messages) */}
+									{message.role === '' && (
+										<ResponceActions
+											message={message}
+											isDark={isDark}
+											handlers={handlers}
+											uiState={uiState}
+										/>
+									)}
+								</div>
+							</div>
+						</Motion.div>
+					))}
+				</AnimatePresence>
+
+				{/* Typing Indicator */}
+				<AnimatePresence>
+					{isTyping && (
+						<Motion.div
+							layout
+							initial={{ opacity: 0, y: 20 }}
+							animate={{ opacity: 1, y: 0 }}
+							exit={{ opacity: 0, y: 10 }}
+							className="flex justify-start"
+						>
+							<div className="flex space-x-3 max-w-3xl">
+								<div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
+									<span className="text-white text-sm font-medium">AI</span>
+								</div>
+								<div className={`px-4 py-3 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+									<div className="flex space-x-1">
+										<Motion.div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></Motion.div>
+										<div
+											className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+											style={{ animationDelay: '0.1s' }}
+										/>
+										<div
+											className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"
+											style={{ animationDelay: '0.2s' }}
+										/>
+									</div>
+								</div>
+							</div>
+						</Motion.div>
+					)}
+				</AnimatePresence>
+			</div>
+		</div>
+	);
+};
+
+export default MessagesList;

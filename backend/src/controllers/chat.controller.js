@@ -1,4 +1,4 @@
-import { generalInstructions } from '../constants/ai.constant.js'
+import { generalInstructions } from '../constants/ai.constant.js';
 import chatModel from '../models/chat.model.js';
 import messageModel from '../models/message.model.js';
 import sandboxLogModel from '../models/sandboxLog.model.js';
@@ -82,6 +82,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 		});
 		socket.emit('response', title ? { text, title } : { text });
 	} catch (error) {
+		socket.emit('error', { content: 'AI Model is overloaded, Please try again later!', chatId });
 		console.error('Error in chatController:', error);
 	}
 };
@@ -105,12 +106,14 @@ export const sandboxChatController = async (socket, msg, chatId) => {
 
 		if (response.length > 0) {
 			response.forEach(item => {
+				// console.log(item, item.userMessage, item.aiResponse);
 				contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
 				contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
 			});
 		}
 
 		contents.push({ role: 'user', parts: [{ text: msg }] });
+		console.log(JSON.stringify(contents, null, 2));
 
 		const { text, title } = await geminiService(contents);
 
@@ -121,6 +124,7 @@ export const sandboxChatController = async (socket, msg, chatId) => {
 		});
 		socket.emit('response', { content: text, chatId });
 	} catch (error) {
+		socket.emit('error', { content: 'AI Model is overloaded, Please try again later!', chatId });
 		console.error('Error in chatController:', error);
 	}
 };

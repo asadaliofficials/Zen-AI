@@ -1,18 +1,22 @@
+// features/theme/themeSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const [isDark, setIsDark] = useState(false);
+const initialState = {
+	isDark: false,
+};
 
 export const themeSlice = createSlice({
 	name: 'theme',
-	initialState: isDark,
+	initialState,
 	reducers: {
 		toggleTheme: state => {
-			state.value += 1;
+			state.isDark = !state.isDark;
+		},
+		setTheme: (state, action) => {
+			state.isDark = !!action.payload;
 		},
 	},
 });
 
-// Action creators are generated for each case reducer function
-export const { toggleTheme } = themeSlice.actions;
-
+export const { toggleTheme, setTheme } = themeSlice.actions;
 export default themeSlice.reducer;

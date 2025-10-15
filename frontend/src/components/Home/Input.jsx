@@ -1,17 +1,43 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 
-const Input = () => {
+const Input = ({ onSend, onCancel, isDark, isWaiting }) => {
+	const [inputMessage, setInputMessage] = useState('');
+	const textareaRef = useRef(null);
+
+	const handleSend = e => {
+		e && e.preventDefault();
+		const content = inputMessage.trim();
+		if (!content || isWaiting) return;
+		onSend(content);
+		setInputMessage('');
+		// reset height
+		if (textareaRef.current) textareaRef.current.style.height = 'auto';
+	};
+
+	const handleKeyPress = e => {
+		if (e.key === 'Enter' && !e.shiftKey) {
+			e.preventDefault();
+			handleSend();
+		}
+	};
+
 	return (
 		<div className={`p-4 max-w-[1000px] mx-auto w-full`}>
-			<form onSubmit={handleSendMessage} className="relative">
+			<form onSubmit={handleSend} className="relative">
 				<div
 					className={`relative rounded-2xl border transition-colors ${
 						isDark ? 'bg-[#303030] border-white/10' : 'bg-gray-100 border-black/10'
 					}`}
 				>
 					<textarea
+						ref={textareaRef}
 						value={inputMessage}
-						onChange={e => setInputMessage(e.target.value)}
+						onChange={e => {
+							setInputMessage(e.target.value);
+							const t = e.target;
+							t.style.height = 'auto';
+							t.style.height = Math.min(t.scrollHeight, 240) + 'px';
+						}}
 						onKeyDown={handleKeyPress}
 						placeholder="Message Zen-AI..."
 						rows="1"
@@ -25,14 +51,8 @@ const Input = () => {
 								: 'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400'
 						}`}
 						style={{
-							maxHeight: '240px', // 10 lines * 24px line height
+							maxHeight: '240px',
 							overflowY: 'auto',
-						}}
-						onInput={e => {
-							const textarea = e.target;
-							textarea.style.height = 'auto';
-							const newHeight = Math.min(textarea.scrollHeight, 240); // Max 10 lines
-							textarea.style.height = newHeight + 'px';
 						}}
 					/>
 
@@ -59,10 +79,10 @@ const Input = () => {
 						</button>
 
 						{/* Send/Cancel Button */}
-						{isWaitingForResponse ? (
+						{isWaiting ? (
 							<button
 								type="button"
-								onClick={handleCancelRequest}
+								onClick={onCancel}
 								className={`p-2 cursor-pointer rounded-lg transition-colors ${
 									isDark ? 'bg-white  text-black' : 'bg-black  text-white'
 								}`}
