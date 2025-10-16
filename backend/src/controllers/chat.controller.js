@@ -80,7 +80,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 			userMessage: msg,
 			aiResponse: text,
 		});
-		socket.emit('response', title ? { text, title } : { text });
+		socket.emit('response', title ? { content: text, title } : { content: text });
 	} catch (error) {
 		socket.emit('error', { content: 'AI Model is overloaded, Please try again later!', chatId });
 		console.error('Error in chatController:', error);

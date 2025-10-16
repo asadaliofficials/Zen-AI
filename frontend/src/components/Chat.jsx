@@ -21,7 +21,7 @@ import {
 	setSelectedModel,
 } from '../features/ui/uiSlice';
 import { toggleTheme, setTheme } from '../features/theme/themeSlice';
-import { sandboxSocket } from '../sockets/client.socket';
+import { userSocket } from '../sockets/client.socket';
 
 const Chat = () => {
 	const dispatch = useDispatch();
@@ -64,7 +64,7 @@ const Chat = () => {
 	};
 
 	useEffect(() => {
-		sandboxSocket.on('response', data => {
+		userSocket.on('response', data => {
 			console.log('Received response:', data);
 			dispatch(addMessage({ role: 'model', content: data.content }));
 			dispatch(setTyping(false));
@@ -73,7 +73,7 @@ const Chat = () => {
 			if (isNearBottom()) scrollToBottom();
 			if (!chatId && data.chatId) setChatId(data.chatId);
 		});
-		sandboxSocket.on('error', data => {
+		userSocket.on('error', data => {
 			console.log('Received response:', data);
 			dispatch(addMessage({ role: 'model', content: data.content }));
 			dispatch(setTyping(false));
@@ -83,7 +83,7 @@ const Chat = () => {
 		});
 
 		return () => {
-			sandboxSocket.off('response');
+			userSocket.off('response');
 		};
 	}, []);
 	const handlers = {
@@ -95,7 +95,7 @@ const Chat = () => {
 
 			setTimeout(() => scrollToBottom(), 100);
 
-			sandboxSocket.emit('message', JSON.stringify({ message: content, chatId: chatId || 'null' }));
+			userSocket.emit('message', JSON.stringify({ message: content, chatId: chatId || 'null' }));
 		},
 		cancelRequest: () => {
 			if (cancelRef.current) {
