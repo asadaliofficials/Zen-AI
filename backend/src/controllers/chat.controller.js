@@ -58,7 +58,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 				parts: [
 					{
 						text:
-							'After responding to the user query, also generate a short, relevant title for this conversation (maximum 5 words).' +
+							'After responding to the user query, also generate a short, relevant title for this conversation in English only (maximum 5 words).' +
 							' Respond in this exact format:\n\n' +
 							'### Response:\n<your response here>\n\n' +
 							'### Title:\n<your short title here>',
@@ -70,6 +70,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 		const { text, title } = await geminiService(contents, isNewChat);
 
 		// If it's a new chat, create it and get the chatId
+		console.log('title generated:', title);
 		if (isNewChat) {
 			const newChat = await createChat(title || 'New Chat', userId);
 			chatId = newChat._id;
@@ -80,7 +81,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 			userMessage: msg,
 			aiResponse: text,
 		});
-		socket.emit('response', title ? { content: text, title } : { content: text });
+		socket.emit('response', title ? { content: text, title, chatId } : { content: text, chatId });
 	} catch (error) {
 		socket.emit('error', { content: 'AI Model is overloaded, Please try again later!', chatId });
 		console.error('Error in chatController:', error);

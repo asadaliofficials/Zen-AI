@@ -27,31 +27,7 @@ export function setupSocket(server) {
 			try {
 				const userId = getTokenFromSocket(socket);
 				if (!userId) {
-					socket.emit('response', { message: 'Unauthorized' });
-					return;
-				}
-
-				const { message, chatId } = JSON.parse(obj);
-				const isNewChat = chatId === 'null';
-
-				const errors = messageValidator(message, chatId);
-				if (errors.length > 0) {
-					socket.emit('response', errors);
-					return;
-				}
-
-				const tempChat = socket.handshake.query.temp;
-				chatController(socket, message, chatId, userId, isNewChat, tempChat);
-			} catch (error) {
-				console.error('Socket message error:', error);
-				socket.emit('error', { message: 'Internal server error' });
-			}
-		});
-		socket.on('message', obj => {
-			try {
-				const userId = getTokenFromSocket(socket);
-				if (!userId) {
-					socket.emit('response', { message: 'Unauthorized' });
+					socket.emit('response', { message: 'Unauthorized socket' });
 					return;
 				}
 
