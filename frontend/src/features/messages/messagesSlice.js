@@ -40,6 +40,9 @@ const messagesSlice = createSlice({
 		clearMessages(state) {
 			state.messages = [];
 		},
+		clearLastMessage(state) {
+			state.messages.pop();
+		},
 		replaceLastAssistantMessage(state, action) {
 			// Replace the last model message content (useful for streaming)
 			const lastIndex = [...state.messages].reverse().findIndex(m => m.role === '');
@@ -50,5 +53,6 @@ const messagesSlice = createSlice({
 	},
 });
 
-export const { addMessage, clearMessages, replaceLastAssistantMessage } = messagesSlice.actions;
+export const { addMessage, clearMessages, clearLastMessage, replaceLastAssistantMessage } =
+	messagesSlice.actions;
 export default messagesSlice.reducer;

@@ -27,7 +27,11 @@ export function setupSocket(server) {
 			try {
 				const userId = getTokenFromSocket(socket);
 				if (!userId) {
-					socket.emit('response', { message: 'Unauthorized socket' });
+					socket.emit('response', {
+						success: false,
+						message: 'Unauthorized',
+						statusCode: 401,
+					});
 					return;
 				}
 
@@ -36,7 +40,12 @@ export function setupSocket(server) {
 
 				const errors = messageValidator(message, chatId);
 				if (errors.length > 0) {
-					socket.emit('response', errors);
+					socket.emit('response', {
+						success: false,
+						message: 'Message validation failed',
+						statusCode: 400,
+						errors,
+					});
 					return;
 				}
 
@@ -44,7 +53,11 @@ export function setupSocket(server) {
 				chatController(socket, message, chatId, userId, isNewChat, tempChat);
 			} catch (error) {
 				console.error('Socket message error:', error);
-				socket.emit('error', { message: 'Internal server error' });
+				socket.emit('responce', {
+					success: false,
+					message: 'Internal server error',
+					statusCode: 500,
+				});
 			}
 		});
 	});

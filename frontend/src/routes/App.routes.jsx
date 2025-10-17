@@ -2,12 +2,12 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AuthPage from '../components/AuthPage';
-import HomePage from '../components/Home'; // Add this
+import HomeWrapper from '../components/HomeWrapper';
 const AppRoutes = () => {
 	return (
 		<Router>
 			<Routes>
-				<Route path="/" element={<HomePage />} />
+				<Route path="/" element={<HomeWrapper />} />
 				<Route path="/auth" element={<AuthPage />} />
 			</Routes>
 		</Router>

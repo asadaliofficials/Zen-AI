@@ -3,13 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
-import '../css/chat.css';
-import TopBar from './Home/TopBar';
-import MessagesList from './Home/MessagesList';
-import Input from './Home/Input';
-import screenShotAudio from '../assets/sound/screenshot.mp3';
+import { ToastContainer, toast } from 'react-toastify';
 
-import { addMessage } from '../features/messages/messagesSlice';
+import '../../css/chat.css';
+import TopBar from '../home/TopBar';
+import MessagesList from '../home/MessagesList';
+import Input from '../home/Input';
+import screenShotAudio from '../../assets/sound/screenshot.mp3';
+
+import { addMessage, clearLastMessage } from '../../features/messages/messagesSlice';
 import {
 	setTyping,
 	setWaiting,
@@ -19,11 +21,11 @@ import {
 	toggleLove,
 	setReadingMessage,
 	setSelectedModel,
-} from '../features/ui/uiSlice';
-import { toggleTheme, setTheme } from '../features/theme/themeSlice';
-import { userSocket } from '../sockets/client.socket';
+} from '../../features/ui/uiSlice';
+import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
+import { userSocket } from '../../sockets/client.socket';
 
-const Chat = () => {
+const ChatSandbox = () => {
 	const dispatch = useDispatch();
 	const messages = useSelector(state => state.messages.messages);
 	const ui = useSelector(state => state.ui);
@@ -66,22 +68,22 @@ const Chat = () => {
 	useEffect(() => {
 		userSocket.on('response', data => {
 			console.log('Received response:', data);
-			dispatch(addMessage({ role: 'model', content: data.content }));
-			dispatch(setTyping(false));
-			dispatch(setWaiting(false));
-			dispatch(setCancelRequestId(null));
-			if (isNearBottom()) scrollToBottom();
-			if (!chatId && data.chatId) setChatId(data.chatId);
+			try {
+				if (!data.success) {
+					throw new Error(data.message);
+				}
+				dispatch(addMessage({ role: 'model', content: data.content.text }));
+				if (isNearBottom()) scrollToBottom();
+				if (!chatId && data.content.chatId) setChatId(data.content.chatId);
+			} catch (error) {
+				dispatch(clearLastMessage());
+				toast.error(error.message);
+			} finally {
+				dispatch(setTyping(false));
+				dispatch(setWaiting(false));
+				dispatch(setCancelRequestId(null));
+			}
 		});
-		userSocket.on('error', data => {
-			console.log('Received response:', data);
-			dispatch(addMessage({ role: 'model', content: data.content }));
-			dispatch(setTyping(false));
-			dispatch(setWaiting(false));
-			dispatch(setCancelRequestId(null));
-			if (isNearBottom()) scrollToBottom();
-		});
-
 		return () => {
 			userSocket.off('response');
 		};
@@ -171,4 +173,4 @@ const Chat = () => {
 	);
 };
 
-export default Chat;
+export default ChatSandbox;
