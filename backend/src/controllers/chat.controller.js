@@ -70,7 +70,6 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 		const { text, title } = await geminiService(contents, isNewChat);
 
 		// If it's a new chat, create it and get the chatId
-		console.log('title generated:', title);
 		if (isNewChat) {
 			const newChat = await createChat(title || 'New Chat', userId);
 			chatId = newChat._id;
@@ -120,14 +119,12 @@ export const sandboxChatController = async (socket, msg, chatId) => {
 
 		if (response.length > 0) {
 			response.forEach(item => {
-				// console.log(item, item.userMessage, item.aiResponse);
 				contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
 				contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
 			});
 		}
 
 		contents.push({ role: 'user', parts: [{ text: msg }] });
-		console.log(JSON.stringify(contents, null, 2));
 
 		const { text, title } = await geminiService(contents);
 

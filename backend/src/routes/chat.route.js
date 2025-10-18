@@ -8,7 +8,6 @@ import {
 import authMiddleware from '../middlewares/auth.middleware.js';
 import { chatValidator } from '../validators/chat.validator.js';
 import { reqValidationResult } from '../middlewares/reqValidationResult.middleware.js';
-import { get } from 'mongoose';
 
 const router = Router();
 

@@ -22,7 +22,7 @@ import {
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
-import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
+// import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
 import { userSocket } from '../../sockets/client.socket';
 
 const Chat = () => {
@@ -67,7 +67,6 @@ const Chat = () => {
 
 	useEffect(() => {
 		userSocket.on('response', data => {
-			console.log('Received response:', data);
 			try {
 				if (!data.success) {
 					throw new Error(data.message);

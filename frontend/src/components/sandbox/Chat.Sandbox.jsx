@@ -22,31 +22,16 @@ import {
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
-import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
+// import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
 import { userSocket } from '../../sockets/client.socket';
 
 const ChatSandbox = () => {
 	const dispatch = useDispatch();
 	const messages = useSelector(state => state.messages.messages);
 	const ui = useSelector(state => state.ui);
-	const themeIsDark = useSelector(state => state.theme.isDark);
 	const [chatId, setChatId] = useState(null);
 
 	const cancelRef = useRef(null);
-
-	// Sync system theme once at mount
-	useEffect(() => {
-		const checkSystemTheme = () => {
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			dispatch(setTheme(prefersDark));
-		};
-
-		checkSystemTheme();
-		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		const handler = () => checkSystemTheme();
-		mediaQuery.addEventListener('change', handler);
-		return () => mediaQuery.removeEventListener('change', handler);
-	}, [dispatch]);
 
 	const playSound = () => {
 		const audio = new Audio(screenShotAudio);
@@ -65,29 +50,28 @@ const ChatSandbox = () => {
 		return scrollHeight - scrollTop - clientHeight < 100;
 	};
 
-	useEffect(() => {
-		userSocket.on('response', data => {
-			console.log('Received response:', data);
-			try {
-				if (!data.success) {
-					throw new Error(data.message);
-				}
-				dispatch(addMessage({ role: 'model', content: data.content.text }));
-				if (isNearBottom()) scrollToBottom();
-				if (!chatId && data.content.chatId) setChatId(data.content.chatId);
-			} catch (error) {
-				dispatch(clearLastMessage());
-				toast.error(error.message);
-			} finally {
-				dispatch(setTyping(false));
-				dispatch(setWaiting(false));
-				dispatch(setCancelRequestId(null));
-			}
-		});
-		return () => {
-			userSocket.off('response');
-		};
-	}, []);
+	// useEffect(() => {
+	// 	userSocket.on('response', data => {
+	// 		try {
+	// 			if (!data.success) {
+	// 				throw new Error(data.message);
+	// 			}
+	// 			dispatch(addMessage({ role: 'model', content: data.content.text }));
+	// 			if (isNearBottom()) scrollToBottom();
+	// 			if (!chatId && data.content.chatId) setChatId(data.content.chatId);
+	// 		} catch (error) {
+	// 			dispatch(clearLastMessage());
+	// 			toast.error(error.message);
+	// 		} finally {
+	// 			dispatch(setTyping(false));
+	// 			dispatch(setWaiting(false));
+	// 			dispatch(setCancelRequestId(null));
+	// 		}
+	// 	});
+	// 	return () => {
+	// 		userSocket.off('response');
+	// 	};
+	// }, []);
 	const handlers = {
 		sendMessage: async ({ content }) => {
 			if (!content || ui.isWaitingForResponse) return;
@@ -136,13 +120,11 @@ const ChatSandbox = () => {
 			}
 		},
 		setModel: modelId => dispatch(setSelectedModel(modelId)),
-		toggleTheme: () => dispatch(toggleTheme()),
 	};
 
 	return (
-		<div className={`flex-1 flex flex-col h-screen ${themeIsDark ? 'bg-[#212121]' : 'bg-white'}`}>
+		<div className={`flex-1 flex flex-col h-screen dark:bg-[#212121] bg-white`}>
 			<TopBar
-				isDark={themeIsDark}
 				setShowModel={() => {}}
 				models={[
 					{ id: 'zen-1.5', name: 'zen-1.5' },
@@ -155,18 +137,11 @@ const ChatSandbox = () => {
 				toggleTheme={() => handlers.toggleTheme()}
 			/>
 
-			<MessagesList
-				messages={messages}
-				isDark={themeIsDark}
-				isTyping={ui.isTyping}
-				handlers={handlers}
-				uiState={ui}
-			/>
+			<MessagesList messages={messages} isTyping={ui.isTyping} handlers={handlers} uiState={ui} />
 
 			<Input
 				onSend={content => handlers.sendMessage({ content })}
 				onCancel={() => handlers.cancelRequest()}
-				isDark={themeIsDark}
 				isWaiting={ui.isWaitingForResponse}
 			/>
 		</div>

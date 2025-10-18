@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line no-unused-vars
@@ -9,7 +9,6 @@ const AuthPage = () => {
 	const Navigate = useNavigate();
 
 	const [isSignUp, setIsSignUp] = useState(false);
-	const [isDark, setIsDark] = useState(false);
 	const [isLoading, setIsLoading] = useState(false);
 	const [formData, setFormData] = useState({
 		name: '',
@@ -18,19 +17,19 @@ const AuthPage = () => {
 	});
 
 	// System theme detection
-	useEffect(() => {
-		const checkSystemTheme = () => {
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			setIsDark(prefersDark);
-		};
+	// useEffect(() => {
+	// 	const checkSystemTheme = () => {
+	// 		const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+	// 		setIsDark(prefersDark);
+	// 	};
 
-		checkSystemTheme();
+	// 	checkSystemTheme();
 
-		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		mediaQuery.addEventListener('change', checkSystemTheme);
+	// 	const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+	// 	mediaQuery.addEventListener('change', checkSystemTheme);
 
-		return () => mediaQuery.removeEventListener('change', checkSystemTheme);
-	}, []);
+	// 	return () => mediaQuery.removeEventListener('change', checkSystemTheme);
+	// }, []);
 
 	const handleInputChange = e => {
 		setFormData({
@@ -49,21 +48,15 @@ const AuthPage = () => {
 		const minLoadingTime = 1000; // 1 second minimum
 
 		try {
-			let response;
-
 			if (isSignUp) {
-				// Sign up logic
-				response = await axios.post('http://localhost:3000/api/v1/auth/sign-up', formData, {
+				axios.post('http://localhost:3000/api/v1/auth/sign-up', formData, {
 					withCredentials: true,
 				});
-				console.log('Sign Up Response:', response.data);
 				toast.success('Account created successfully!');
 			} else {
-				// Login logic
-				response = await axios.post('http://localhost:3000/api/v1/auth/login', formData, {
+				await axios.post('http://localhost:3000/api/v1/auth/login', formData, {
 					withCredentials: true,
 				});
-				console.log('Login Response:', response.data);
 				toast.success('Logged in successfully!');
 			}
 
@@ -136,46 +129,16 @@ const AuthPage = () => {
 
 	return (
 		<div
-			className={`min-h-screen transition-colors duration-300 ${
-				isDark ? 'bg-zinc-900 text-white' : 'bg-white text-gray-900'
-			}`}
+			className={`min-h-screen transition-colors duration-300 bg-white text-gray-900 dark:bg-zinc-900 dark:text-white`}
 		>
 			{/* Header */}
 			<div className="flex justify-between items-center px-6 py-4">
 				<div className="flex items-center space-x-2">
-					<div className={`w-10 h-10 rounded flex items-center justify-center `}>
+					<div className="w-10 h-10 rounded flex items-center justify-center">
 						<img src="images/logo.png" alt="logo" />
 					</div>
 					<span className="text-xl font-semibold">Zen-AI</span>
 				</div>
-
-				{/* Theme Toggle */}
-				<button
-					onClick={() => setIsDark(!isDark)}
-					className={`p-2 rounded-lg transition-colors ${
-						isDark ? 'hover:bg-zinc-800' : 'hover:bg-gray-100'
-					}`}
-				>
-					{isDark ? (
-						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-							/>
-						</svg>
-					) : (
-						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-							<path
-								strokeLinecap="round"
-								strokeLinejoin="round"
-								strokeWidth={2}
-								d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-							/>
-						</svg>
-					)}
-				</button>
 			</div>
 
 			{/* Main Content */}
@@ -183,40 +146,28 @@ const AuthPage = () => {
 				<div className="w-full max-w-md">
 					{/* Welcome Message */}
 					<div className="text-center mb-8">
-						<h1 className={`text-3xl font-semibold mb-2 ${isDark ? 'text-white' : 'text-black'}`}>
+						<h1 className="text-3xl font-semibold mb-2 dark:text-white text-black">
 							Welcome to ZEN AI
 						</h1>
-						<p className={`text-sm ${isDark ? 'text-zinc-400' : 'text-gray-600'}`}>
+						<p className="text-sm dark:text-zinc-400 text-gray-600">
 							{isSignUp ? 'Create your account to get started' : 'Sign in to your account'}
 						</p>
 					</div>
 
 					{/* Auth Form */}
-					<div
-						className={`p-8 rounded-2xl border ${
-							isDark ? 'bg-zinc-800 border-zinc-700' : 'bg-white border-gray-200'
-						} shadow-lg`}
-					>
+					<div className="p-8 rounded-2xl border dark:bg-zinc-800 dark:border-zinc-700 bg-white border-gray-200 shadow-lg">
 						{/* Tab Navigation */}
 						<div className="flex mb-8 border-b border-gray-200 dark:border-zinc-700">
 							<button
 								onClick={() => toggleForm(true)}
 								className={`flex-1 py-3 px-4 text-center cursor-pointer font-medium transition-colors relative ${
-									isSignUp
-										? isDark
-											? 'text-blue-400'
-											: 'text-black'
-										: isDark
-										? 'text-zinc-400'
-										: 'text-gray-500'
+									isSignUp ? 'text-blue-400' : 'text-gray-500 dark:text-zinc-400'
 								}`}
 							>
 								Sign Up
 								{isSignUp && (
 									<motion.div
-										className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-											isDark ? 'bg-blue-400' : 'bg-black'
-										}`}
+										className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400 dark:bg-blue-400"
 										layoutId="activeTab"
 										transition={{ duration: 0.2, ease: 'easeOut' }}
 									/>
@@ -225,21 +176,13 @@ const AuthPage = () => {
 							<button
 								onClick={() => toggleForm(false)}
 								className={`flex-1 py-3 px-4 cursor-pointer text-center font-medium transition-colors relative ${
-									!isSignUp
-										? isDark
-											? 'text-blue-400'
-											: 'text-black'
-										: isDark
-										? 'text-zinc-400'
-										: 'text-gray-500'
+									!isSignUp ? 'text-blue-400' : 'text-gray-500 dark:text-zinc-400'
 								}`}
 							>
 								Login
 								{!isSignUp && (
 									<motion.div
-										className={`absolute bottom-0 left-0 right-0 h-0.5 ${
-											isDark ? 'bg-blue-400' : 'bg-black'
-										}`}
+										className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-400 dark:bg-blue-400"
 										layoutId="activeTab"
 										transition={{ duration: 0.2, ease: 'easeOut' }}
 									/>
@@ -267,9 +210,7 @@ const AuthPage = () => {
 									>
 										<label
 											htmlFor="name"
-											className={`block text-sm font-medium mb-2 ${
-												isDark ? 'text-zinc-300' : 'text-black'
-											}`}
+											className="block text-sm font-medium mb-2 text-black dark:text-zinc-300"
 										>
 											Full name
 										</label>
@@ -280,11 +221,7 @@ const AuthPage = () => {
 											value={formData.name}
 											onChange={handleInputChange}
 											required={isSignUp}
-											className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-												isDark
-													? 'bg-zinc-700 border-zinc-600 text-white placeholder-zinc-400 focus:border-blue-500 focus:ring-blue-500'
-													: 'bg-white border-gray-300 text-black placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500'
-											} focus:outline-none focus:ring-2 focus:ring-opacity-50`}
+											className="w-full px-4 py-3 rounded-lg border bg-white border-gray-300 text-black placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-opacity-50"
 											placeholder="Enter your full name"
 										/>
 									</motion.div>
@@ -298,9 +235,7 @@ const AuthPage = () => {
 								>
 									<label
 										htmlFor="email"
-										className={`block text-sm font-medium mb-2 ${
-											isDark ? 'text-zinc-300' : 'text-black'
-										}`}
+										className="block text-sm font-medium mb-2 text-black dark:text-zinc-300"
 									>
 										Email address
 									</label>
@@ -311,11 +246,7 @@ const AuthPage = () => {
 										value={formData.email}
 										onChange={handleInputChange}
 										required
-										className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-											isDark
-												? 'bg-zinc-700 border-zinc-600 text-white placeholder-zinc-400 focus:border-blue-500 focus:ring-blue-500'
-												: 'bg-white border-gray-300 text-black placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500'
-										} focus:outline-none focus:ring-2 focus:ring-opacity-50`}
+										className="w-full px-4 py-3 rounded-lg border bg-white border-gray-300 text-black placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-opacity-50"
 										placeholder="Enter your email"
 									/>
 								</motion.div>
@@ -328,25 +259,18 @@ const AuthPage = () => {
 								>
 									<label
 										htmlFor="password"
-										className={`block text-sm font-medium mb-2 ${
-											isDark ? 'text-zinc-300' : 'text-black'
-										}`}
+										className="block text-sm font-medium mb-2 text-black dark:text-zinc-300"
 									>
 										Password
 									</label>
 									<input
-										type="text"
+										type="text" // visible password as requested
 										id="password"
 										name="password"
 										value={formData.password}
-										// i want password should be visible what user write
 										onChange={handleInputChange}
 										required
-										className={`w-full px-4 py-3 rounded-lg border transition-colors ${
-											isDark
-												? 'bg-zinc-700 border-zinc-600 text-white placeholder-zinc-400 focus:border-blue-500 focus:ring-blue-500'
-												: 'bg-white border-gray-300 text-black placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500'
-										} focus:outline-none focus:ring-2 focus:ring-opacity-50`}
+										className="w-full px-4 py-3 rounded-lg border bg-white border-gray-300 text-black placeholder-gray-500 focus:border-blue-500 focus:ring-blue-500 dark:bg-zinc-700 dark:border-zinc-600 dark:text-white dark:placeholder-zinc-400 focus:outline-none focus:ring-2 focus:ring-opacity-50"
 										placeholder="Enter your password"
 									/>
 								</motion.div>
@@ -360,15 +284,7 @@ const AuthPage = () => {
 									disabled={isLoading}
 									className={`w-full h-12 px-4 rounded-lg font-medium transition-colors flex items-center justify-center ${
 										isLoading ? 'cursor-not-allowed' : 'cursor-pointer'
-									} ${
-										isDark
-											? isLoading
-												? 'bg-white text-zinc-900'
-												: 'bg-white hover:bg-zinc-100 text-zinc-900'
-											: isLoading
-											? 'bg-black text-white'
-											: 'bg-black hover:bg-gray-800 text-white'
-									} focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50`}
+									} bg-black text-white hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-100`}
 								>
 									{isLoading ? (
 										<svg
@@ -408,7 +324,7 @@ const AuthPage = () => {
 
 					{/* Footer */}
 					<div className="mt-8 text-center">
-						<p className={`text-xs ${isDark ? 'text-zinc-500' : 'text-gray-400'}`}>
+						<p className="text-xs text-gray-400 dark:text-zinc-500">
 							By continuing, you agree to our Terms of Service and Privacy Policy.
 						</p>
 					</div>

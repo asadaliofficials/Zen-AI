@@ -23,6 +23,7 @@ export function setupSocket(server) {
 	const userNamespace = io.of('/user');
 
 	userNamespace.on('connection', socket => {
+		console.log(`logged in user connected: ${socket.id}`);
 		socket.on('message', obj => {
 			try {
 				const userId = getTokenFromSocket(socket);
@@ -73,7 +74,6 @@ export function setupSocket(server) {
 		socket.on('message', obj => {
 			let { message, chatId } = JSON.parse(obj);
 			const isNewChat = chatId === 'null';
-			console.log(message, chatId, isNewChat);
 
 			if (
 				typeof message !== 'string' ||
@@ -92,10 +92,6 @@ export function setupSocket(server) {
 			}
 
 			sandboxChatController(socket, message, chatId);
-		});
-
-		socket.on('disconnect', () => {
-			console.log(`❌ Sandbox user disconnected: ${socket.id}`);
 		});
 	});
 }
