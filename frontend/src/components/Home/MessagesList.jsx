@@ -5,11 +5,7 @@ import ResponceActions from './ResponceActions';
 const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 	return (
 		<div
-			className={`messages-container flex-1 overflow-y-auto p-4 space-y-6 ${
-				isDark
-					? 'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500'
-					: 'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400'
-			}`}
+			className={`messages-container flex-1 overflow-y-auto p-4 space-y-6 dark:scrollbar-thin dark:scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400`}
 		>
 			<div className="max-w-[1000px] w-full mx-auto">
 				<AnimatePresence initial={false}>
@@ -32,12 +28,8 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 									<div
 										className={`px-4 py-3 rounded-2xl ${
 											message.role === 'user'
-												? isDark
-													? 'bg-[#303030] text-white'
-													: 'bg-[#303030] text-white'
-												: isDark
-												? 'bg-transparent text-white'
-												: 'bg-transparent text-black'
+												? 'dark:bg-[#303030] dark:text-white bg-[#303030] text-white'
+												: 'dark:bg-transparent dark:text-white bg-transparent text-black'
 										}`}
 									>
 										<p className="whitespace-pre-wrap">{message.content}</p>
@@ -72,7 +64,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 								<div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
 									<span className="text-white text-sm font-medium">AI</span>
 								</div>
-								<div className={`px-4 py-3 rounded-2xl ${isDark ? 'bg-gray-800' : 'bg-gray-100'}`}>
+								<div className={`px-4 py-3 rounded-2xl dark:bg-gray-800 bg-gray-100`}>
 									<div className="flex space-x-1">
 										<Motion.div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce"></Motion.div>
 										<div

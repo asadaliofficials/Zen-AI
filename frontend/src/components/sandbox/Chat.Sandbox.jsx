@@ -1,12 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-// eslint-disable-next-line no-unused-vars
-import { motion, AnimatePresence } from 'framer-motion';
-
-import { ToastContainer, toast } from 'react-toastify';
 
 import '../../css/chat.css';
-import TopBar from '../home/TopBar';
 import MessagesList from '../home/MessagesList';
 import Input from '../home/Input';
 import screenShotAudio from '../../assets/sound/screenshot.mp3';
@@ -22,8 +17,8 @@ import {
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
-// import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
-import { userSocket } from '../../sockets/client.socket';
+import TopBarSandbox from './TopBar.sandbox';
+// import { userSocket } from '../../sockets/client.socket';
 
 const ChatSandbox = () => {
 	const dispatch = useDispatch();
@@ -124,7 +119,7 @@ const ChatSandbox = () => {
 
 	return (
 		<div className={`flex-1 flex flex-col h-screen dark:bg-[#212121] bg-white`}>
-			<TopBar
+			<TopBarSandbox
 				setShowModel={() => {}}
 				models={[
 					{ id: 'zen-1.5', name: 'zen-1.5' },
@@ -133,8 +128,6 @@ const ChatSandbox = () => {
 					{ id: 'zen-4.0', name: 'zen-4.0' },
 				]}
 				selectedModel={ui.selectedModel}
-				setSelectedModel={id => handlers.setModel(id)}
-				toggleTheme={() => handlers.toggleTheme()}
 			/>
 
 			<MessagesList messages={messages} isTyping={ui.isTyping} handlers={handlers} uiState={ui} />

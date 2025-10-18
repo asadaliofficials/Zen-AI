@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
-import HomeSandbox from './sandbox/Home.Sandbox';
+import HomeSandbox from './sandbox/Home.sandbox';
 import Home from './home/Home';
 
 const HomeWrapper = () => {

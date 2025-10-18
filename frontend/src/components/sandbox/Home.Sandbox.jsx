@@ -1,4 +1,4 @@
-import ChatSandbox from './Chat.Sandbox';
+import ChatSandbox from './Chat.sandbox';
 
 const HomeSandbox = () => {
 	console.log('heee');

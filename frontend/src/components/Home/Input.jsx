@@ -25,9 +25,7 @@ const Input = ({ onSend, onCancel, isDark, isWaiting }) => {
 		<div className={`p-4 max-w-[1000px] mx-auto w-full`}>
 			<form onSubmit={handleSend} className="relative">
 				<div
-					className={`relative rounded-2xl border transition-colors ${
-						isDark ? 'bg-[#303030] border-white/10' : 'bg-gray-100 border-black/10'
-					}`}
+					className={`relative rounded-2xl border transition-colors dark:bg-[#303030] dark:border-white/10 bg-gray-100 border-black/10`}
 				>
 					<textarea
 						ref={textareaRef}
@@ -41,15 +39,7 @@ const Input = ({ onSend, onCancel, isDark, isWaiting }) => {
 						onKeyDown={handleKeyPress}
 						placeholder="Message Zen-AI..."
 						rows="1"
-						className={`w-full px-4 py-3 pr-20 resize-none transition-colors rounded-2xl focus:outline-none ${
-							isDark
-								? 'bg-transparent text-white placeholder-gray-400'
-								: 'bg-transparent text-black placeholder-gray-500'
-						} ${
-							isDark
-								? 'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-600 hover:scrollbar-thumb-gray-500'
-								: 'scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400'
-						}`}
+						className={`w-full px-4 py-3 pr-20 resize-none transition-colors rounded-2xl focus:outline-none dark:bg-transparent dark:text-white dark:placeholder-gray-400 bg-transparent text-black placeholder-gray-500 dark:scrollbar-thin dark:scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400`}
 						style={{
 							maxHeight: '240px',
 							overflowY: 'auto',

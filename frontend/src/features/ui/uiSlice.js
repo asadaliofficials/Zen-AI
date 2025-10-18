@@ -8,7 +8,7 @@ const initialState = {
 	screenshotStates: {},
 	lovedMessages: {},
 	readingMessageId: null,
-	selectedModel: 'zen-3.5',
+	selectedModel: 'zen-1.5',
 };
 
 const uiSlice = createSlice({
