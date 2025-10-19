@@ -1,0 +1,39 @@
+@baseUrl = http://localhost:3000
+
+# @name login
+POST {{baseUrl}}/api/login HTTP/1.1
+Content-Type: application/json
+
+name=foo&password=bar
+
+###
+
+@authToken = {{login.response.headers.X-AuthToken}}
+
+# @name createComment
+POST {{baseUrl}}/comments HTTP/1.1
+Authorization: {{authToken}}
+Content-Type: application/json
+
+{
+    "content": "fake content"
+}
+
+###
+
+@commentId = {{createComment.response.body.$.id}}
+
+# @name getCreatedComment
+GET {{baseUrl}}/comments/{{commentId}} HTTP/1.1
+Authorization: {{authToken}}
+
+###
+
+# @name getReplies
+GET {{baseUrl}}/comments/{{commentId}}/replies HTTP/1.1
+Accept: application/xml
+
+###
+
+# @name getFirstReply
+GET {{baseUrl}}/comments/{{commentId}}/replies/{{getReplies.response.body.//reply[1]/@id}}
