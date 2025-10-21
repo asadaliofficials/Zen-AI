@@ -16,4 +16,5 @@ export const userSocket = io(`${SERVER_URL}/user`, {
 		temp: false,
 	},
 	withCredentials: true,
+	autoConnect: false,
 });

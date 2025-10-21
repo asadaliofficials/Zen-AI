@@ -133,9 +133,17 @@ export const sandboxChatController = async (socket, msg, chatId) => {
 			userMessage: msg,
 			aiResponse: text,
 		});
-		socket.emit('response', { content: text, chatId });
+		socket.emit('response', {
+			success: true,
+			message: 'ai responded successfully',
+			content: { text, chatId },
+		});
 	} catch (error) {
-		socket.emit('error', { content: 'AI Model is overloaded, Please try again later!', chatId });
+		socket.emit('response', {
+			success: false,
+			message: 'AI Model is overloaded.',
+			chatId,
+		});
 		console.error('Error in chatController:', error);
 	}
 };

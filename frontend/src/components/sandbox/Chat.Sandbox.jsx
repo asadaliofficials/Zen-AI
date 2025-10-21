@@ -18,7 +18,8 @@ import {
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
 import TopBarSandbox from './TopBar.sandbox';
-// import { userSocket } from '../../sockets/client.socket';
+import { sandboxSocket } from '../../sockets/client.socket';
+import { toast } from 'react-toastify';
 
 const ChatSandbox = () => {
 	const dispatch = useDispatch();
@@ -45,28 +46,35 @@ const ChatSandbox = () => {
 		return scrollHeight - scrollTop - clientHeight < 100;
 	};
 
-	// useEffect(() => {
-	// 	userSocket.on('response', data => {
-	// 		try {
-	// 			if (!data.success) {
-	// 				throw new Error(data.message);
-	// 			}
-	// 			dispatch(addMessage({ role: 'model', content: data.content.text }));
-	// 			if (isNearBottom()) scrollToBottom();
-	// 			if (!chatId && data.content.chatId) setChatId(data.content.chatId);
-	// 		} catch (error) {
-	// 			dispatch(clearLastMessage());
-	// 			toast.error(error.message);
-	// 		} finally {
-	// 			dispatch(setTyping(false));
-	// 			dispatch(setWaiting(false));
-	// 			dispatch(setCancelRequestId(null));
-	// 		}
-	// 	});
-	// 	return () => {
-	// 		userSocket.off('response');
-	// 	};
-	// }, []);
+	useEffect(() => {
+		sandboxSocket.on('response', data => {
+			try {
+				if (!data.success) {
+					dispatch(
+						addMessage({
+							role: 'model',
+							content: data.message,
+						})
+					);
+					if (isNearBottom()) scrollToBottom();
+					throw new Error(data.message);
+				}
+				dispatch(addMessage({ role: 'model', content: data.content.text }));
+				if (isNearBottom()) scrollToBottom();
+				if (!chatId && data.content.chatId) setChatId(data.content.chatId);
+			} catch (error) {
+				// dispatch(clearLastMessage());
+				toast.error(error.message);
+			} finally {
+				dispatch(setTyping(false));
+				dispatch(setWaiting(false));
+				dispatch(setCancelRequestId(null));
+			}
+		});
+		return () => {
+			sandboxSocket.off('response');
+		};
+	}, []);
 	const handlers = {
 		sendMessage: async ({ content }) => {
 			if (!content || ui.isWaitingForResponse) return;
@@ -76,7 +84,24 @@ const ChatSandbox = () => {
 
 			setTimeout(() => scrollToBottom(), 100);
 
-			userSocket.emit('message', JSON.stringify({ message: content, chatId: chatId || 'null' }));
+			if (!sandboxSocket.connected) {
+				setTimeout(() => {
+					dispatch(
+						addMessage({
+							role: 'model',
+							content:
+								'Failed to connect with server, check you internet connect or try again later!',
+						})
+					);
+					if (isNearBottom()) scrollToBottom();
+					dispatch(setTyping(false));
+					dispatch(setWaiting(false));
+					dispatch(setCancelRequestId(null));
+				}, 1000);
+				return;
+			}
+
+			sandboxSocket.emit('message', JSON.stringify({ message: content, chatId: chatId || 'null' }));
 		},
 		cancelRequest: () => {
 			if (cancelRef.current) {

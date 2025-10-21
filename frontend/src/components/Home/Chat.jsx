@@ -23,7 +23,7 @@ import {
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
 // import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
-import { userSocket } from '../../sockets/client.socket';
+// import { userSocket } from '../../sockets/client.socket';
 
 const Chat = () => {
 	const dispatch = useDispatch();
@@ -65,78 +65,78 @@ const Chat = () => {
 		return scrollHeight - scrollTop - clientHeight < 100;
 	};
 
-	useEffect(() => {
-		userSocket.on('response', data => {
-			try {
-				if (!data.success) {
-					throw new Error(data.message);
-				}
-				dispatch(addMessage({ role: 'model', content: data.content.text }));
-				if (isNearBottom()) scrollToBottom();
-				if (!chatId && data.content.chatId) setChatId(data.content.chatId);
-			} catch (error) {
-				dispatch(clearLastMessage());
-				toast.error(error.message);
-			} finally {
-				dispatch(setTyping(false));
-				dispatch(setWaiting(false));
-				dispatch(setCancelRequestId(null));
-			}
-		});
-		return () => {
-			userSocket.off('response');
-		};
-	}, []);
-	const handlers = {
-		sendMessage: async ({ content }) => {
-			if (!content || ui.isWaitingForResponse) return;
-			dispatch(addMessage({ role: 'user', content }));
-			dispatch(setWaiting(true));
-			dispatch(setTyping(true));
+	// useEffect(() => {
+	// 	userSocket.on('response', data => {
+	// 		try {
+	// 			if (!data.success) {
+	// 				throw new Error(data.message);
+	// 			}
+	// 			dispatch(addMessage({ role: 'model', content: data.content.text }));
+	// 			if (isNearBottom()) scrollToBottom();
+	// 			if (!chatId && data.content.chatId) setChatId(data.content.chatId);
+	// 		} catch (error) {
+	// 			dispatch(clearLastMessage());
+	// 			toast.error(error.message);
+	// 		} finally {
+	// 			dispatch(setTyping(false));
+	// 			dispatch(setWaiting(false));
+	// 			dispatch(setCancelRequestId(null));
+	// 		}
+	// 	});
+	// 	return () => {
+	// 		userSocket.off('response');
+	// 	};
+	// }, []);
+	// const handlers = {
+	// 	sendMessage: async ({ content }) => {
+	// 		if (!content || ui.isWaitingForResponse) return;
+	// 		dispatch(addMessage({ role: 'user', content }));
+	// 		dispatch(setWaiting(true));
+	// 		dispatch(setTyping(true));
 
-			setTimeout(() => scrollToBottom(), 100);
+	// 		setTimeout(() => scrollToBottom(), 100);
 
-			userSocket.emit('message', JSON.stringify({ message: content, chatId: chatId || 'null' }));
-		},
-		cancelRequest: () => {
-			if (cancelRef.current) {
-				clearTimeout(cancelRef.current);
-				cancelRef.current = null;
-			}
-			dispatch(setWaiting(false));
-			dispatch(setTyping(false));
-			dispatch(setCancelRequestId(null));
-		},
-		copyMessage: (content, messageId) => {
-			navigator.clipboard.writeText(content);
-			dispatch(setCopyState({ messageId, value: true }));
-			setTimeout(() => dispatch(setCopyState({ messageId, value: false })), 1500);
-		},
-		screenshot: messageId => {
-			playSound();
-			dispatch(setScreenshotState({ messageId, value: true }));
-			setTimeout(() => dispatch(setScreenshotState({ messageId, value: false })), 1500);
-		},
-		loveMessage: messageId => dispatch(toggleLove(messageId)),
-		shareMessage: messageId => console.log('Share message', messageId),
-		readAloud: (content, messageId) => {
-			const readingId = ui.readingMessageId;
-			if (readingId === messageId) {
-				speechSynthesis.cancel();
-				dispatch(setReadingMessage(null));
-			} else {
-				if ('speechSynthesis' in window) {
-					speechSynthesis.cancel();
-					const utter = new SpeechSynthesisUtterance(content);
-					utter.onend = () => dispatch(setReadingMessage(null));
-					speechSynthesis.speak(utter);
-					dispatch(setReadingMessage(messageId));
-				}
-			}
-		},
-		setModel: modelId => dispatch(setSelectedModel(modelId)),
-		toggleTheme: () => dispatch(toggleTheme()),
-	};
+	// 		userSocket.emit('message', JSON.stringify({ message: content, chatId: chatId || 'null' }));
+	// 	},
+	// 	cancelRequest: () => {
+	// 		if (cancelRef.current) {
+	// 			clearTimeout(cancelRef.current);
+	// 			cancelRef.current = null;
+	// 		}
+	// 		dispatch(setWaiting(false));
+	// 		dispatch(setTyping(false));
+	// 		dispatch(setCancelRequestId(null));
+	// 	},
+	// 	copyMessage: (content, messageId) => {
+	// 		navigator.clipboard.writeText(content);
+	// 		dispatch(setCopyState({ messageId, value: true }));
+	// 		setTimeout(() => dispatch(setCopyState({ messageId, value: false })), 1500);
+	// 	},
+	// 	screenshot: messageId => {
+	// 		playSound();
+	// 		dispatch(setScreenshotState({ messageId, value: true }));
+	// 		setTimeout(() => dispatch(setScreenshotState({ messageId, value: false })), 1500);
+	// 	},
+	// 	loveMessage: messageId => dispatch(toggleLove(messageId)),
+	// 	shareMessage: messageId => console.log('Share message', messageId),
+	// 	readAloud: (content, messageId) => {
+	// 		const readingId = ui.readingMessageId;
+	// 		if (readingId === messageId) {
+	// 			speechSynthesis.cancel();
+	// 			dispatch(setReadingMessage(null));
+	// 		} else {
+	// 			if ('speechSynthesis' in window) {
+	// 				speechSynthesis.cancel();
+	// 				const utter = new SpeechSynthesisUtterance(content);
+	// 				utter.onend = () => dispatch(setReadingMessage(null));
+	// 				speechSynthesis.speak(utter);
+	// 				dispatch(setReadingMessage(messageId));
+	// 			}
+	// 		}
+	// 	},
+	// 	setModel: modelId => dispatch(setSelectedModel(modelId)),
+	// 	toggleTheme: () => dispatch(toggleTheme()),
+	// };
 
 	return (
 		<div className={`flex-1 flex flex-col h-screen ${themeIsDark ? 'bg-[#212121]' : 'bg-white'}`}>

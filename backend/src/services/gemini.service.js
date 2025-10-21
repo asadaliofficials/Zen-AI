@@ -10,7 +10,7 @@ const geminiService = async (contents, isNewChat) => {
 		const fullText = response.text;
 
 		// Regex to match both parts
-		if(!isNewChat) {
+		if (!isNewChat) {
 			return { text: fullText, title: null };
 		}
 		const match = fullText.match(/### Response:\s*([\s\S]*?)\s*### Title:\s*(.+)/i);

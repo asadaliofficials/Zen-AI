@@ -25,6 +25,7 @@ export function setupSocket(server) {
 	userNamespace.on('connection', socket => {
 		console.log(`logged in user connected: ${socket.id}`);
 		socket.on('message', obj => {
+			console.log('message recieved at loggedin socket');
 			try {
 				const userId = getTokenFromSocket(socket);
 				if (!userId) {
@@ -72,6 +73,8 @@ export function setupSocket(server) {
 		console.log(`🧪 Sandbox user connected: ${socket.id}`);
 
 		socket.on('message', obj => {
+			console.log('message recieved at sandbox socket');
+
 			let { message, chatId } = JSON.parse(obj);
 			const isNewChat = chatId === 'null';
 

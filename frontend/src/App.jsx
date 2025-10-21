@@ -35,7 +35,13 @@ const App = () => {
 	return (
 		<>
 			<AppRoutes />
-			<ToastContainer position="top-right" autoClose={3000} pauseOnHover theme="colored" />
+			<ToastContainer
+				position="top-right"
+				autoClose={3000}
+				pauseOnHover
+				theme="colored"
+				hideProgressBar={true}
+			/>
 		</>
 	);
 };
