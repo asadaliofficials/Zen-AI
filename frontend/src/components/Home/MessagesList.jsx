@@ -6,7 +6,7 @@ import { p } from 'framer-motion/client';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
-import 'highlight.js/styles/github-dark.css';
+import 'highlight.js/styles/monokai.css';
 import { MarkdownMessage } from '../MarkdownMessage';
 
 const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
@@ -31,14 +31,14 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 								className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
 							>
 								<div
-									className={`max-w-3xl flex ${
-										message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+									className={`max-w-3xl flex  ${
+										message.role === 'user' ? 'flex-row-reverse' : 'flex-row max-w-none w-full'
 									} space-x-3`}
 								>
 									{/* Message Content */}
-									<div className="flex flex-col">
+									<div className="flex flex-col  w-full">
 										<div
-											className={`px-4 py-3 rounded-2xl prose dark:prose-invert ${
+											className={`px-4 py-3 rounded-2xl   ${
 												message.role === 'user'
 													? 'dark:bg-[#303030] dark:text-white bg-[#303030] text-white'
 													: 'dark:bg-transparent dark:text-white bg-transparent text-black'
@@ -47,7 +47,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 											{message.role === 'user' ? (
 												<p className="whitespace-pre-wrap">{message.content}</p>
 											) : (
-												<div className="markdown-body">
+												<div className="markdown-body  w-full">
 													<MarkdownMessage
 														remarkPlugins={[remarkGfm]}
 														rehypePlugins={[rehypeHighlight]}

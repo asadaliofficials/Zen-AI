@@ -3,3 +3,9 @@
 body {
 	background-color: black;
 }
+.prose code::before,
+.prose code::after,
+.dark .prose code::before,
+.dark .prose code::after {
+	content: none !important;
+}
