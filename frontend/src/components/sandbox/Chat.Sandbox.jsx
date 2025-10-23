@@ -160,7 +160,13 @@ const ChatSandbox = () => {
 				handleDeleteChat={handleDeleteChat}
 			/>
 
-			<MessagesList messages={messages} isTyping={ui.isTyping} handlers={handlers} uiState={ui} />
+			<MessagesList
+				messages={messages}
+				isTyping={ui.isTyping}
+				handlers={handlers}
+				uiState={ui}
+				
+			/>
 
 			<Input
 				onSend={content => handlers.sendMessage({ content })}

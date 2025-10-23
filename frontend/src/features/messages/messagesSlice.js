@@ -11,8 +11,19 @@ const initialState = {
 		{
 			id: nanoid(),
 			role: 'model',
-			content:
-				"Hello! I'm here to help you with a wide variety of tasks. I can assist you with writing, coding, analysis, creative projects, problem-solving, and much more. What would you like to work on today?",
+			content: `### Here's some Express code
+
+**Steps:**
+1. Install dependencies
+\n
+2. Run the server
+
+\`\`\`javascript
+const express = require('express');
+const app = express();
+app.get('/', (req, res) => res.send('Hello World!'));
+app.listen(3000);
+\`\`\``,
 			timestamp: new Date().toISOString(),
 		},
 	],

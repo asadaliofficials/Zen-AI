@@ -3,6 +3,12 @@ import { AnimatePresence, motion as Motion } from 'framer-motion';
 import ResponceActions from './ResponceActions';
 import { p } from 'framer-motion/client';
 
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeHighlight from 'rehype-highlight';
+import 'highlight.js/styles/github-dark.css';
+import { MarkdownMessage } from '../MarkdownMessage';
+
 const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 	return (
 		<div
@@ -32,22 +38,33 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 									{/* Message Content */}
 									<div className="flex flex-col">
 										<div
-											className={`px-4 py-3 rounded-2xl ${
+											className={`px-4 py-3 rounded-2xl prose dark:prose-invert ${
 												message.role === 'user'
 													? 'dark:bg-[#303030] dark:text-white bg-[#303030] text-white'
 													: 'dark:bg-transparent dark:text-white bg-transparent text-black'
 											}`}
 										>
-											<p className="whitespace-pre-wrap">{message.content}</p>
+											{message.role === 'user' ? (
+												<p className="whitespace-pre-wrap">{message.content}</p>
+											) : (
+												<div className="markdown-body">
+													<MarkdownMessage
+														remarkPlugins={[remarkGfm]}
+														rehypePlugins={[rehypeHighlight]}
+														content={message.content}
+													/>
+												</div>
+											)}
 										</div>
 
 										{/* Message Actions (only for AI messages) */}
-										{message.role === '' && (
+										{message.role === 'model' && (
 											<ResponceActions
 												message={message}
 												isDark={isDark}
 												handlers={handlers}
 												uiState={uiState}
+												isSandbox={true}
 											/>
 										)}
 									</div>
@@ -67,7 +84,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 							exit={{ opacity: 0, y: 10 }}
 							className="flex justify-start"
 						>
-							<div className="flex space-x-3 max-w-3xl">
+							<div className="flex space-x-3 ">
 								<div className="w-8 h-8 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center">
 									<span className="text-white text-sm font-medium">AI</span>
 								</div>

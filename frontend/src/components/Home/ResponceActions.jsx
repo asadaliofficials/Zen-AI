@@ -1,6 +1,8 @@
 import React from 'react';
+import { toast } from 'react-toastify';
 
-const ResponceActions = ({ message, handlers, isDark, uiState }) => {
+const ResponceActions = ({ message, handlers, uiState, isSandbox }) => {
+	console.log(isSandbox);
 	const {
 		copyStates = {},
 		screenshotStates = {},
@@ -13,9 +15,7 @@ const ResponceActions = ({ message, handlers, isDark, uiState }) => {
 			{/* copy button */}
 			<button
 				onClick={() => handlers.copyMessage(message.content, message.id)}
-				className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-					isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-200 text-black'
-				}`}
+				className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
 				title="Copy"
 			>
 				{copyStates[message.id] ? (
@@ -32,13 +32,14 @@ const ResponceActions = ({ message, handlers, isDark, uiState }) => {
 					</svg>
 				)}
 			</button>
-
-			{/* screenshot button  */}
+			{/* screenshot button */}
 			<button
-				onClick={() => handlers.screenshot(message.id)}
-				className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-					isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-200 text-black'
-				}`}
+				onClick={() => {
+					isSandbox
+						? toast.error('Please login to use this Feature!')
+						: handlers.screenshot(message.id);
+				}}
+				className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
 				title="Screenshot"
 			>
 				{screenshotStates[message.id] ? (
@@ -56,10 +57,12 @@ const ResponceActions = ({ message, handlers, isDark, uiState }) => {
 			</button>
 
 			<button
-				onClick={() => handlers.loveMessage(message.id)}
-				className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-					isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-200 text-black'
-				}`}
+				onClick={() => {
+					isSandbox
+						? toast.error('Please login to use this Feature!')
+						: handlers.loveMessage(message.id);
+				}}
+				className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
 				title="Love"
 			>
 				<svg xmlns="http://www.w3.org/2000/svg" width={18} height={18} viewBox="0 0 48 48">
@@ -73,11 +76,14 @@ const ResponceActions = ({ message, handlers, isDark, uiState }) => {
 					></path>
 				</svg>
 			</button>
+
 			<button
-				onClick={() => handlers.shareMessage(message.id)}
-				className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
-					isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-200 text-black'
-				}`}
+				onClick={() => {
+					isSandbox
+						? toast.error('Please login to use this Feature!')
+						: handlers.shareMessage(message.id);
+				}}
+				className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
 				title="Share"
 			>
 				<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -89,16 +95,13 @@ const ResponceActions = ({ message, handlers, isDark, uiState }) => {
 					/>
 				</svg>
 			</button>
+
 			<button
 				onClick={() => handlers.readAloud(message.content, message.id)}
 				className={`p-1.5 rounded-lg transition-colors cursor-pointer ${
 					readingMessageId === message.id
-						? isDark
-							? 'bg-[#303030] text-white'
-							: 'bg-gray-200 text-black'
-						: isDark
-						? 'hover:bg-[#303030] text-white'
-						: 'hover:bg-gray-200 text-black'
+						? 'bg-gray-200 text-black dark:bg-[#303030] dark:text-white'
+						: 'hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white'
 				}`}
 				title="Read Aloud"
 			>
