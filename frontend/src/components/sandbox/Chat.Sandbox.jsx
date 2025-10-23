@@ -6,7 +6,7 @@ import MessagesList from '../home/MessagesList';
 import Input from '../home/Input';
 import screenShotAudio from '../../assets/sound/screenshot.mp3';
 
-import { addMessage, clearLastMessage } from '../../features/messages/messagesSlice';
+import { addMessage, clearLastMessage, clearChat } from '../../features/messages/messagesSlice';
 import {
 	setTyping,
 	setWaiting,
@@ -44,6 +44,10 @@ const ChatSandbox = () => {
 		if (!messagesContainer) return false;
 		const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
 		return scrollHeight - scrollTop - clientHeight < 100;
+	};
+	const handleDeleteChat = () => {
+		dispatch(clearChat());
+		setChatId(null);
 	};
 
 	useEffect(() => {
@@ -153,6 +157,7 @@ const ChatSandbox = () => {
 					{ id: 'zen-4.0', name: 'zen-4.0' },
 				]}
 				selectedModel={ui.selectedModel}
+				handleDeleteChat={handleDeleteChat}
 			/>
 
 			<MessagesList messages={messages} isTyping={ui.isTyping} handlers={handlers} uiState={ui} />

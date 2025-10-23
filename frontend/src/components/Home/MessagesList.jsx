@@ -1,6 +1,7 @@
 import React from 'react';
 import { AnimatePresence, motion as Motion } from 'framer-motion';
 import ResponceActions from './ResponceActions';
+import { p } from 'framer-motion/client';
 
 const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 	return (
@@ -9,45 +10,51 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 		>
 			<div className="max-w-[1000px] w-full mx-auto">
 				<AnimatePresence initial={false}>
-					{messages.map(message => (
-						<Motion.div
-							key={message.id}
-							initial={{ opacity: 0, y: 20 }}
-							animate={{ opacity: 1, y: 0 }}
-							exit={{ opacity: 0, y: 10 }}
-							layout
-							className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-						>
-							<div
-								className={`max-w-3xl flex ${
-									message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
-								} space-x-3`}
+					{messages.length < 1 ? (
+						<p className="absolute top-[50%] left-[50%] -translate-[50%] text-3xl font-bold">
+							What can I help with?
+						</p>
+					) : (
+						messages.map(message => (
+							<Motion.div
+								key={message.id}
+								initial={{ opacity: 0, y: 20 }}
+								animate={{ opacity: 1, y: 0 }}
+								exit={{ opacity: 0, y: 10 }}
+								layout
+								className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
 							>
-								{/* Message Content */}
-								<div className="flex flex-col">
-									<div
-										className={`px-4 py-3 rounded-2xl ${
-											message.role === 'user'
-												? 'dark:bg-[#303030] dark:text-white bg-[#303030] text-white'
-												: 'dark:bg-transparent dark:text-white bg-transparent text-black'
-										}`}
-									>
-										<p className="whitespace-pre-wrap">{message.content}</p>
-									</div>
+								<div
+									className={`max-w-3xl flex ${
+										message.role === 'user' ? 'flex-row-reverse' : 'flex-row'
+									} space-x-3`}
+								>
+									{/* Message Content */}
+									<div className="flex flex-col">
+										<div
+											className={`px-4 py-3 rounded-2xl ${
+												message.role === 'user'
+													? 'dark:bg-[#303030] dark:text-white bg-[#303030] text-white'
+													: 'dark:bg-transparent dark:text-white bg-transparent text-black'
+											}`}
+										>
+											<p className="whitespace-pre-wrap">{message.content}</p>
+										</div>
 
-									{/* Message Actions (only for AI messages) */}
-									{message.role === '' && (
-										<ResponceActions
-											message={message}
-											isDark={isDark}
-											handlers={handlers}
-											uiState={uiState}
-										/>
-									)}
+										{/* Message Actions (only for AI messages) */}
+										{message.role === '' && (
+											<ResponceActions
+												message={message}
+												isDark={isDark}
+												handlers={handlers}
+												uiState={uiState}
+											/>
+										)}
+									</div>
 								</div>
-							</div>
-						</Motion.div>
-					))}
+							</Motion.div>
+						))
+					)}
 				</AnimatePresence>
 
 				{/* Typing Indicator */}

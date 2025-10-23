@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
 
-const TopBarSandbox = ({ models = [], selectedModel }) => {
+const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
 	const [showModelDropdown, setShowModelDropdown] = useState(false);
 
 	const handleModelSelection = id => {
@@ -104,7 +104,7 @@ const TopBarSandbox = ({ models = [], selectedModel }) => {
 			<div className="flex items-center space-x-2">
 				<button
 					onClick={() => {
-						handleModelSelection(null);
+						handleDeleteChat();
 					}}
 					className={`flex cursor-pointer items-center space-x-2 px-3 py-2 rounded-lg transition-colors dark:bg-gray-700/50 dark:hover:bg-gray-700/70 dark:text-red-400 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700`}
 					title="Delete Chat"

@@ -22,8 +22,6 @@ import {
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
-// import { toggleTheme, setTheme } from '../../features/theme/themeSlice';
-// import { userSocket } from '../../sockets/client.socket';
 
 const Chat = () => {
 	const dispatch = useDispatch();
