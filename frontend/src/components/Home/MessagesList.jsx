@@ -28,7 +28,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 								animate={{ opacity: 1, y: 0 }}
 								exit={{ opacity: 0, y: 10 }}
 								layout
-								className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+								className={`flex mt-10 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
 							>
 								<div
 									className={`max-w-3xl flex  ${
@@ -47,7 +47,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 											{message.role === 'user' ? (
 												<p className="whitespace-pre-wrap">{message.content}</p>
 											) : (
-												<div className="markdown-body  w-full">
+												<div className="markdown-body w-full">
 													<MarkdownMessage
 														remarkPlugins={[remarkGfm]}
 														rehypePlugins={[rehypeHighlight]}

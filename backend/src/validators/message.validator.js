@@ -5,8 +5,8 @@ export function messageValidator(message, chatId) {
 
 	if (typeof message !== 'string' || !message.trim()) {
 		errors.push({ field: 'message', message: 'Message is required' });
-	} else if (message.length < 1 || message.length > 1000) {
-		errors.push({ field: 'message', message: 'Message must be between 1 and 1000 characters' });
+	} else if (message.length < 1 || message.length > 10000) {
+		errors.push({ field: 'message', message: 'Message must be between 1 and 10000 characters' });
 	}
 
 	const isMongoId = /^[a-f\d]{24}$/i.test(chatId);

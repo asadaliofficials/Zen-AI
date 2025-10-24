@@ -36,16 +36,35 @@ const ChatSandbox = () => {
 		audio.play();
 	};
 
-	const scrollToBottom = () => {
-		const messagesContainer = document.querySelector('.messages-container');
-		if (messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight;
-	};
+	const scrollToSmartPosition = () => {
+		const container = document.querySelector('.messages-container');
+		if (!container) return;
 
-	const isNearBottom = () => {
-		const messagesContainer = document.querySelector('.messages-container');
-		if (!messagesContainer) return false;
-		const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
-		return scrollHeight - scrollTop - clientHeight < 100;
+		const messagesEls = container.querySelectorAll('.flex.mt-10');
+		if (!messagesEls.length) return;
+
+		const lastMessageEl = messagesEls[messagesEls.length - 1]; // AI message
+		const prevMessageEl = messagesEls.length > 1 ? messagesEls[messagesEls.length - 2] : null; // User message
+
+		const containerHeight = container.clientHeight;
+
+		if (!prevMessageEl) {
+			// No previous user message, just scroll to bottom
+			container.scrollTop = container.scrollHeight;
+			return;
+		}
+
+		const userTop = prevMessageEl.offsetTop; // top of last user message
+		const aiBottom = lastMessageEl.offsetTop + lastMessageEl.offsetHeight;
+
+		// If AI message fits in container below user message
+		if (aiBottom - userTop <= containerHeight) {
+			// scroll fully to bottom
+			container.scrollTop = container.scrollHeight;
+		} else {
+			// scroll so last user message is at top
+			container.scrollTop = userTop;
+		}
 	};
 	const handleDeleteChat = () => {
 		dispatch(clearChat());
@@ -62,11 +81,12 @@ const ChatSandbox = () => {
 							content: data.message,
 						})
 					);
-					if (isNearBottom()) scrollToBottom();
+					scrollToSmartPosition();
 					throw new Error(data.message);
 				}
 				dispatch(addMessage({ role: 'model', content: data.content.text }));
-				if (isNearBottom()) scrollToBottom();
+				scrollToSmartPosition();
+
 				if (!chatId && data.content.chatId) setChatId(data.content.chatId);
 			} catch (error) {
 				// dispatch(clearLastMessage());
@@ -88,7 +108,7 @@ const ChatSandbox = () => {
 			dispatch(setWaiting(true));
 			dispatch(setTyping(true));
 
-			setTimeout(() => scrollToBottom(), 100);
+			setTimeout(() => scrollToSmartPosition(), 100);
 
 			if (!sandboxSocket.connected) {
 				setTimeout(() => {
@@ -99,7 +119,7 @@ const ChatSandbox = () => {
 								'Failed to connect with server, check you internet connection or try again later!',
 						})
 					);
-					if (isNearBottom()) scrollToBottom();
+					scrollToSmartPosition();
 					dispatch(setTyping(false));
 					dispatch(setWaiting(false));
 					dispatch(setCancelRequestId(null));
@@ -132,19 +152,34 @@ const ChatSandbox = () => {
 		shareMessage: messageId => console.log('Share message', messageId),
 		readAloud: (content, messageId) => {
 			const readingId = ui.readingMessageId;
+
+			// Remove Markdown symbols
+			const plainText = content
+				.replace(/```[\s\S]*?```/g, '') // remove code blocks
+				.replace(/`([^`]+)`/g, '$1') // inline code
+				.replace(/\*\*(.*?)\*\*/g, '$1') // bold
+				.replace(/\*(.*?)\*/g, '$1') // italic
+				.replace(/!\[.*?\]\(.*?\)/g, '') // images
+				.replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // links
+				.replace(/#+\s/g, '') // headings
+				.replace(/>\s/g, '') // blockquotes
+				.replace(/[-*]\s/g, '') // lists
+				.replace(/\n{2,}/g, '\n'); // collapse multiple newlines
+
 			if (readingId === messageId) {
 				speechSynthesis.cancel();
 				dispatch(setReadingMessage(null));
 			} else {
 				if ('speechSynthesis' in window) {
 					speechSynthesis.cancel();
-					const utter = new SpeechSynthesisUtterance(content);
+					const utter = new SpeechSynthesisUtterance(plainText.trim());
 					utter.onend = () => dispatch(setReadingMessage(null));
 					speechSynthesis.speak(utter);
 					dispatch(setReadingMessage(messageId));
 				}
 			}
 		},
+
 		setModel: modelId => dispatch(setSelectedModel(modelId)),
 	};
 

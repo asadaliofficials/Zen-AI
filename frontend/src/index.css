@@ -9,3 +9,18 @@ body {
 .dark .prose code::after {
 	content: none !important;
 }
+
+.prose {
+	:where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
+		padding: 0px;
+		/* padding-top: 0px !important; */
+	}
+}
+
+.dark\:prose-code\:bg-\[\#424242\] {
+	@media (prefers-color-scheme: dark) {
+		& :is(:where(code):not(:where([class~='not-prose'], [class~='not-prose'] *))) {
+			background-color: transparent !important;
+		}
+	}
+}
