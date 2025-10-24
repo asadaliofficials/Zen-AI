@@ -22,6 +22,8 @@ import { sandboxSocket } from '../../sockets/client.socket';
 import { toast } from 'react-toastify';
 
 const ChatSandbox = () => {
+	// dispatch(addMessage({ role: 'model', content: `` }));
+
 	const dispatch = useDispatch();
 	const messages = useSelector(state => state.messages.messages);
 	const ui = useSelector(state => state.ui);
@@ -94,7 +96,7 @@ const ChatSandbox = () => {
 						addMessage({
 							role: 'model',
 							content:
-								'Failed to connect with server, check you internet connect or try again later!',
+								'Failed to connect with server, check you internet connection or try again later!',
 						})
 					);
 					if (isNearBottom()) scrollToBottom();
@@ -160,13 +162,7 @@ const ChatSandbox = () => {
 				handleDeleteChat={handleDeleteChat}
 			/>
 
-			<MessagesList
-				messages={messages}
-				isTyping={ui.isTyping}
-				handlers={handlers}
-				uiState={ui}
-				
-			/>
+			<MessagesList messages={messages} isTyping={ui.isTyping} handlers={handlers} uiState={ui} />
 
 			<Input
 				onSend={content => handlers.sendMessage({ content })}

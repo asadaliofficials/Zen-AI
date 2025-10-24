@@ -18,12 +18,12 @@ export const MarkdownMessage = ({ content }) => {
 				remarkPlugins={[remarkGfm]}
 				rehypePlugins={[rehypeHighlight]}
 				components={{
-					code({ node, inline, className, children, ...props }) {
+					code({ inline, className, children, ...props }) {
 						const match = /language-(\w+)/.exec(className || '');
 						const language = match ? match[1] : '';
 						const [copied, setCopied] = useState(false);
 
-						// ✅ Inline code (like `req`, `res`)
+						// ✅ Inline code (`req`, `res`)
 						if (inline || !match) {
 							return (
 								<code
@@ -35,7 +35,7 @@ export const MarkdownMessage = ({ content }) => {
 							);
 						}
 
-						// ✅ Fenced code blocks only
+						// ✅ Multiline fenced code blocks only
 						const handleCopy = async () => {
 							try {
 								await navigator.clipboard.writeText(String(children).trim());
@@ -47,9 +47,9 @@ export const MarkdownMessage = ({ content }) => {
 						};
 
 						return (
-							<div className="relative my-4">
-								{/* Top bar (language + copy) */}
-								<div className="flex justify-between items-center text-xs text-gray-400 dark:text-gray-300 bg-[#1e1e1e] px-3 py-1 rounded-t-md border-b border-gray-700">
+							<div className="relative my-2 not-prose">
+								{/* Top bar */}
+								<div className="absolute top-0 left-0 right-0 flex justify-between items-center text-xs text-gray-400 dark:text-gray-300 bg-[#1e1e1e] px-3 py-1 rounded-t-md border-b border-gray-700">
 									<span className="font-mono">{language || 'text'}</span>
 									<button
 										onClick={handleCopy}
@@ -59,8 +59,8 @@ export const MarkdownMessage = ({ content }) => {
 									</button>
 								</div>
 
-								{/* Code block */}
-								<pre className="bg-[#272822] text-gray-100 rounded-b-md p-4 overflow-x-auto">
+								{/* Code block (no top padding so it attaches to bar) */}
+								<pre className="bg-[#272822] text-gray-100 rounded-md pt-7 pb-3 px-4 overflow-x-auto">
 									<code className={className} {...props}>
 										{children}
 									</code>
