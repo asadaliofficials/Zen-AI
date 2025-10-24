@@ -78,7 +78,7 @@ export const MarkdownMessage = ({ content }) => {
 										) : (
 											<button
 												onClick={handleCopy}
-												class="flex gap-1 items-center select-none py-1"
+												class="flex gap-1 items-center select-none py-1 cursor-pointer"
 												aria-label="Copy"
 											>
 												<svg
