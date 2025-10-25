@@ -20,6 +20,7 @@ import {
 import TopBarSandbox from './TopBar.sandbox';
 import { sandboxSocket } from '../../sockets/client.socket';
 import { toast } from 'react-toastify';
+import mdToPlainText from '../../utils/mdToText';
 
 const ChatSandbox = () => {
 	// dispatch(addMessage({ role: 'model', content: `` }));
@@ -204,7 +205,8 @@ const ChatSandbox = () => {
 			dispatch(setCancelRequestId(null));
 		},
 		copyMessage: (content, messageId) => {
-			navigator.clipboard.writeText(content);
+			const plainText = mdToPlainText(content);
+			navigator.clipboard.writeText(plainText);
 			dispatch(setCopyState({ messageId, value: true }));
 			setTimeout(() => dispatch(setCopyState({ messageId, value: false })), 1500);
 		},
@@ -219,17 +221,7 @@ const ChatSandbox = () => {
 			const readingId = ui.readingMessageId;
 
 			// Remove Markdown symbols
-			const plainText = content
-				.replace(/```[\s\S]*?```/g, '') // remove code blocks
-				.replace(/`([^`]+)`/g, '$1') // inline code
-				.replace(/\*\*(.*?)\*\*/g, '$1') // bold
-				.replace(/\*(.*?)\*/g, '$1') // italic
-				.replace(/!\[.*?\]\(.*?\)/g, '') // images
-				.replace(/\[([^\]]+)\]\(.*?\)/g, '$1') // links
-				.replace(/#+\s/g, '') // headings
-				.replace(/>\s/g, '') // blockquotes
-				.replace(/[-*]\s/g, '') // lists
-				.replace(/\n{2,}/g, '\n'); // collapse multiple newlines
+			const plainText = mdToPlainText(content);
 
 			if (readingId === messageId) {
 				speechSynthesis.cancel();
