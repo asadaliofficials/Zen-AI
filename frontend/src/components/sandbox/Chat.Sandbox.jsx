@@ -20,7 +20,7 @@ import {
 import TopBarSandbox from './TopBar.sandbox';
 import { sandboxSocket } from '../../sockets/client.socket';
 import { toast } from 'react-toastify';
-import mdToPlainText from '../../utils/mdToText';
+import mdToPlainText from '../../utils/mdToText.util';
 
 const ChatSandbox = () => {
 	// dispatch(addMessage({ role: 'model', content: `` }));

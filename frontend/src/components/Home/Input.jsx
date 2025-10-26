@@ -48,10 +48,10 @@ const Input = ({ onSend, onCancel, isDark, isWaiting }) => {
 
 					{/* Buttons inside input */}
 					<div className="absolute right-4 bottom-2 flex items-center space-x-1">
-						{/* Voice Input Button */}
+						{/* Voice Input Button (hidden)*/}
 						<button
 							type="button"
-							className={`p-2 cursor-pointer rounded-lg transition-colors ${
+							className={`hidden p-2 cursor-pointer rounded-lg transition-colors ${
 								isDark
 									? 'hover:bg-gray-600/50 text-gray-400 hover:text-gray-300'
 									: 'hover:bg-gray-200 text-gray-600 hover:text-gray-800'

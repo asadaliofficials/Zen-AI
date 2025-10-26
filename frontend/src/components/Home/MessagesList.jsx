@@ -1,15 +1,28 @@
 import React from 'react';
 import { AnimatePresence, motion as Motion } from 'framer-motion';
 import ResponceActions from './ResponceActions';
-import { p } from 'framer-motion/client';
 
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeHighlight from 'rehype-highlight';
 import 'highlight.js/styles/monokai.css';
 import { MarkdownMessage } from '../MarkdownMessage';
+import { takeScreenshot } from '../../utils/screenshot.util';
+import { getRandomName } from '../../utils/getRandomName.util';
 
 const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
+	const handleScreenshot = id => {
+		const elem = document.getElementById(id);
+		if (!elem) return;
+
+		try {
+			const name = getRandomName();
+			takeScreenshot(elem, name); // ✅ pass element and file name
+		} catch (error) {
+			console.error('Screenshot failed:', error);
+		}
+	};
+
 	return (
 		<div
 			className={`messages-container flex-1 overflow-y-auto p-4 space-y-6 dark:scrollbar-thin dark:scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400`}
@@ -17,7 +30,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 			<div className="max-w-[1000px] w-full mx-auto">
 				<AnimatePresence initial={false}>
 					{messages.length < 1 ? (
-						<p className="absolute top-[50%] left-[50%] -translate-[50%] text-3xl font-bold">
+						<p className="absolute top-[50%] left-[50%] -translate-[50%] text-3xl text-black dark:text-white font-bold">
 							What can I help with?
 						</p>
 					) : (
@@ -28,7 +41,9 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 								animate={{ opacity: 1, y: 0 }}
 								exit={{ opacity: 0, y: 10 }}
 								layout
-								className={`flex mt-10 ${message.role === 'user' ? 'justify-end user-message' : 'justify-start'}`}
+								className={`flex mt-10 ${
+									message.role === 'user' ? 'justify-end user-message' : 'justify-start'
+								}`}
 							>
 								<div
 									className={`max-w-3xl flex  ${
@@ -36,7 +51,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 									} space-x-3`}
 								>
 									{/* Message Content */}
-									<div className="flex flex-col  w-full">
+									<div id={message.id} className="flex flex-col  w-full">
 										<div
 											className={`px-4 py-3 rounded-2xl   ${
 												message.role === 'user'
@@ -65,6 +80,7 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 												handlers={handlers}
 												uiState={uiState}
 												isSandbox={true}
+												handleScreenshot={handleScreenshot}
 											/>
 										)}
 									</div>

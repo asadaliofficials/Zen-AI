@@ -21,6 +21,7 @@ router.post(
 	chatValidator,
 	reqValidationResult,
 	createChatController
+	
 );
 router.get('/delete/:id', authMiddleware, deleteChatController);
 router.get('/all', authMiddleware, getAllChatsController);

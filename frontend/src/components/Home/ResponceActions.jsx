@@ -1,7 +1,7 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 
-const ResponceActions = ({ message, handlers, uiState, isSandbox }) => {
+const ResponceActions = ({ message, handlers, uiState, isSandbox, handleScreenshot }) => {
 	console.log(isSandbox);
 	const {
 		copyStates = {},
@@ -34,11 +34,7 @@ const ResponceActions = ({ message, handlers, uiState, isSandbox }) => {
 			</button>
 			{/* screenshot button */}
 			<button
-				onClick={() => {
-					isSandbox
-						? toast.error('Please login to use this Feature!')
-						: handlers.screenshot(message.id);
-				}}
+				onClick={() => handleScreenshot(message.id)}
 				className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
 				title="Screenshot"
 			>
