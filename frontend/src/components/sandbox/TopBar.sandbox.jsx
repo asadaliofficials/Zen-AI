@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
 
 const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
 	const [showModelDropdown, setShowModelDropdown] = useState(false);
@@ -9,8 +10,10 @@ const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
 		if (id === 'zen-1.5') return;
 		toast.error('Please login to use this Feature!');
 	};
-
-	// Close dropdown when clicking outside is handled by parent Chat if desired.
+	const navigate = useNavigate();
+	const handleLogin = () => {
+		navigate('/auth');
+	};
 
 	return (
 		<div className="flex bg-transparent items-center justify-between p-4">
@@ -78,7 +81,7 @@ const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
 													height="20px"
 													viewBox="-3.5 0 19 19"
 													xmlns="http://www.w3.org/2000/svg"
-													class="cf-icon-svg"
+													className="cf-icon-svg"
 												>
 													<path d="M11.182 8.927v6.912a.794.794 0 0 1-.792.792H1.61a.794.794 0 0 1-.792-.792V8.927a.794.794 0 0 1 .792-.792h.856V6.367a3.534 3.534 0 1 1 7.068 0v1.768h.856a.794.794 0 0 1 .792.792zm-2.756-2.56a2.426 2.426 0 1 0-4.852 0v1.768h4.852zM7.108 11.47a1.108 1.108 0 1 0-1.583 1.001v1.849a.475.475 0 0 0 .95 0v-1.849a1.108 1.108 0 0 0 .633-1.001z" />
 												</svg>
@@ -134,6 +137,19 @@ const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
 							d="M12 5v8.5M15 7l-3-3l-3 3m-4 5v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"
 						/>
 					</svg>
+				</button>
+
+				<button
+					onClick={handleLogin}
+					className="px-4 py-1.5 font-medium rounded-md cursor-pointer
+  bg-black text-white 
+  dark:bg-white dark:text-black
+  hover:bg-gray-800 dark:hover:bg-gray-200
+  transition-colors duration-200
+  absolute top-18 right-6 z-9
+  sm:ml-8 sm:relative sm:top-auto sm:left-auto"
+				>
+					Login
 				</button>
 			</div>
 		</div>

@@ -51,8 +51,9 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 									} space-x-3`}
 								>
 									{/* Message Content */}
-									<div id={message.id} className="flex flex-col  w-full">
+									<div className="flex flex-col  w-full">
 										<div
+											id={message.id}
 											className={`px-4 py-3 rounded-2xl   ${
 												message.role === 'user'
 													? 'dark:bg-[#303030] dark:text-white bg-[#303030] text-white'
