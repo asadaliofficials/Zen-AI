@@ -6,7 +6,7 @@ import MessagesList from '../home/MessagesList';
 import Input from '../home/Input';
 import screenShotAudio from '../../assets/sound/screenshot.mp3';
 
-import { addMessage, clearLastMessage, clearChat } from '../../features/messages/messagesSlice';
+import { addMessage, clearChat } from '../../features/messages/messagesSlice';
 import {
 	setTyping,
 	setWaiting,

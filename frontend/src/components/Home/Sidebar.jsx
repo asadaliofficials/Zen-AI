@@ -1,33 +1,25 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 import { useSelector } from 'react-redux';
+import Cookies from 'js-cookie';
+import { useNavigate } from 'react-router-dom';
+import ConfirmPopup from '../conformPopup';
 
 const Sidebar = ({ isOpen, onToggle }) => {
-	const [isDark, setIsDark] = useState(false);
 	const [showProfileMenu, setShowProfileMenu] = useState(false);
 	const chats = useSelector(state => state.chats.chats.contents);
-	const user = useSelector(state => state.chats);
-	console.log(user);
-
-	// System theme detection
-	useEffect(() => {
-		const checkSystemTheme = () => {
-			const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-			setIsDark(prefersDark);
-		};
-
-		checkSystemTheme();
-
-		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-		mediaQuery.addEventListener('change', checkSystemTheme);
-
-		return () => mediaQuery.removeEventListener('change', checkSystemTheme);
-	}, []);
+	const user = useSelector(state => state.user.user);
 
 	const sidebarVariants = {
 		open: { x: 0, transition: { duration: 0.3, ease: 'easeOut' } },
 		closed: { x: '-100%', transition: { duration: 0.3, ease: 'easeIn' } },
+	};
+	const [showPopup, setShowPopup] = useState(false);
+	const navigate = useNavigate();
+	const logoutHandler = () => {
+		Cookies.remove('token');
+		navigate('/auth');
 	};
 
 	return (
@@ -146,12 +138,12 @@ const Sidebar = ({ isOpen, onToggle }) => {
 							onClick={() => setShowProfileMenu(!showProfileMenu)}
 							className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
 						>
-							<div className="w-10 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-								<span className="text-white text-sm font-medium">AS</span>
+							<div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+								<span className="text-white text-sm font-medium">{user.userName[0]}</span>
 							</div>
 							<div className="flex-1 text-left">
-								<div className="text-sm font-medium">John Doe</div>
-								<div className="text-xs text-gray-500 dark:text-gray-400">john.doe@example.com</div>
+								<div className="text-sm font-medium">{user.userName}</div>
+								<div className="text-xs text-gray-500 dark:text-gray-400">{user.userEmail}</div>
 							</div>
 							<svg className="w-5 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path
@@ -170,11 +162,12 @@ const Sidebar = ({ isOpen, onToggle }) => {
 									initial={{ opacity: 0, y: 10 }}
 									animate={{ opacity: 1, y: 0 }}
 									exit={{ opacity: 0, y: 10 }}
-									className={`absolute  bottom-full left-0 right-0 mb-2 py-1 rounded-lg shadow-lg border ${
-										isDark ? 'bg-[#181818] border-gray-700' : 'bg-white border-gray-200'
-									}`}
+									className={`absolute  bottom-full left-0 right-0 mb-2 py-1 rounded-lg shadow-lg border dark:bg-[#181818] dark:border-gray-700 bg-white border-gray-200`}
 								>
-									<button className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
+									<button
+										onClick={() => setShowPopup(state => !state)}
+										className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+									>
 										Logout
 									</button>
 									<button className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-red-600 dark:text-red-400">
@@ -186,6 +179,18 @@ const Sidebar = ({ isOpen, onToggle }) => {
 					</div>
 				</div>
 			</motion.div>
+			{showPopup ? (
+				<ConfirmPopup
+					show={showPopup}
+					title="Logout"
+					description="Are you sure you want to log out?"
+					confirmLabel="Logout"
+					onCancel={() => setShowPopup(false)}
+					onConfirm={logoutHandler}
+				/>
+			) : (
+				''
+			)}
 		</>
 	);
 };

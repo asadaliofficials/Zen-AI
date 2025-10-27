@@ -4,12 +4,13 @@ import HomeSandbox from './sandbox/Home.sandbox';
 import Home from './home/Home';
 import { addChats } from '../features/chats/chatSlice';
 import { useDispatch } from 'react-redux';
+import { addUser } from '../features/user/userSlice';
 
 const HomeWrapper = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(null);
 	const [retryCount, setRetryCount] = useState(0);
 	const [response, setResponse] = useState(null);
-  const dispatch = useDispatch()
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		let retryTimer;
@@ -20,12 +21,12 @@ const HomeWrapper = () => {
 					withCredentials: true,
 				});
 
-
 				if (!response.data.success) {
 					setIsLoggedIn(false);
 				} else {
 					setResponse(response.data);
-          dispatch(addChats(response.data.chats))
+					dispatch(addChats(response.data.chats));
+					dispatch(addUser(response.data.user));
 					setIsLoggedIn(true);
 				}
 			} catch (error) {

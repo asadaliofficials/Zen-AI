@@ -13,7 +13,7 @@ export const registerController = async (req, res) => {
 		const token = getToken(user._id, user.name, user.email);
 
 		res.cookie('token', token, {
-			httpOnly: true,
+			// httpOnly: true,
 			secure: NODE_ENV === 'production',
 			sameSite: 'strict',
 			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
@@ -35,7 +35,7 @@ export const loginController = async (req, res) => {
 		const token = getToken(user._id, user.name, user.email);
 
 		res.cookie('token', token, {
-			httpOnly: true,
+			// httpOnly: true,
 			secure: NODE_ENV === 'production',
 			sameSite: 'strict',
 			maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
