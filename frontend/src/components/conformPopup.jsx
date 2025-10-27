@@ -11,19 +11,9 @@ const ConfirmPopup = ({
 }) => {
 	const [isProcessing, setIsProcessing] = useState(false);
 
-	useEffect(() => {
-		let timer;
-		if (isProcessing) {
-			timer = setTimeout(() => {
-				onConfirm();
-				setIsProcessing(false);
-			}, 3000);
-		}
-		return () => clearTimeout(timer);
-	}, [isProcessing, onConfirm]);
-
 	const handleConfirmClick = () => {
 		setIsProcessing(true);
+		onConfirm();
 	};
 
 	return (

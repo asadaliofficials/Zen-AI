@@ -21,8 +21,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
 	const [showDelAccPopup, setshowDelAccPopup] = useState(false);
 	const navigate = useNavigate();
 	const logoutHandler = () => {
-		Cookies.remove('token');
-		navigate('/auth');
+		setTimeout(() => {
+			Cookies.remove('token');
+			navigate('/auth');
+		}, 2000);
 	};
 	const accountDeleteHandler = async () => {
 		try {
