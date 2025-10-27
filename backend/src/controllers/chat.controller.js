@@ -11,7 +11,7 @@ export const getAllChatsController = async (req, res) => {
 		const chats = await chatModel.find({ userId }).sort({ createdAt: -1 }).select('-userId');
 		return res.status(200).json({
 			success: true,
-			user: { userName: req.user.name, userEmail: req.user.email },
+			user: { userName: req.user.name, userEmail: req.user.email, userId: req.user.id },
 			chats: {
 				contents: chats,
 				count: chats.length,

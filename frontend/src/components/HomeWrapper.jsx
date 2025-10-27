@@ -8,7 +8,6 @@ import { addUser } from '../features/user/userSlice';
 
 const HomeWrapper = () => {
 	const [isLoggedIn, setIsLoggedIn] = useState(null);
-	const [retryCount, setRetryCount] = useState(0);
 	const [response, setResponse] = useState(null);
 	const dispatch = useDispatch();
 
@@ -31,18 +30,16 @@ const HomeWrapper = () => {
 				}
 			} catch (error) {
 				console.error('Error fetching data:', error);
-
-				// retry after 3 seconds
-				retryTimer = setTimeout(() => {
-					setRetryCount(prev => prev + 1);
-				}, 2000);
+				if (error.response.data.statusCode == '401') {
+					setIsLoggedIn(false);
+				}
 			}
 		};
 
 		fetchData();
 
 		return () => clearTimeout(retryTimer);
-	}, [retryCount]);
+	}, []);
 
 	// Loader while waiting
 	if (isLoggedIn === null) {

@@ -117,6 +117,7 @@ export const deleteUserController = async (req, res) => {
 		await saveDeletes('batch', deleteLogs); // 'batch' is just a placeholder type; it will be ignored internally
 
 		return res.status(200).json({
+			success: true,
 			message: 'User and all associated data deleted successfully',
 			user: deletedUser,
 		});

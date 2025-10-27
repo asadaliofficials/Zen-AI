@@ -5,6 +5,8 @@ import { useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import ConfirmPopup from '../conformPopup';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
 const Sidebar = ({ isOpen, onToggle }) => {
 	const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -15,11 +17,29 @@ const Sidebar = ({ isOpen, onToggle }) => {
 		open: { x: 0, transition: { duration: 0.3, ease: 'easeOut' } },
 		closed: { x: '-100%', transition: { duration: 0.3, ease: 'easeIn' } },
 	};
-	const [showPopup, setShowPopup] = useState(false);
+	const [showLogoutPopup, setShowLogoutPopup] = useState(false);
+	const [showDelAccPopup, setshowDelAccPopup] = useState(false);
 	const navigate = useNavigate();
 	const logoutHandler = () => {
 		Cookies.remove('token');
 		navigate('/auth');
+	};
+	const accountDeleteHandler = async () => {
+		try {
+			const response = await axios.delete(
+				`http://localhost:3000/api/v1/auth/delete/${user.userId}`
+			);
+			console.log(response.data);
+			if (!response.data.success) throw new Error('failed to delete account!');
+			toast.success('Account deleted successfully!');
+			setTimeout(() => {
+				Cookies.remove('token');
+				window.location.reload();
+			}, 1000);
+		} catch (error) {
+			console.log(error);
+			toast.error('failed to delete account!');
+		}
 	};
 
 	return (
@@ -165,12 +185,21 @@ const Sidebar = ({ isOpen, onToggle }) => {
 									className={`absolute  bottom-full left-0 right-0 mb-2 py-1 rounded-lg shadow-lg border dark:bg-[#181818] dark:border-gray-700 bg-white border-gray-200`}
 								>
 									<button
-										onClick={() => setShowPopup(state => !state)}
+										onClick={() => {
+											setShowLogoutPopup(state => !state);
+											setShowProfileMenu(!showProfileMenu);
+										}}
 										className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
 									>
 										Logout
 									</button>
-									<button className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-red-600 dark:text-red-400">
+									<button
+										onClick={() => {
+											setshowDelAccPopup(state => !state);
+											setShowProfileMenu(!showProfileMenu);
+										}}
+										className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-red-600 dark:text-red-400"
+									>
 										Delete Account
 									</button>
 								</motion.div>
@@ -179,14 +208,26 @@ const Sidebar = ({ isOpen, onToggle }) => {
 					</div>
 				</div>
 			</motion.div>
-			{showPopup ? (
+			{showLogoutPopup ? (
 				<ConfirmPopup
-					show={showPopup}
+					show={showLogoutPopup}
 					title="Logout"
 					description="Are you sure you want to log out?"
 					confirmLabel="Logout"
-					onCancel={() => setShowPopup(false)}
+					onCancel={() => setShowLogoutPopup(false)}
 					onConfirm={logoutHandler}
+				/>
+			) : (
+				''
+			)}
+			{showDelAccPopup ? (
+				<ConfirmPopup
+					show={showDelAccPopup}
+					title="Delete Account"
+					description="Are you sure you want to delete you Account?"
+					confirmLabel="Delete"
+					onCancel={() => setshowDelAccPopup(false)}
+					onConfirm={accountDeleteHandler}
 				/>
 			) : (
 				''

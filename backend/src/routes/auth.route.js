@@ -10,6 +10,6 @@ const router = Router();
 router.post('/sign-up', registerValidator, reqValidationResult, registerController);
 router.post('/login', loginValidator, reqValidationResult, loginController);
 router.get('/logout', logoutController);
-router.get('/delete/:id', deleteUserController);
+router.delete('/delete/:id', deleteUserController);
 
 export default router;
