@@ -2,9 +2,10 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Chat from './Chat';
 
-const Home = () => {
+const Home = response => {
 	const [sidebarOpen, setSidebarOpen] = useState(true);
 	const [isDark, setIsDark] = useState(false);
+
 
 	// System theme detection
 	useEffect(() => {

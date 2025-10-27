@@ -1,7 +1,6 @@
 import ChatSandbox from './Chat.sandbox';
 
 const HomeSandbox = () => {
-	console.log('heee');
 	return (
 		<div className={`flex h-screen dark:bg-gray-900 bg-white`}>
 			{/* Chat Area */}

@@ -1,10 +1,14 @@
 import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
+import { useSelector } from 'react-redux';
 
 const Sidebar = ({ isOpen, onToggle }) => {
 	const [isDark, setIsDark] = useState(false);
 	const [showProfileMenu, setShowProfileMenu] = useState(false);
+	const chats = useSelector(state => state.chats.chats.contents);
+	const user = useSelector(state => state.chats);
+	console.log(user);
 
 	// System theme detection
 	useEffect(() => {
@@ -45,9 +49,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 			<motion.div
 				variants={sidebarVariants}
 				animate={isOpen ? 'open' : 'closed'}
-				className={`fixed lg:relative top-0 left-0 h-full w-64 z-50 ${
-					isDark ? 'bg-[#181818]' : 'bg-white'
-				}  flex flex-col`}
+				className="fixed lg:relative top-0 left-0 h-full w-64 z-50 bg-white dark:bg-[#181818] flex flex-col"
 			>
 				{/* Header */}
 				<div className="flex items-center justify-between p-4">
@@ -55,15 +57,11 @@ const Sidebar = ({ isOpen, onToggle }) => {
 						<div className="w-8 h-8 rounded flex items-center justify-center">
 							<img src="images/logo.png" alt="logo" className="w-8 h-9" />
 						</div>
-						<span className={`text-lg font-semibold ${isDark ? 'text-white' : 'text-black'}`}>
-							Zen-AI
-						</span>
+						<span className="text-lg font-semibold text-black dark:text-white">Zen-AI</span>
 					</div>
 					<button
 						onClick={onToggle}
-						className={`p-1.5 rounded-lg transition-colors ${
-							isDark ? 'hover:bg-[#303030]' : 'hover:bg-gray-100'
-						} lg:hidden`}
+						className="p-1.5 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] lg:hidden"
 					>
 						<svg xmlns="http://www.w3.org/2000/svg" width={24} height={24} viewBox="0 0 24 24">
 							<g fill="none" fillRule="evenodd">
@@ -79,11 +77,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
 				{/* Navigation Buttons */}
 				<div className="p-4 space-y-2">
-					<button
-						className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
-							isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
-						}`}
-					>
+					<button className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
 								strokeLinecap="round"
@@ -94,21 +88,13 @@ const Sidebar = ({ isOpen, onToggle }) => {
 						</svg>
 						<span>New Chat</span>
 					</button>
-					<button
-						className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
-							isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
-						}`}
-					>
+					<button className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
 						<svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
 							<path d="M17.06 13c-1.86 0-3.42 1.33-3.82 3.1c-.95-.41-1.82-.3-2.48-.01C10.35 14.31 8.79 13 6.94 13C4.77 13 3 14.79 3 17s1.77 4 3.94 4c2.06 0 3.74-1.62 3.9-3.68c.34-.24 1.23-.69 2.32.02c.18 2.05 1.84 3.66 3.9 3.66c2.17 0 3.94-1.79 3.94-4s-1.77-4-3.94-4M6.94 19.86c-1.56 0-2.81-1.28-2.81-2.86s1.26-2.86 2.81-2.86c1.56 0 2.81 1.28 2.81 2.86s-1.25 2.86-2.81 2.86m10.12 0c-1.56 0-2.81-1.28-2.81-2.86s1.25-2.86 2.81-2.86s2.82 1.28 2.82 2.86s-1.27 2.86-2.82 2.86M22 10.5H2V12h20zm-6.47-7.87c-.22-.49-.78-.75-1.31-.58L12 2.79l-2.23-.74l-.05-.01c-.53-.15-1.09.13-1.29.64L6 9h12l-2.44-6.32z" />
 						</svg>
 						<span>Temporary Chat</span>
 					</button>
-					<button
-						className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
-							isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
-						}`}
-					>
+					<button className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
 								strokeLinecap="round"
@@ -120,11 +106,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 						<span>Special Personalities</span>
 					</button>
 
-					<button
-						className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors ${
-							isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
-						}`}
-					>
+					<button className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
 								strokeLinecap="round"
@@ -139,20 +121,21 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
 				{/* Chat History */}
 				<div className="flex-1 px-4">
-					<h3 className={`text-sm font-medium mb-3 ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
-						Chats:
-					</h3>
+					<h3 className="text-sm font-medium mb-3 text-gray-600 dark:text-gray-400">Chats:</h3>
 					<div className="space-y-1">
-						{['Chat 1', 'Chat 2', 'Chat 3'].map((chat, index) => (
-							<button
-								key={index}
-								className={`w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors ${
-									isDark ? 'hover:bg-[#303030] text-gray-300' : 'hover:bg-gray-100 text-gray-700'
-								}`}
-							>
-								{chat}
-							</button>
-						))}
+						{chats.length < 1 ? (
+							<p className="text-black dark:text-white opacity-30">No Chat History</p>
+						) : (
+							chats.map((chat, index) => (
+								<button
+									id={chat.id}
+									key={index}
+									className="w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate"
+								>
+									{chat.title}
+								</button>
+							))
+						)}
 					</div>
 				</div>
 
@@ -161,18 +144,14 @@ const Sidebar = ({ isOpen, onToggle }) => {
 					<div className="relative">
 						<button
 							onClick={() => setShowProfileMenu(!showProfileMenu)}
-							className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors ${
-								isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
-							}`}
+							className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
 						>
 							<div className="w-10 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
 								<span className="text-white text-sm font-medium">AS</span>
 							</div>
 							<div className="flex-1 text-left">
 								<div className="text-sm font-medium">John Doe</div>
-								<div className={`text-xs ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
-									john.doe@example.com
-								</div>
+								<div className="text-xs text-gray-500 dark:text-gray-400">john.doe@example.com</div>
 							</div>
 							<svg className="w-5 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path
@@ -195,18 +174,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
 										isDark ? 'bg-[#181818] border-gray-700' : 'bg-white border-gray-200'
 									}`}
 								>
-									<button
-										className={`w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors ${
-											isDark ? 'hover:bg-[#303030] text-white' : 'hover:bg-gray-100 text-black'
-										}`}
-									>
+									<button className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
 										Logout
 									</button>
-									<button
-										className={`w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors ${
-											isDark ? 'hover:bg-[#303030] text-red-400' : 'hover:bg-gray-100 text-red-600'
-										}`}
-									>
+									<button className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-red-600 dark:text-red-400">
 										Delete Account
 									</button>
 								</motion.div>

@@ -2,28 +2,49 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import HomeSandbox from './sandbox/Home.sandbox';
 import Home from './home/Home';
+import { addChats } from '../features/chats/chatSlice';
+import { useDispatch } from 'react-redux';
 
 const HomeWrapper = () => {
-	const [showSandbox, setShowSandbox] = useState(null);
+	const [isLoggedIn, setIsLoggedIn] = useState(null);
+	const [retryCount, setRetryCount] = useState(0);
+	const [response, setResponse] = useState(null);
+  const dispatch = useDispatch()
 
 	useEffect(() => {
-		axios
-			.get('http://localhost:3000/api/v1/chat/all', { withCredentials: true })
-			.then(response => {
-				if (!response.data.success) {
-					setShowSandbox(true);
-				} else {
-					setShowSandbox(false);
-				}
-			})
-			.catch(error => {
-				console.error('Error fetching data:', error);
-				setShowSandbox(true);
-			});
-	}, []);
+		let retryTimer;
 
-	// While waiting for API response, show a loader
-	if (showSandbox === null) {
+		const fetchData = async () => {
+			try {
+				const response = await axios.get('http://localhost:3000/api/v1/chat/all', {
+					withCredentials: true,
+				});
+
+
+				if (!response.data.success) {
+					setIsLoggedIn(false);
+				} else {
+					setResponse(response.data);
+          dispatch(addChats(response.data.chats))
+					setIsLoggedIn(true);
+				}
+			} catch (error) {
+				console.error('Error fetching data:', error);
+
+				// retry after 3 seconds
+				retryTimer = setTimeout(() => {
+					setRetryCount(prev => prev + 1);
+				}, 2000);
+			}
+		};
+
+		fetchData();
+
+		return () => clearTimeout(retryTimer);
+	}, [retryCount]);
+
+	// Loader while waiting
+	if (isLoggedIn === null) {
 		return (
 			<>
 				<style>
@@ -69,8 +90,7 @@ const HomeWrapper = () => {
 		);
 	}
 
-	// After data is loaded
-	return showSandbox ? <HomeSandbox /> : <Home />;
+	return isLoggedIn ? <Home response={response} /> : <HomeSandbox />;
 };
 
 export default HomeWrapper;

@@ -2,7 +2,6 @@ import React from 'react';
 import { toast } from 'react-toastify';
 
 const ResponceActions = ({ message, handlers, uiState, isSandbox, handleScreenshot }) => {
-	console.log(isSandbox);
 	const {
 		copyStates = {},
 		screenshotStates = {},

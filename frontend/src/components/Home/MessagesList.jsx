@@ -9,15 +9,46 @@ import 'highlight.js/styles/monokai.css';
 import { MarkdownMessage } from '../MarkdownMessage';
 import { takeScreenshot } from '../../utils/screenshot.util';
 import { getRandomName } from '../../utils/getRandomName.util';
+import screenShotAudio from '../../assets/sound/screenshot.mp3';
 
 const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
+	const playSound = () => {
+		const audio = new Audio(screenShotAudio);
+		audio.play();
+	};
+
 	const handleScreenshot = id => {
 		const elem = document.getElementById(id);
 		if (!elem) return;
 
 		try {
 			const name = getRandomName();
-			takeScreenshot(elem, name); // ✅ pass element and file name
+			playSound();
+
+			// Detect theme
+			const isDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+			// Store original color to restore later
+			const originalBg = getComputedStyle(elem).backgroundColor;
+
+			// Soft blink color depending on theme
+			const blinkColor = isDark ? '#303030' : '#f2f2f2';
+
+			// Apply blink effect
+			elem.style.transition = 'background-color 0.3s ease';
+			elem.style.backgroundColor = blinkColor;
+
+			setTimeout(() => {
+				takeScreenshot(elem, name);
+
+				// Restore original color
+				elem.style.backgroundColor = originalBg;
+
+				// Optional: clear transition after restoring
+				setTimeout(() => {
+					elem.style.transition = '';
+				}, 300);
+			}, 300);
 		} catch (error) {
 			console.error('Screenshot failed:', error);
 		}
