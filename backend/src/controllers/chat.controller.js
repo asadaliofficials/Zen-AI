@@ -24,7 +24,7 @@ export const getAllChatsController = async (req, res) => {
 	}
 };
 
-export const chatController = async (socket, msg, chatId, userId, isNewChat) => {
+export const chatController = async (socket, msg, chatId, userId, isNewChat, tempChat) => {
 	try {
 		const contents = [];
 		contents.push({
@@ -37,9 +37,16 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 		});
 
 		if (!isNewChat) {
-			const response = (
-				await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
-			).reverse();
+			let response;
+			if (!tempChat) {
+				response = (
+					await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
+				).reverse();
+			} else {
+				response = (
+					await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
+				).reverse();
+			}
 
 			if (response.length > 0) {
 				response.forEach(item => {
@@ -71,20 +78,30 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 		const { text, title } = await geminiService(contents, isNewChat);
 
 		// If it's a new chat, create it and get the chatId
-		if (isNewChat) {
+		if (isNewChat && !tempChat) {
 			const newChat = await createChat(title || 'New Chat', userId);
 			chatId = newChat._id;
 		}
-		await messageModel.create({
-			chatId: chatId,
-			userId: userId,
-			userMessage: msg,
-			aiResponse: text,
-		});
+		if (!tempChat) {
+			await messageModel.create({
+				chatId: chatId,
+				userId: userId,
+				userMessage: msg,
+				aiResponse: text,
+			});
+		} else {
+			await sandboxLogModel.create({
+				chatId: chatId,
+				userMessage: msg,
+				aiResponse: text,
+			});
+		}
 		socket.emit('response', {
 			success: true,
 			message: 'Response generated successfully',
 			statusCode: 200,
+			isNewChat: isNewChat,
+			tempChat: tempChat || false,
 			content: {
 				text,
 				chatId,
@@ -92,7 +109,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat) => 
 			},
 		});
 	} catch (error) {
-		socket.emit('error', {
+		socket.emit('response', {
 			success: false,
 			message: 'AI Model is overloaded, Please try again later!',
 			statusCode: 503,

@@ -10,7 +10,9 @@ import { toast } from 'react-toastify';
 
 const Sidebar = ({ isOpen, onToggle }) => {
 	const [showProfileMenu, setShowProfileMenu] = useState(false);
-	const chats = useSelector(state => state.chats.chats.contents);
+	const chats = useSelector(state => state.chats.chats);
+	console.log(chats);
+	
 	const user = useSelector(state => state.user.user);
 
 	const sidebarVariants = {
@@ -137,18 +139,21 @@ const Sidebar = ({ isOpen, onToggle }) => {
 				<div className="flex-1 px-4">
 					<h3 className="text-sm font-medium mb-3 text-gray-600 dark:text-gray-400">Chats:</h3>
 					<div className="space-y-1">
-						{chats.length < 1 ? (
+						{!chats || chats.length === 0 ? (
 							<p className="text-black dark:text-white opacity-30">No Chat History</p>
 						) : (
-							chats.map((chat, index) => (
-								<button
-									id={chat.id}
-									key={index}
-									className="w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate"
-								>
-									{chat.title}
-								</button>
-							))
+							chats
+								.slice()
+								.reverse() 
+								.map(chat => (
+									<button
+										key={chat._id}
+										id={chat._id}
+										className="w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate"
+									>
+										{chat.title}
+									</button>
+								))
 						)}
 					</div>
 				</div>

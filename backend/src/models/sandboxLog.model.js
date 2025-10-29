@@ -13,6 +13,10 @@ const sandboxLogSchema = new mongoose.Schema({
 		type: String,
 		required: true,
 	},
+	userId: {
+		type: String,
+		required: false,
+	},
 	createdAt: {
 		type: Date,
 		default: Date.now,

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
@@ -22,16 +22,17 @@ import {
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
+import { addOneChat, setChatId, setTempChat } from '../../features/chats/chatSlice';
 import { userSocket } from '../../sockets/client.socket';
 
 const Chat = () => {
 	const dispatch = useDispatch();
 	const messages = useSelector(state => state.messages.messages);
 	const ui = useSelector(state => state.ui);
-	const [chatId, setChatId] = useState(null);
+	const chatId = useSelector(state => state.chats.chatId);
+	console.log(chatId);
 
-	const handleShareChat = () => {
-	};
+	const handleShareChat = () => {};
 
 	const cancelRef = useRef(null);
 
@@ -54,13 +55,20 @@ const Chat = () => {
 
 	useEffect(() => {
 		userSocket.on('response', data => {
+			console.log(data);
+
 			try {
 				if (!data.success) {
 					throw new Error(data.message);
 				}
 				dispatch(addMessage({ role: 'model', content: data.content.text }));
 				if (isNearBottom()) scrollToBottom();
-				if (!chatId && data.content.chatId) setChatId(data.content.chatId);
+				setChatId(data.content.chatId);
+				console.log(data.isNewChat);
+				if (data.isNewChat) {
+					dispatch(addOneChat({ title: data.content.title, id: data.content.chatId }));
+					document.title = data.content.title;
+				}
 			} catch (error) {
 				dispatch(clearLastMessage());
 				toast.error(error.message);
@@ -75,7 +83,6 @@ const Chat = () => {
 		};
 	}, []);
 
-	
 	const handlers = {
 		sendMessage: async ({ content }) => {
 			if (!content || ui.isWaitingForResponse) return;
