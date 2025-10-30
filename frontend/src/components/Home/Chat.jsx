@@ -11,7 +11,7 @@ import MessagesList from './MessagesList';
 import Input from './Input';
 import screenShotAudio from '../../assets/sound/screenshot.mp3';
 
-import { addMessage, clearLastMessage } from '../../features/messages/messagesSlice';
+import { addMessage, clearMessages } from '../../features/messages/messagesSlice';
 import {
 	setTyping,
 	setWaiting,
@@ -24,9 +24,13 @@ import {
 } from '../../features/ui/uiSlice';
 import { addOneChat, setChatId, setTempChat } from '../../features/chats/chatSlice';
 import { userSocket } from '../../sockets/client.socket';
+import { useNavigate } from 'react-router-dom';
+import { scrollToFullBottom, smartScroll } from '../../utils/autoScroll.util';
+import axios from 'axios';
 
 const Chat = () => {
 	const dispatch = useDispatch();
+	const Navigate = useNavigate();
 	const messages = useSelector(state => state.messages.messages);
 	const ui = useSelector(state => state.ui);
 	const chatId = useSelector(state => state.chats.chatId);
@@ -41,36 +45,47 @@ const Chat = () => {
 		audio.play();
 	};
 
-	const scrollToBottom = () => {
-		const messagesContainer = document.querySelector('.messages-container');
-		if (messagesContainer) messagesContainer.scrollTop = messagesContainer.scrollHeight;
-	};
-
-	const isNearBottom = () => {
-		const messagesContainer = document.querySelector('.messages-container');
-		if (!messagesContainer) return false;
-		const { scrollTop, scrollHeight, clientHeight } = messagesContainer;
-		return scrollHeight - scrollTop - clientHeight < 100;
-	};
+	useEffect(() => {
+		const getChatMessages = async () => {
+			console.log('getting chat messages...');
+			const response = await axios.get(`http://localhost:3000/api/v1/chat/${chatId}`, {
+				withCredentials: true,
+			});
+			console.log(response);
+		};
+		if (chatId) {
+			document.title = chatId;
+			Navigate(`/chat/${chatId}`);
+			getChatMessages();
+		} else {
+			Navigate(`/`);
+		}
+	}, [chatId]);
 
 	useEffect(() => {
+		dispatch(clearMessages());
 		userSocket.on('response', data => {
-			console.log(data);
-
 			try {
 				if (!data.success) {
+					dispatch(
+						addMessage({
+							role: 'model',
+							content: data.message,
+						})
+					);
+					scrollToFullBottom();
 					throw new Error(data.message);
 				}
 				dispatch(addMessage({ role: 'model', content: data.content.text }));
-				if (isNearBottom()) scrollToBottom();
-				setChatId(data.content.chatId);
-				console.log(data.isNewChat);
 				if (data.isNewChat) {
 					dispatch(addOneChat({ title: data.content.title, id: data.content.chatId }));
 					document.title = data.content.title;
+					Navigate(`/chat/${chatId}`);
 				}
+				smartScroll();
+
+				if (!chatId && data.content.chatId) setChatId(data.content.chatId);
 			} catch (error) {
-				dispatch(clearLastMessage());
 				toast.error(error.message);
 			} finally {
 				dispatch(setTyping(false));
@@ -90,7 +105,7 @@ const Chat = () => {
 			dispatch(setWaiting(true));
 			dispatch(setTyping(true));
 
-			setTimeout(() => scrollToBottom(), 100);
+			setTimeout(() => scrollToFullBottom(), 100);
 
 			userSocket.emit('message', JSON.stringify({ message: content, chatId: chatId || 'null' }));
 		},

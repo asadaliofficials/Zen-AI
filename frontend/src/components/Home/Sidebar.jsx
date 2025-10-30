@@ -1,18 +1,29 @@
 import React, { useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import Cookies from 'js-cookie';
 import { useNavigate } from 'react-router-dom';
 import ConfirmPopup from '../conformPopup';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import { setChatId } from '../../features/chats/chatSlice';
+import { clearMessages } from '../../features/messages/messagesSlice';
+// import '../../css/chat.css';
 const Sidebar = ({ isOpen, onToggle }) => {
 	const [showProfileMenu, setShowProfileMenu] = useState(false);
 	const chats = useSelector(state => state.chats.chats);
 	console.log(chats);
-	
+	const dispatch = useDispatch();
+
+	const chatId = useSelector(state => state.chats.chatId);
+
+	const handleNewChat = () => {
+		dispatch(setChatId(null));
+		dispatch(clearMessages());
+		document.title = 'Zen Ai';
+	};
+
 	const user = useSelector(state => state.user.user);
 
 	const sidebarVariants = {
@@ -46,6 +57,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
 		}
 	};
 
+	const handleChatClick = id => {
+		dispatch(setChatId(id));
+	};
+
 	return (
 		<>
 			{/* Mobile Overlay */}
@@ -65,7 +80,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 			<motion.div
 				variants={sidebarVariants}
 				animate={isOpen ? 'open' : 'closed'}
-				className="fixed lg:relative top-0 left-0 h-full w-64 z-50 bg-white dark:bg-[#181818] flex flex-col"
+				className="fixed lg:relative top-0 left-0 h-full w-72 z-50 bg-white dark:bg-[#181818] flex flex-col"
 			>
 				{/* Header */}
 				<div className="flex items-center justify-between p-4">
@@ -93,7 +108,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
 
 				{/* Navigation Buttons */}
 				<div className="p-4 space-y-2">
-					<button className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
+					<button
+						onClick={handleNewChat}
+						className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+					>
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
 								strokeLinecap="round"
@@ -136,7 +154,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 				</div>
 
 				{/* Chat History */}
-				<div className="flex-1 px-4">
+				<div className="flex-1 px-4 overflow-y-auto dark:scrollbar-thin dark:scrollbar-track-transparent dark:scrollbar-thumb-gray-600 dark:hover:scrollbar-thumb-gray-500 scrollbar-thin scrollbar-track-transparent scrollbar-thumb-gray-300 hover:scrollbar-thumb-gray-400">
 					<h3 className="text-sm font-medium mb-3 text-gray-600 dark:text-gray-400">Chats:</h3>
 					<div className="space-y-1">
 						{!chats || chats.length === 0 ? (
@@ -144,12 +162,16 @@ const Sidebar = ({ isOpen, onToggle }) => {
 						) : (
 							chats
 								.slice()
-								.reverse() 
+								.reverse()
 								.map(chat => (
 									<button
+										title={chat.title}
 										key={chat._id}
 										id={chat._id}
-										className="w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate"
+										onClick={() => handleChatClick(chat._id)}
+										className={`w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate ${
+											chatId == chat._id ? 'bg-[#303030]' : ''
+										}`}
 									>
 										{chat.title}
 									</button>
@@ -168,9 +190,11 @@ const Sidebar = ({ isOpen, onToggle }) => {
 							<div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
 								<span className="text-white text-sm font-medium">{user.userName[0]}</span>
 							</div>
-							<div className="flex-1 text-left">
+							<div className="flex-1 text-left w-[70%] truncate">
 								<div className="text-sm font-medium">{user.userName}</div>
-								<div className="text-xs text-gray-500 dark:text-gray-400">{user.userEmail}</div>
+								<div className="text-xs text-gray-500 dark:text-gray-400 truncate">
+									{user.userEmail}
+								</div>
 							</div>
 							<svg className="w-5 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 								<path

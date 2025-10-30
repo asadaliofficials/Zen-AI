@@ -2,30 +2,28 @@ import { createSlice, nanoid } from '@reduxjs/toolkit';
 
 const initialState = {
 	messages: [
-		{
-			id: nanoid(),
-			role: 'user',
-			content: 'Hello! How can you help me today?',
-			timestamp: new Date().toISOString(),
-		},
-		{
-			id: nanoid(),
-			role: 'model',
-			content: `### Here's some Express code
-
-**Steps:**
-1. Install dependencies
-\n
-2. Run the server
-
-\`\`\`javascript
-const express = require('express');
-const app = express();
-app.get('/', (req, res) => res.send('Hello World!'));
-app.listen(3000);
-\`\`\``,
-			timestamp: new Date().toISOString(),
-		},
+		// 		{
+		// 			id: nanoid(),
+		// 			role: 'user',
+		// 			content: 'Hello! How can you help me today?',
+		// 			timestamp: new Date().toISOString(),
+		// 		},
+		// 		{
+		// 			id: nanoid(),
+		// 			role: 'model',
+		// 			content: `### Here's some Express code
+		// **Steps:**
+		// 1. Install dependencies
+		// \n
+		// 2. Run the server
+		// \`\`\`javascript
+		// const express = require('express');
+		// const app = express();
+		// app.get('/', (req, res) => res.send('Hello World!'));
+		// app.listen(3000);
+		// \`\`\``,
+		// 			timestamp: new Date().toISOString(),
+		// 		},
 	],
 };
 
