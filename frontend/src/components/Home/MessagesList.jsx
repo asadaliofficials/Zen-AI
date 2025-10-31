@@ -65,9 +65,9 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 							What can I help with?
 						</p>
 					) : (
-						messages.map(message => (
+						messages.map((message, index) => (
 							<Motion.div
-								key={message.id}
+								key={message.id || message._id || `${message.role}-${index}`}
 								initial={{ opacity: 0, y: 20 }}
 								animate={{ opacity: 1, y: 0 }}
 								exit={{ opacity: 0, y: 10 }}
@@ -77,15 +77,15 @@ const MessagesList = ({ messages, isDark, isTyping, handlers, uiState }) => {
 								}`}
 							>
 								<div
-									className={`max-w-3xl flex  ${
+									className={`max-w-3xl flex ${
 										message.role === 'user' ? 'flex-row-reverse' : 'flex-row max-w-none w-full'
 									} space-x-3`}
 								>
 									{/* Message Content */}
-									<div className="flex flex-col  w-full">
+									<div className="flex flex-col w-full">
 										<div
 											id={message.id}
-											className={`px-4 py-3 rounded-2xl   ${
+											className={`px-4 py-3 rounded-2xl ${
 												message.role === 'user'
 													? 'dark:bg-[#303030] dark:text-white bg-[#303030] text-white'
 													: 'dark:bg-transparent dark:text-white bg-transparent text-black'

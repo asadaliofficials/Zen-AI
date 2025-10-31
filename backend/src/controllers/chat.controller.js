@@ -217,7 +217,10 @@ export const chatMessagesController = async (req, res) => {
 	try {
 		// Verify chat ownership
 		const chat = await chatModel.findOne({ _id: id, userId }).select('title');
-		if (!chat) return res.status(404).json({ message: 'Chat not found or unauthorized' });
+		if (!chat)
+			return res
+				.status(404)
+				.json({ success: false, statusCode: 404, message: 'Chat not found or unauthorized' });
 
 		const messages = await messageModel
 			.find({ chatId: id })
@@ -228,6 +231,8 @@ export const chatMessagesController = async (req, res) => {
 		const contents = hasMore ? messages.slice(0, limit) : messages;
 
 		return res.status(200).json({
+			success: true,
+			statusCode: 200,
 			chat: { id: chat._id, title: chat.title, author: name },
 			messages: {
 				contents: contents.reverse(), // reverse to maintain chronological order
@@ -238,6 +243,6 @@ export const chatMessagesController = async (req, res) => {
 	} catch (error) {
 		return res
 			.status(error.statusCode || 500)
-			.json({ message: error.message || 'Internal server error' });
+			.json({ success: false, statusCode: 500, message: error.message || 'Internal server error' });
 	}
 };

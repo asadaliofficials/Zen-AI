@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,10 +17,11 @@ const Sidebar = ({ isOpen, onToggle }) => {
 	const dispatch = useDispatch();
 
 	const chatId = useSelector(state => state.chats.chatId);
-
+	const Navigate = useNavigate();
 	const handleNewChat = () => {
 		dispatch(setChatId(null));
 		dispatch(clearMessages());
+		Navigate('/');
 		document.title = 'Zen Ai';
 	};
 
@@ -60,6 +61,9 @@ const Sidebar = ({ isOpen, onToggle }) => {
 	const handleChatClick = id => {
 		dispatch(setChatId(id));
 	};
+	useEffect(() => {
+		console.log('rendering sidebar');
+	}, [chatId]);
 
 	return (
 		<>
@@ -128,7 +132,12 @@ const Sidebar = ({ isOpen, onToggle }) => {
 						</svg>
 						<span>Temporary Chat</span>
 					</button>
-					<button className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
+					<button
+						onClick={() => {
+							toast.error('Feature not implemented yet!');
+						}}
+						className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+					>
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
 								strokeLinecap="round"
@@ -140,7 +149,12 @@ const Sidebar = ({ isOpen, onToggle }) => {
 						<span>Special Personalities</span>
 					</button>
 
-					<button className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white">
+					<button
+						onClick={() => {
+							toast.error('Feature not implemented yet!');
+						}}
+						className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+					>
 						<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 							<path
 								strokeLinecap="round"
@@ -163,10 +177,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
 							chats
 								.slice()
 								.reverse()
-								.map(chat => (
+								.map((chat, idx) => (
 									<button
 										title={chat.title}
-										key={chat._id}
+										key={idx}
 										id={chat._id}
 										onClick={() => handleChatClick(chat._id)}
 										className={`w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate ${
