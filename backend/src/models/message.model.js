@@ -23,6 +23,10 @@ const messageSchema = new mongoose.Schema({
 		type: Date,
 		default: Date.now,
 	},
+	loved: {
+		type: Boolean,
+		default: false,
+	},
 });
 
 const messageModel = mongoose.model('Message', messageSchema);

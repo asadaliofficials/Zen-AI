@@ -1,7 +1,7 @@
 import React from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import ResponceActions from "./ResponceActions";
+import ResponceActions from "./ResponseActions";
 
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";

@@ -1,7 +1,7 @@
 import React from 'react';
 import { toast } from 'react-toastify';
 
-const ResponceActions = ({ message, handlers, uiState, isSandbox, handleScreenshot }) => {
+const ResponseActions = ({ message, handlers, uiState, isSandbox, handleScreenshot }) => {
 	const {
 		copyStates = {},
 		screenshotStates = {},
@@ -115,4 +115,4 @@ const ResponceActions = ({ message, handlers, uiState, isSandbox, handleScreensh
 	);
 };
 
-export default ResponceActions;
+export default ResponseActions;

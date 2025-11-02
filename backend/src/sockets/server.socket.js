@@ -55,7 +55,7 @@ export function setupSocket(server) {
 				chatController(socket, message, chatId, userId, isNewChat, tempChat);
 			} catch (error) {
 				console.error('Socket message error:', error);
-				socket.emit('responce', {
+				socket.emit('response', {
 					success: false,
 					message: 'Internal server error',
 					statusCode: 500,

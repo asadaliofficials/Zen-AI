@@ -88,6 +88,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 				userId: userId,
 				userMessage: msg,
 				aiResponse: text,
+				loved: false,
 			});
 		} else {
 			await sandboxLogModel.create({
@@ -117,6 +118,27 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		console.error('Error in chatController:', error);
 	}
 };
+
+export const messageLoveController = async (req, res) => {
+	const { id } = req.params;
+	const { id: userId } = req.user;
+
+	try {
+		const message = await messageModel.findOne({ _id: id, userId });
+		if (message) {
+			message.loved = !message.loved;
+			await message.save();
+			return res.status(200).json({ success: true, message: 'Message loved successfully' });
+		} else {
+			return res.status(404).json({ success: false, message: 'Message not found' });
+		}
+	} catch (error) {
+		return res
+			.status(error.statusCode || 500)
+			.json({ message: error.message || 'Internal server error' });
+	}
+};
+
 
 export const sandboxChatController = async (socket, msg, chatId) => {
 	try {
