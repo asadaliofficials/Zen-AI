@@ -3,6 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+// eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
 
 import { addMessage, clearMessages, setMessages } from '../../features/messages/messagesSlice';
@@ -16,7 +17,7 @@ import {
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
-import { addOneChat, setChatId, setTempChat } from '../../features/chats/chatSlice';
+import { addOneChat, setChatId } from '../../features/chats/chatSlice';
 
 import { userSocket } from '../../sockets/client.socket';
 import { scrollToFullBottom, smartScroll } from '../../utils/autoScroll.util';
@@ -112,6 +113,8 @@ const Chat = () => {
 
 				if (data.isNewChat) {
 					dispatch(addOneChat({ title: data.content.title, id: data.content.chatId }));
+					console.log(data.content.chatId);
+					
 					document.title = data.content.title;
 					Navigate(`/chat/${data.content.chatId}`, { replace: true });
 				}
@@ -199,7 +202,13 @@ const Chat = () => {
 				onShareChat={() => {}}
 			/>
 
-			<MessagesList messages={messages} isTyping={ui.isTyping} handlers={handlers} uiState={ui} />
+			<MessagesList 
+				messages={messages} 
+				isTyping={ui.isTyping} 
+				handlers={handlers} 
+				uiState={ui} 
+				chatId={chatId}
+			/>
 
 			<Input
 				onSend={content => handlers.sendMessage({ content })}

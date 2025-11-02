@@ -9,6 +9,7 @@ const AppRoutes = () => {
 			<Routes>
 				<Route path="/" element={<HomeWrapper />} />
 				<Route path="/chat/:id" element={<HomeWrapper />} />
+
 				<Route path="/auth" element={<AuthPage />} />
 			</Routes>
 		</Router>

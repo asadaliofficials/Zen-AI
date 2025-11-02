@@ -3,11 +3,12 @@ import jwt from 'jsonwebtoken';
 import { JWT_SECRET } from '../config/env.config.js';
 
 const authMiddleware = (req, res, next) => {
-	console.log('req comes in auth middleware');
-
 	const { token } = req.cookies;
+
 	if (!token) {
-		return res.status(401).json({ success: false, statusCode: 401, message: 'Unauthorized' });
+		return res
+			.status(401)
+			.json({ success: false, statusCode: 401, message: 'Authorization token not found' });
 	}
 
 	try {
@@ -20,7 +21,8 @@ const authMiddleware = (req, res, next) => {
 
 		next();
 	} catch (error) {
-		return res.status(401).json({ success: false, statusCode: 401, message: 'Unauthorized' });
+		console.error('JWT verification error:', error.message);
+		return res.status(401).json({ success: false, statusCode: 401, message: 'Invalid token' });
 	}
 };
 export default authMiddleware;

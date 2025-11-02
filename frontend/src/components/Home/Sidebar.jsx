@@ -90,7 +90,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
 				<div className="flex items-center justify-between p-4">
 					<div className="flex items-center space-x-2">
 						<div className="w-8 h-8 rounded flex items-center justify-center">
-							<img src="images/logo.png" alt="logo" className="w-8 h-9" />
+							<img src="/images/logo.png" alt="logo" className="w-8 h-9" />
 						</div>
 						<span className="text-lg font-semibold text-black dark:text-white">Zen-AI</span>
 					</div>
@@ -181,10 +181,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
 									<button
 										title={chat.title}
 										key={idx}
-										id={chat._id}
-										onClick={() => handleChatClick(chat._id)}
+										id={chat._id || chat.id}
+										onClick={() => handleChatClick(chat._id || chat.id)}
 										className={`w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate ${
-											chatId == chat._id ? 'bg-[#303030]' : ''
+											chatId === (chat._id || chat.id) ? 'bg-[#303030]' : ''
 										}`}
 									>
 										{chat.title}
