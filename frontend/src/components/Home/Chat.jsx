@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 
 import {
   addMessage,
+  changeLovedMessage,
   clearMessages,
   setMessages,
 } from "../../features/messages/messagesSlice";
@@ -17,7 +18,6 @@ import {
   setCancelRequestId,
   setCopyState,
   setScreenshotState,
-  toggleLove,
   setReadingMessage,
   setSelectedModel,
 } from "../../features/ui/uiSlice";
@@ -68,10 +68,19 @@ const Chat = () => {
 
       document.title = chat.title || "Chat";
 
-      const formattedMessages = contents.flatMap((item) => [
-        { role: "user", content: item.userMessage },
-        { id: item._id, role: "model", content: item.aiResponse },
-      ]);
+      const formattedMessages = contents.flatMap((item) => {
+        console.log(item);
+
+        return [
+          { role: "user", content: item.userMessage },
+          {
+            loved: item.loved,
+            id: item._id,
+            role: "model",
+            content: item.aiResponse,
+          },
+        ];
+      });
 
       if (append) {
         // Prepend older messages to the beginning
@@ -252,15 +261,34 @@ const Chat = () => {
         1500
       );
     },
-    screenshot: (messageId) => {
-      new Audio(screenShotAudio).play();
-      dispatch(setScreenshotState({ messageId, value: true }));
-      setTimeout(
-        () => dispatch(setScreenshotState({ messageId, value: false })),
-        1500
-      );
+    loveMessage: async (messageId) => {
+      try {
+        // withCredentials must be passed as the axios config (3rd arg),
+        // not as the request body. Send empty body {} for PATCH.
+        const response = await axios.patch(
+          `http://localhost:3000/api/v1/chat/love/${messageId}`,
+          {},
+          { withCredentials: true }
+        );
+
+        if (response.data.success) {
+          dispatch(
+            changeLovedMessage({ messageId, loved: response.data.loved })
+          );
+          toast.success(response.data.message);
+        } else {
+          toast.error(response.data.message);
+        }
+      } catch (error) {
+        console.error("loveMessage error:", error);
+        // Prefer server message if available
+        toast.error(
+          error.response?.data?.message ||
+            error.message ||
+            "Failed to update message"
+        );
+      }
     },
-    loveMessage: (messageId) => dispatch(toggleLove(messageId)),
     readAloud: (content, messageId) => {
       const readingId = ui.readingMessageId;
       if (readingId === messageId) {

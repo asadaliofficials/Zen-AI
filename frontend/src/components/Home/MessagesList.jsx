@@ -21,7 +21,6 @@ const MessagesList = ({
   handlers,
   uiState,
   chatId,
-  hasMore,
   isLoadingMore,
   onScroll,
   containerRef,

@@ -35,6 +35,15 @@ const messagesSlice = createSlice({
     clearChat(state) {
       state.messages = [];
     },
+    changeLovedMessage(state, action) {
+      const { messageId, loved } = action.payload;
+      const message = state.messages.find(
+        (message) => message.id === messageId
+      );
+      if (message) {
+        message.loved = loved;
+      }
+    },
   },
 });
 
@@ -44,5 +53,6 @@ export const {
   clearChat,
   clearLastMessage,
   setMessages,
+  changeLovedMessage,
 } = messagesSlice.actions;
 export default messagesSlice.reducer;

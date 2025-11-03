@@ -1,19 +1,18 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
 import SharePopup from "../SharePopup";
+import { useSelector } from "react-redux";
 
 const ResponseActions = ({
   message,
   handlers,
-  uiState,
   isSandbox,
   handleScreenshot,
 }) => {
-  const { lovedMessages = {}, readingMessageId } = uiState || {};
-
   // Local state for each message's actions
   const [isCopied, setIsCopied] = useState(false);
   const [isScreenshotTaken, setIsScreenshotTaken] = useState(false);
+  const readingMessageId = useSelector((state) => state.ui.readingMessageId);
 
   const handleCopy = () => {
     handlers.copyMessage(message.content, message.id);
@@ -46,6 +45,7 @@ const ResponseActions = ({
   const handleShareClose = () => {
     setShowSharePopup(false);
   };
+  console.log(message);
 
   return (
     <div className="flex items-center space-x-2 mt-2 ml-2">
@@ -117,7 +117,7 @@ const ResponseActions = ({
 
       <button
         onClick={() => {
-          isSandbox
+          isSandbox == true
             ? toast.error("Please login to use this Feature!")
             : handlers.loveMessage(message.id);
         }}
@@ -131,7 +131,7 @@ const ResponseActions = ({
           viewBox="0 0 48 48"
         >
           <path
-            fill={lovedMessages[message.id] ? "currentColor" : "none"}
+            fill={message.loved ? "currentColor" : "none"}
             stroke="currentColor"
             strokeLinecap="round"
             strokeLinejoin="round"
@@ -143,7 +143,6 @@ const ResponseActions = ({
 
       <button
         onClick={() => {
-          console.log(isSandbox);
           isSandbox == true
             ? toast.error("Please login to use this Feature!")
             : handleShareClick();

@@ -13,7 +13,6 @@ import {
 	setCancelRequestId,
 	setCopyState,
 	setScreenshotState,
-	toggleLove,
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
@@ -121,7 +120,6 @@ const ChatSandbox = () => {
 			dispatch(setScreenshotState({ messageId, value: true }));
 			setTimeout(() => dispatch(setScreenshotState({ messageId, value: false })), 1500);
 		},
-		loveMessage: messageId => dispatch(toggleLove(messageId)),
 		shareMessage: messageId => console.log('Share message', messageId),
 		readAloud: (content, messageId) => {
 			const readingId = ui.readingMessageId;
