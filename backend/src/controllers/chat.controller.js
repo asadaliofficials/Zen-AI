@@ -128,7 +128,7 @@ export const messageLoveController = async (req, res) => {
 		if (message) {
 			message.loved = !message.loved;
 			await message.save();
-			return res.status(200).json({ success: true, message: 'Message loved successfully' });
+			return res.status(200).json({ success: true, message: 'Message loved status updated' });
 		} else {
 			return res.status(404).json({ success: false, message: 'Message not found' });
 		}
