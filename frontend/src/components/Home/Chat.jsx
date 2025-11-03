@@ -70,7 +70,7 @@ const Chat = () => {
 
       const formattedMessages = contents.flatMap((item) => [
         { role: "user", content: item.userMessage },
-        { role: "model", content: item.aiResponse },
+        { id: item._id, role: "model", content: item.aiResponse },
       ]);
 
       if (append) {
@@ -184,7 +184,9 @@ const Chat = () => {
           throw new Error(data.message);
         }
 
-        dispatch(addMessage({ role: "model", content: data.content.text }));
+        dispatch(
+          addMessage({ id: data.id, role: "model", content: data.content.text })
+        );
 
         if (data.isNewChat) {
           dispatch(

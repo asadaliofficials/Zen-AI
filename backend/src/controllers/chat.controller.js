@@ -139,7 +139,6 @@ export const messageLoveController = async (req, res) => {
 	}
 };
 
-
 export const sandboxChatController = async (socket, msg, chatId) => {
 	try {
 		const contents = [];
@@ -226,7 +225,7 @@ export const deleteChatController = async (req, res) => {
 		await messageModel.deleteMany({ chatId: id });
 	}
 
-	return res.status(200).json({ message: 'Chat and messages deleted', id });
+	return res.status(200).json({ success: true, message: 'Chat and messages deleted', id });
 };
 
 export const chatMessagesController = async (req, res) => {

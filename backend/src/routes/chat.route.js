@@ -23,7 +23,7 @@ router.post(
 	reqValidationResult,
 	createChatController
 );
-router.get('/delete/:id', authMiddleware, deleteChatController);
+router.delete('/delete/:id', authMiddleware, deleteChatController);
 router.get('/all', authMiddleware, getAllChatsController);
 router.get('/:id', authMiddleware, chatMessagesController);
 router.patch('/love/:id', authMiddleware, messageLoveController);

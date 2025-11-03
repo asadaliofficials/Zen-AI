@@ -99,7 +99,7 @@ const MessagesList = ({
             >
               {messages.map((message, index) => (
                 <motion.div
-                  key={message.id || message._id || `${message.role}-${index}`}
+                  key={index || message._id || `${message.role}-${index}`}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: 10 }}
