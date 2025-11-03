@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import axios from "axios";
 import { toast } from "react-toastify";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
@@ -17,7 +16,6 @@ import {
   setWaiting,
   setCancelRequestId,
   setCopyState,
-  setScreenshotState,
   setReadingMessage,
   setSelectedModel,
 } from "../../features/ui/uiSlice";
@@ -29,7 +27,6 @@ import { scrollToFullBottom, smartScroll } from "../../utils/autoScroll.util";
 import TopBar from "./TopBar";
 import MessagesList from "./MessagesList";
 import Input from "./Input";
-import screenShotAudio from "../../assets/sound/screenshot.mp3";
 
 import "../../css/chat.css";
 import axiosInstance from "../../services/axios.service";

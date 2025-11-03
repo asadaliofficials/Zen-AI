@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
-import axios from "axios";
 import { useSelector, useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";

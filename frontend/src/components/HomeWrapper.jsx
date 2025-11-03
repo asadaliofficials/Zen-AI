@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 import HomeSandbox from "./sandbox/Home.sandbox";
 import Home from "./home/Home";
 import { addChats } from "../features/chats/chatSlice";

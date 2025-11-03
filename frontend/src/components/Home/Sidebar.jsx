@@ -5,7 +5,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Cookies from "js-cookie";
 import { useNavigate } from "react-router-dom";
 import ConfirmPopup from "../conformPopup";
-import axios from "axios";
 import { toast } from "react-toastify";
 import { setChatId } from "../../features/chats/chatSlice";
 import { clearMessages } from "../../features/messages/messagesSlice";
