@@ -24,6 +24,8 @@ const MessagesList = ({
   isLoadingMore,
   onScroll,
   containerRef,
+  isReading,
+  author,
 }) => {
   const playSound = () => {
     const audio = new Audio(screenShotAudio);
@@ -151,8 +153,9 @@ const MessagesList = ({
                           isDark={isDark}
                           handlers={handlers}
                           uiState={uiState}
-                          isSandbox={user.userId ? "false" : "ture"}
+                          isSandbox={user?.userId ? "false" : "ture"}
                           handleScreenshot={handleScreenshot}
+                          isReading={isReading}
                         />
                       )}
                     </div>
@@ -160,6 +163,13 @@ const MessagesList = ({
                 </motion.div>
               ))}
             </motion.div>
+          )}
+          {/* credit to chat owner */}
+          {isReading && (
+            <div className="text-lg text-center text-gray-500 dark:text-gray-400 mt-18">
+              This is read-only chat shared by{" "}
+              <span className="font-bold">{author}</span>
+            </div>
           )}
         </AnimatePresence>
 

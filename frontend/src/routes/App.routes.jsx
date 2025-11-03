@@ -13,6 +13,7 @@ const AppRoutes = () => {
         <Route path="/chat/:id" element={<HomeWrapper />} />
         <Route path="/auth" element={<AuthPage />} />
         <Route path="/c/read/:id" element={<HomeSandbox />} />
+        <Route path="/m/read/:id" element={<HomeSandbox />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
     </Router>

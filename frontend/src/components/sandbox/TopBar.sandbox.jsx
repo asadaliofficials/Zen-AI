@@ -4,8 +4,14 @@ import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 
-const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
+const TopBarSandbox = ({
+  models = [],
+  selectedModel,
+  handleDeleteChat,
+  isReading,
+}) => {
   const [showModelDropdown, setShowModelDropdown] = useState(false);
+  console.log(isReading);
 
   const handleModelSelection = (id) => {
     if (id === "zen-1.5") return;
@@ -29,7 +35,7 @@ const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
           </span>
         </div>
         {/* Model Selection */}
-        <div className="relative model-dropdown">
+        <div className={`relative model-dropdown ${isReading ? "hidden" : ""}`}>
           <button
             onClick={() => setShowModelDropdown(!showModelDropdown)}
             className={`flex items-center space-x-2 px-3 py-1.5 rounded-lg cursor-pointer transition-colors dark:bg-[#2a2a2a] dark:border-gray-600 dark:hover:bg-[#353535] dark:text-white bg-gray-50 border-gray-300 hover:bg-gray-100 text-black`}
@@ -114,12 +120,14 @@ const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
         </div>
       </div>
       {/* Action Buttons */}
-      <div className="flex items-center space-x-2">
+      <div className={`flex items-center space-x-2 `}>
         <button
           onClick={() => {
             handleDeleteChat();
           }}
-          className={`flex cursor-pointer items-center space-x-2 px-3 py-2 rounded-lg transition-colors dark:bg-gray-700/50 dark:hover:bg-gray-700/70 dark:text-red-400 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700`}
+          className={`flex cursor-pointer items-center space-x-2 px-3 py-2 rounded-lg transition-colors dark:bg-gray-700/50 dark:hover:bg-gray-700/70 dark:text-red-400 bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 ${
+            isReading ? "hidden" : ""
+          }`}
           title="Delete Chat"
         >
           <svg
@@ -141,7 +149,9 @@ const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
           onClick={() => {
             handleModelSelection(null);
           }}
-          className={`flex cursor-pointer items-center space-x-2 px-3 py-2 rounded-lg transition-colors dark:bg-gray-700/50 dark:hover:bg-gray-700/70 dark:text-white dark:hover:text-gray-100 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900`}
+          className={`flex cursor-pointer items-center space-x-2 px-3 py-2 rounded-lg transition-colors dark:bg-gray-700/50 dark:hover:bg-gray-700/70 dark:text-white dark:hover:text-gray-100 bg-gray-100 hover:bg-gray-200 text-gray-700 hover:text-gray-900 ${
+            isReading ? "hidden" : ""
+          }`}
           title="Share Chat"
         >
           <svg
@@ -161,15 +171,29 @@ const TopBarSandbox = ({ models = [], selectedModel, handleDeleteChat }) => {
 
         <button
           onClick={handleLogin}
-          className="px-4 py-1.5 font-medium rounded-md cursor-pointer
+          className={`px-4 py-1.5 font-medium rounded-md cursor-pointer
   bg-black text-white 
   dark:bg-white dark:text-black
   hover:bg-gray-800 dark:hover:bg-gray-200
   transition-colors duration-200
   absolute top-18 right-6 z-9
-  sm:ml-8 sm:relative sm:top-auto sm:left-auto"
+  sm:ml-8 sm:relative sm:top-auto sm:left-auto ${isReading ? "hidden" : ""}`}
         >
           Login
+        </button>
+        <button
+          onClick={() => {
+            navigate("/");
+          }}
+          className={`px-4 py-1.5 font-medium rounded-md cursor-pointer
+  bg-black text-white 
+  dark:bg-white dark:text-black
+  hover:bg-gray-800 dark:hover:bg-gray-200
+  transition-colors duration-200
+  absolute top-18 right-6 z-9
+  sm:ml-8 sm:relative sm:top-auto sm:left-auto ${isReading ? "" : "hidden"}`}
+        >
+          Chat with Zen
         </button>
       </div>
     </div>

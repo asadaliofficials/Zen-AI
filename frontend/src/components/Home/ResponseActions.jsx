@@ -8,6 +8,7 @@ const ResponseActions = ({
   handlers,
   isSandbox,
   handleScreenshot,
+  isReading,
 }) => {
   // Local state for each message's actions
   const [isCopied, setIsCopied] = useState(false);
@@ -30,18 +31,16 @@ const ResponseActions = ({
   };
 
   const handleReadAloud = () => {
-
-
     handlers.readAloud(message.content, message.id);
   };
   const [showSharePopup, setShowSharePopup] = useState(false);
 
   const handleShareClick = () => {
     if (!message.id) return;
-      if (isTemp) {
-          toast.error("Cannot share temporary chat!");
-          return;
-        }
+    if (isTemp) {
+      toast.error("Cannot share temporary chat!");
+      return;
+    }
     setShowSharePopup(true);
   };
 
@@ -121,6 +120,8 @@ const ResponseActions = ({
         onClick={() => {
           isSandbox == true
             ? toast.error("Please login to use this Feature!")
+            : isReading == true
+            ? toast.error("This is readonly Chat!")
             : handlers.loveMessage(message.id);
         }}
         className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
@@ -147,6 +148,8 @@ const ResponseActions = ({
         onClick={() => {
           isSandbox == true
             ? toast.error("Please login to use this Feature!")
+            : isReading == true
+            ? toast.error("This is readonly Chat!")
             : handleShareClick();
         }}
         className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
