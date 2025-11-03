@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { toast } from "react-toastify";
+import SharePopup from "../SharePopup";
 
 const ResponseActions = ({
   message,
@@ -34,6 +35,16 @@ const ResponseActions = ({
     console.log(message.content, message._id);
 
     handlers.readAloud(message.content, message.id);
+  };
+  const [showSharePopup, setShowSharePopup] = useState(false);
+
+  const handleShareClick = () => {
+    if (!message.id) return;
+    setShowSharePopup(true);
+  };
+
+  const handleShareClose = () => {
+    setShowSharePopup(false);
   };
 
   return (
@@ -132,9 +143,10 @@ const ResponseActions = ({
 
       <button
         onClick={() => {
-          isSandbox
+          console.log(isSandbox);
+          isSandbox == true
             ? toast.error("Please login to use this Feature!")
-            : handlers.shareMessage(message.id);
+            : handleShareClick();
         }}
         className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
         title="Share"
@@ -178,6 +190,12 @@ const ResponseActions = ({
           />
         </svg>
       </button>
+      <SharePopup
+        show={showSharePopup}
+        id={message.id}
+        onClose={handleShareClose}
+        sharing={"message"}
+      />
     </div>
   );
 };

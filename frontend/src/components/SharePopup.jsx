@@ -2,12 +2,13 @@ import React, { useState, useEffect } from "react";
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from "framer-motion";
 
-const SharePopup = ({ show, chatId, onClose }) => {
+const SharePopup = ({ show, id, onClose, sharing }) => {
   const [isLoading, setIsLoading] = useState(true);
   const [countdown, setCountdown] = useState(2);
   const [copied, setCopied] = useState(false);
 
-  const shareUrl = `http://localhost/view/${chatId}`;
+  const chatUrl = `http://localhost/c/read/${id}`;
+  const msgUrl = `http://localhost/m/read/${id}`;
 
   useEffect(() => {
     if (show) {
@@ -31,7 +32,7 @@ const SharePopup = ({ show, chatId, onClose }) => {
   }, [show]);
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(shareUrl);
+    navigator.clipboard.writeText(sharing === "chat" ? chatUrl : msgUrl);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
@@ -62,11 +63,15 @@ const SharePopup = ({ show, chatId, onClose }) => {
 							dark:bg-[#1e1e1e] dark:text-white"
             >
               {/* Title */}
-              <h2 className="text-lg font-semibold mb-2">Share Chat</h2>
+              <h2 className="text-lg font-semibold mb-2">
+                {sharing === "chat" ? "Share Chat " : "Share Message"}
+              </h2>
 
               {/* Description */}
               <p className="text-sm text-gray-600 dark:text-gray-300 mb-6">
-                Share this chat with others using the link below.
+                {sharing === "chat"
+                  ? "Share this chat with others using the link below."
+                  : "Share this message with others using the link below."}
               </p>
 
               {/* Loading or URL Input */}
@@ -86,7 +91,7 @@ const SharePopup = ({ show, chatId, onClose }) => {
                     <div className="flex items-center space-x-2">
                       <input
                         type="text"
-                        value={shareUrl}
+                        value={sharing === "chat" ? chatUrl : msgUrl}
                         readOnly
                         className="flex-1 px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600
                                  bg-gray-50 dark:bg-[#2a2a2a] 

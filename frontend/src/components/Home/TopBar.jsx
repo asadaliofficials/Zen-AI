@@ -202,8 +202,9 @@ const TopBar = ({ models = [], selectedModel, setSelectedModel }) => {
       {/* Share Popup */}
       <SharePopup
         show={showSharePopup}
-        chatId={chatId}
+        id={chatId}
         onClose={handleShareClose}
+        sharing={"chat"}
       />
     </div>
   );

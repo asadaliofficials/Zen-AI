@@ -11,6 +11,7 @@ import { MarkdownMessage } from "../MarkdownMessage";
 import { takeScreenshot } from "../../utils/screenshot.util";
 import { getRandomName } from "../../utils/getRandomName.util";
 import screenShotAudio from "../../assets/sound/screenshot.mp3";
+import { useSelector } from "react-redux";
 
 // eslint-disable-next-line no-unused-vars
 const MessagesList = ({
@@ -29,6 +30,9 @@ const MessagesList = ({
     const audio = new Audio(screenShotAudio);
     audio.play();
   };
+
+  const user = useSelector((state) => state.user.user);
+  console.log(user);
 
   const handleScreenshot = (id) => {
     const elem = document.getElementById(id);
@@ -149,7 +153,7 @@ const MessagesList = ({
                           isDark={isDark}
                           handlers={handlers}
                           uiState={uiState}
-                          isSandbox={true}
+                          isSandbox={user.userId ? "false" : "ture"}
                           handleScreenshot={handleScreenshot}
                         />
                       )}
