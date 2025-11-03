@@ -9,6 +9,7 @@ import axios from "axios";
 import { toast } from "react-toastify";
 import { setChatId } from "../../features/chats/chatSlice";
 import { clearMessages } from "../../features/messages/messagesSlice";
+import axiosInstance from "../../services/axios.service";
 // import '../../css/chat.css';
 const Sidebar = ({ isOpen, onToggle }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
@@ -42,8 +43,8 @@ const Sidebar = ({ isOpen, onToggle }) => {
   };
   const accountDeleteHandler = async () => {
     try {
-      const response = await axios.delete(
-        `http://localhost:3000/api/v1/auth/delete/${user.userId}`
+      const response = await axiosInstance.delete(
+        `/auth/delete/${user.userId}`
       );
       console.log(response.data);
       if (!response.data.success) throw new Error("failed to delete account!");

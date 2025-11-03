@@ -9,6 +9,7 @@ import ConfirmPopup from "../conformPopup";
 import SharePopup from "../SharePopup";
 import { deleteOneChat, setChatId } from "../../features/chats/chatSlice";
 import { clearChat } from "../../features/messages/messagesSlice";
+import axiosInstance from "../../services/axios.service";
 
 const TopBar = ({ models = [], selectedModel, setSelectedModel }) => {
   const [showModelDropdown, setShowModelDropdown] = useState(false);
@@ -32,10 +33,9 @@ const TopBar = ({ models = [], selectedModel, setSelectedModel }) => {
   const handleDeleteConfirm = async () => {
     setIsDeleting(true);
     try {
-      const response = await axios.delete(
-        `http://localhost:3000/api/v1/chat/delete/${chatId}`,
-        { withCredentials: true }
-      );
+      const response = await axiosInstance.delete(`/chat/delete/${chatId}`, {
+        withCredentials: true,
+      });
       if (response.data.success) {
         toast.success("Chat deleted successfully!");
         document.title = "Zen AI";

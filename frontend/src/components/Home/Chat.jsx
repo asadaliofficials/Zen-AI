@@ -32,6 +32,7 @@ import Input from "./Input";
 import screenShotAudio from "../../assets/sound/screenshot.mp3";
 
 import "../../css/chat.css";
+import axiosInstance from "../../services/axios.service";
 
 const Chat = () => {
   const dispatch = useDispatch();
@@ -55,12 +56,9 @@ const Chat = () => {
   const getChatMessages = async (id, start = 0, append = false) => {
     try {
       console.log("Fetching chat messages for:", id, "start:", start);
-      const response = await axios.get(
-        `http://localhost:3000/api/v1/chat/${id}?start=${start}`,
-        {
-          withCredentials: true,
-        }
-      );
+      const response = await axiosInstance.get(`/chat/${id}?start=${start}`, {
+        withCredentials: true,
+      });
 
       const chat = response.data.chat;
       const contents = response.data.messages.contents;
@@ -263,10 +261,8 @@ const Chat = () => {
     },
     loveMessage: async (messageId) => {
       try {
-        // withCredentials must be passed as the axios config (3rd arg),
-        // not as the request body. Send empty body {} for PATCH.
-        const response = await axios.patch(
-          `http://localhost:3000/api/v1/chat/love/${messageId}`,
+        const response = await axiosInstance.patch(
+          `/chat/love/${messageId}`,
           {},
           { withCredentials: true }
         );

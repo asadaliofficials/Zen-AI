@@ -7,8 +7,8 @@ const SharePopup = ({ show, id, onClose, sharing }) => {
   const [countdown, setCountdown] = useState(2);
   const [copied, setCopied] = useState(false);
 
-  const chatUrl = `http://localhost/c/read/${id}`;
-  const msgUrl = `http://localhost/m/read/${id}`;
+  const chatUrl = `http://localhost:3000/c/read/${id}`;
+  const msgUrl = `http://localhost:3000/m/read/${id}`;
 
   useEffect(() => {
     if (show) {
