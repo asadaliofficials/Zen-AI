@@ -25,7 +25,6 @@ const HomeWrapper = () => {
         } else {
           setResponse(response.data);
           dispatch(addChats(response.data.chats.contents.reverse()));
-          console.log(response.data);
 
           dispatch(addUser(response.data.user));
           setIsLoggedIn(true);

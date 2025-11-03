@@ -15,15 +15,19 @@ const TopBar = ({ models = [], selectedModel, setSelectedModel }) => {
   const [showDeletePopup, setShowDeletePopup] = useState(false);
   const [showSharePopup, setShowSharePopup] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
+  const isTemp = useSelector((state) => state.chats.isTemp);
 
   const chatId = useSelector((state) => state.chats.chatId);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  console.log(chatId);
 
   const handleDeleteClick = () => {
     if (!chatId) {
       toast.error("Please select a chat to delete!");
+      return;
+    }
+    if (isTemp) {
+      toast.error("Cannot delete temporary chat!");
       return;
     }
     setShowDeletePopup(true);
@@ -39,7 +43,6 @@ const TopBar = ({ models = [], selectedModel, setSelectedModel }) => {
         toast.success("Chat deleted successfully!");
         document.title = "Zen AI";
         dispatch(deleteOneChat(response.data.id));
-        console.log(response.data.id);
         dispatch(clearChat());
         dispatch(setChatId(null));
         navigate("/");
@@ -59,6 +62,10 @@ const TopBar = ({ models = [], selectedModel, setSelectedModel }) => {
   const handleShareClick = () => {
     if (!chatId) {
       toast.error("Please select a chat to share!");
+      return;
+    }
+    if (isTemp) {
+      toast.error("Cannot share temporary chat!");
       return;
     }
     setShowSharePopup(true);

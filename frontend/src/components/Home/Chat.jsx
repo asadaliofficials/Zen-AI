@@ -44,6 +44,7 @@ const Chat = () => {
   const [isLoadingMore, setIsLoadingMore] = useState(false);
   const [currentStart, setCurrentStart] = useState(0);
   const [isInitialLoad, setIsInitialLoad] = useState(true);
+  const isTemp = useSelector((state) => state.chats.isTemp);
 
   const cancelRef = useRef(null);
   const lastFetchedRef = useRef(null); // 🧠 Track last fetched chatId
@@ -52,7 +53,6 @@ const Chat = () => {
   // 🟢 Fetch chat messages from backend
   const getChatMessages = async (id, start = 0, append = false) => {
     try {
-      console.log("Fetching chat messages for:", id, "start:", start);
       const response = await axiosInstance.get(`/chat/${id}?start=${start}`, {
         withCredentials: true,
       });
@@ -64,8 +64,6 @@ const Chat = () => {
       document.title = chat.title || "Chat";
 
       const formattedMessages = contents.flatMap((item) => {
-        console.log(item);
-
         return [
           { role: "user", content: item.userMessage },
           {
@@ -93,12 +91,6 @@ const Chat = () => {
       }
 
       setHasMore(hasMoreMessages);
-      console.log(
-        "Loaded messages:",
-        formattedMessages,
-        "hasMore:",
-        hasMoreMessages
-      );
     } catch (error) {
       console.error("Error fetching chat messages:", error);
       toast.error("Failed to load chat messages");
@@ -161,7 +153,6 @@ const Chat = () => {
 
   // 🟢 On first mount → use URL param
   useEffect(() => {
-    console.log(id);
     if (id) {
       dispatch(setChatId(id));
       safeGetChatMessages(id);
@@ -170,7 +161,7 @@ const Chat = () => {
 
   // 🟢 When Redux chatId changes (sidebar click)
   useEffect(() => {
-    if (chatId && chatId !== id) {
+    if (chatId && chatId !== id && !isTemp) {
       Navigate(`/chat/${chatId}`, { replace: true });
       safeGetChatMessages(chatId);
     }
@@ -192,17 +183,16 @@ const Chat = () => {
           addMessage({ id: data.id, role: "model", content: data.content.text })
         );
 
-        if (data.isNewChat) {
+        console.log(data);
+
+        if (data.isNewChat && !data.tempChat) {
           dispatch(
             addOneChat({ title: data.content.title, id: data.content.chatId })
           );
-          console.log(data.content.chatId);
-
           document.title = data.content.title;
           Navigate(`/chat/${data.content.chatId}`, { replace: true });
         }
         setIsNewChat(data.isNewChat);
-
         if (!chatId && data.content.chatId) {
           dispatch(setChatId(data.content.chatId));
         }
@@ -218,7 +208,10 @@ const Chat = () => {
       }
     });
 
-    return () => userSocket.off("response");
+    return () => {
+      userSocket.disconnect();
+      userSocket.off("response");
+    };
   }, []);
 
   // 🧩 Handlers (unchanged except simplified sendMessage)
@@ -234,6 +227,10 @@ const Chat = () => {
         scrollToFullBottom();
         setTimeout(() => setIsInitialLoad(false), 500);
       }, 100);
+
+      userSocket.io.opts.query = { temp: isTemp ? "true" : "false" };
+
+      userSocket.connect();
       userSocket.emit(
         "message",
         JSON.stringify({ message: content, chatId: chatId || "null" })
@@ -257,6 +254,10 @@ const Chat = () => {
       );
     },
     loveMessage: async (messageId) => {
+      if (isTemp) {
+        toast.error("Cannot like temporary chat!");
+        return;
+      }
       try {
         const response = await axiosInstance.patch(
           `/chat/love/${messageId}`,

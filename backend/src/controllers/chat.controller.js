@@ -60,7 +60,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		contents.push({ role: 'user', parts: [{ text: msg }] });
 
 		// Add system prompt for title generation if it's a new chat
-		if (isNewChat) {
+		if (isNewChat && !tempChat) {
 			contents.unshift({
 				role: 'user',
 				parts: [
@@ -128,7 +128,9 @@ export const messageLoveController = async (req, res) => {
 		if (message) {
 			message.loved = !message.loved;
 			await message.save();
-			return res.status(200).json({ success: true, message: 'Message loved status updated', loved: message.loved });
+			return res
+				.status(200)
+				.json({ success: true, message: 'Message loved status updated', loved: message.loved });
 		} else {
 			return res.status(404).json({ success: false, message: 'Message not found' });
 		}

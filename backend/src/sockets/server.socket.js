@@ -24,6 +24,7 @@ export function setupSocket(server) {
 
 	userNamespace.on('connection', socket => {
 		console.log(`logged in user connected: ${socket.id}`);
+
 		socket.on('message', obj => {
 			console.log('message recieved at loggedin socket');
 			try {
@@ -37,7 +38,7 @@ export function setupSocket(server) {
 					return;
 				}
 
-				const { message, chatId } = JSON.parse(obj);
+				let { message, chatId } = JSON.parse(obj);
 				const isNewChat = chatId === 'null';
 
 				const errors = messageValidator(message, chatId);
@@ -52,6 +53,11 @@ export function setupSocket(server) {
 				}
 
 				const tempChat = socket.handshake.query.temp;
+				// assign new chatId if chat is temp and new chat
+
+				if (isNewChat && tempChat) {
+					chatId = nanoid(20);
+				}
 				chatController(socket, message, chatId, userId, isNewChat, tempChat);
 			} catch (error) {
 				console.error('Socket message error:', error);
@@ -82,10 +88,10 @@ export function setupSocket(server) {
 				typeof message !== 'string' ||
 				!message.trim() ||
 				message.length < 1 ||
-				message.length > 1000
+				message.length > 10000
 			) {
 				socket.emit('response', {
-					message: 'Message must be between 1 and 1000 characters',
+					message: 'Message must be between 1 and 10000 characters',
 				});
 				return;
 			}

@@ -31,7 +31,6 @@ const MessagesList = ({
   };
 
   const user = useSelector((state) => state.user.user);
-  console.log(user);
 
   const handleScreenshot = (id) => {
     const elem = document.getElementById(id);

@@ -74,6 +74,7 @@ const ChatSandbox = () => {
     });
     return () => {
       sandboxSocket.off("response");
+      sandboxSocket.disconnect();
     };
   }, []);
   const handlers = {
@@ -101,7 +102,7 @@ const ChatSandbox = () => {
         }, 1000);
         return;
       }
-
+      sandboxSocket.connect();
       sandboxSocket.emit(
         "message",
         JSON.stringify({ message: content, chatId: chatId || "null" })
@@ -133,7 +134,6 @@ const ChatSandbox = () => {
         1500
       );
     },
-    shareMessage: (messageId) => console.log("Share message", messageId),
     readAloud: (content, messageId) => {
       const readingId = ui.readingMessageId;
 

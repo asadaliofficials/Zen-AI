@@ -11,8 +11,9 @@ export function messageValidator(message, chatId) {
 
 	const isMongoId = /^[a-f\d]{24}$/i.test(chatId);
 	const isNullValue = chatId === null || chatId === 'null';
+	const isLength20 = chatId.length == 20;
 
-	if (!isNullValue && !isMongoId) {
+	if (!isNullValue && !isMongoId && !isLength20) {
 		errors.push({ field: 'chatId', message: 'Invalid Chat Id' });
 	}
 

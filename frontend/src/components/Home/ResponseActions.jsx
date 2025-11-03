@@ -13,6 +13,7 @@ const ResponseActions = ({
   const [isCopied, setIsCopied] = useState(false);
   const [isScreenshotTaken, setIsScreenshotTaken] = useState(false);
   const readingMessageId = useSelector((state) => state.ui.readingMessageId);
+  const isTemp = useSelector((state) => state.chats.isTemp);
 
   const handleCopy = () => {
     handlers.copyMessage(message.content, message.id);
@@ -29,9 +30,7 @@ const ResponseActions = ({
   };
 
   const handleReadAloud = () => {
-    console.log(message);
 
-    console.log(message.content, message._id);
 
     handlers.readAloud(message.content, message.id);
   };
@@ -39,13 +38,16 @@ const ResponseActions = ({
 
   const handleShareClick = () => {
     if (!message.id) return;
+      if (isTemp) {
+          toast.error("Cannot share temporary chat!");
+          return;
+        }
     setShowSharePopup(true);
   };
 
   const handleShareClose = () => {
     setShowSharePopup(false);
   };
-  console.log(message);
 
   return (
     <div className="flex items-center space-x-2 mt-2 ml-2">
