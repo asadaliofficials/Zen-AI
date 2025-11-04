@@ -15,6 +15,7 @@ const ResponseActions = ({
   const [isScreenshotTaken, setIsScreenshotTaken] = useState(false);
   const readingMessageId = useSelector((state) => state.ui.readingMessageId);
   const isTemp = useSelector((state) => state.chats.isTemp);
+  console.log(isSandbox);
 
   const handleCopy = () => {
     handlers.copyMessage(message.content, message.id);
@@ -118,7 +119,7 @@ const ResponseActions = ({
 
       <button
         onClick={() => {
-          if (isSandbox)
+          if (isSandbox == true)
             return toast.error("Please login to use this Feature!");
           if (isReading) return toast.error("This is readonly Chat!");
           handlers.loveMessage(message.id);
@@ -145,7 +146,7 @@ const ResponseActions = ({
 
       <button
         onClick={() => {
-          if (isSandbox)
+          if (isSandbox == true)
             return toast.error("Please login to use this Feature!");
           if (isReading) return toast.error("This is readonly Chat!");
           handleShareClick();

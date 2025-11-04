@@ -37,9 +37,14 @@ const Home = () => {
 
   return (
     <div className={`flex h-screen dark:bg-[#181818] bg-white`}>
-      <Sidebar isOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} onToggle={toggleSidebar} theme={theme} />
+      <Sidebar
+        isOpen={sidebarOpen}
+        setSidebarOpen={setSidebarOpen}
+        onToggle={toggleSidebar}
+        theme={theme}
+      />
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="lg:hidden flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="lg:hidden  flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <button
             onClick={toggleSidebar}
             className={`p-2 rounded-lg transition-colors dark:hover:bg-gray-800 hover:bg-gray-100`}

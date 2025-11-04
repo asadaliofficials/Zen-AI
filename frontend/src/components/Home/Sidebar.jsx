@@ -96,7 +96,7 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0  backdrop-blur-xs bg-opacity-20 z-40 lg:hidden"
+            className="fixed inset-0  backdrop-blur-xs bg-opacity-20 z-40 hidden lg:hidden"
             onClick={onToggle}
           />
         )}
@@ -106,7 +106,7 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
       <motion.div
         variants={sidebarVariants}
         animate={isOpen ? "open" : "closed"}
-        className="fixed lg:relative top-0 left-0 h-full w-72 z-50 bg-[#F9F9F9] dark:bg-[#181818] flex flex-col"
+        className="fixed  lg:relative top-0 left-0 h-full w-72 z-50 bg-[#F9F9F9] dark:bg-[#181818] flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4">
