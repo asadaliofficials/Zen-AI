@@ -118,11 +118,10 @@ const ResponseActions = ({
 
       <button
         onClick={() => {
-          isSandbox == true
-            ? toast.error("Please login to use this Feature!")
-            : isReading == true
-            ? toast.error("This is readonly Chat!")
-            : handlers.loveMessage(message.id);
+          if (isSandbox)
+            return toast.error("Please login to use this Feature!");
+          if (isReading) return toast.error("This is readonly Chat!");
+          handlers.loveMessage(message.id);
         }}
         className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
         title="Love"
@@ -146,11 +145,10 @@ const ResponseActions = ({
 
       <button
         onClick={() => {
-          isSandbox == true
-            ? toast.error("Please login to use this Feature!")
-            : isReading == true
-            ? toast.error("This is readonly Chat!")
-            : handleShareClick();
+          if (isSandbox)
+            return toast.error("Please login to use this Feature!");
+          if (isReading) return toast.error("This is readonly Chat!");
+          handleShareClick();
         }}
         className="p-1.5 rounded-lg transition-colors cursor-pointer hover:bg-gray-200 text-black dark:hover:bg-[#303030] dark:text-white"
         title="Share"

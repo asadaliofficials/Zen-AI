@@ -10,7 +10,7 @@ import { setChatId, setTempChat } from "../../features/chats/chatSlice";
 import { clearMessages } from "../../features/messages/messagesSlice";
 import axiosInstance from "../../services/axios.service";
 // import '../../css/chat.css';
-const Sidebar = ({ isOpen, onToggle }) => {
+const Sidebar = ({ isOpen, onToggle , theme }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const chats = useSelector((state) => state.chats.chats);
   const dispatch = useDispatch();
@@ -92,7 +92,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
+            className="fixed inset-0  backdrop-blur-xs bg-opacity-20 z-40 lg:hidden"
             onClick={onToggle}
           />
         )}
@@ -102,7 +102,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
       <motion.div
         variants={sidebarVariants}
         animate={isOpen ? "open" : "closed"}
-        className="fixed lg:relative top-0 left-0 h-full w-72 z-50 bg-white dark:bg-[#181818] flex flex-col"
+        className="fixed lg:relative top-0 left-0 h-full w-72 z-50 bg-[#F9F9F9] dark:bg-[#181818] flex flex-col"
       >
         {/* Header */}
         <div className="flex items-center justify-between p-4">
@@ -127,7 +127,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
               <g fill="none" fillRule="evenodd">
                 <path d="m12.594 23.258l-.012.002l-.071.035l-.02.004l-.014-.004l-.071-.036q-.016-.004-.024.006l-.004.01l-.017.428l.005.02l.01.013l.104.074l.015.004l.012-.004l.104-.074l.012-.016l.004-.017l-.017-.427q-.004-.016-.016-.018m.264-.113l-.014.002l-.184.093l-.01.01l-.003.011l.018.43l.005.012l.008.008l.201.092q.019.005.029-.008l.004-.014l-.034-.614q-.005-.019-.02-.022m-.715.002a.02.02 0 0 0-.027.006l-.006.014l-.034.614q.001.018.017.024l.015-.002l.201-.093l.01-.008l.003-.011l.018-.43l-.003-.012l-.01-.01z"></path>
                 <path
-                  fill="currentColor"
+                  fill={theme}
                   d="M3 5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zm2 0h3v14H5zm11.207 5.586L14.793 12l1.414 1.414a1 1 0 0 1-1.414 1.414l-2.121-2.12a1 1 0 0 1 0-1.415l2.121-2.121a1 1 0 1 1 1.414 1.414"
                 ></path>
               </g>
@@ -139,7 +139,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
         <div className="p-4 space-y-2">
           <button
             onClick={handleNewChat}
-            className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+            className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
           >
             <svg
               className="w-5 h-5"
@@ -158,8 +158,8 @@ const Sidebar = ({ isOpen, onToggle }) => {
           </button>
           <button
             onClick={handleTempChat}
-            className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white ${
-              isTemp == true ? "bg-[#303030]" : ""
+            className={`w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white ${
+              isTemp == true ? "bg-gray-300 dark:bg-[#303030]" : ""
             }`}
           >
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
@@ -171,7 +171,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
             onClick={() => {
               toast.error("Feature not implemented yet!");
             }}
-            className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+            className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
           >
             <svg
               className="w-5 h-5"
@@ -193,7 +193,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
             onClick={() => {
               toast.error("Feature not implemented yet!");
             }}
-            className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+            className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
           >
             <svg
               className="w-5 h-5"
@@ -232,8 +232,10 @@ const Sidebar = ({ isOpen, onToggle }) => {
                     key={idx}
                     id={chat._id || chat.id}
                     onClick={() => handleChatClick(chat._id || chat.id)}
-                    className={`w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate ${
-                      chatId === (chat._id || chat.id) ? "bg-[#303030]" : ""
+                    className={`w-full cursor-pointer text-left px-3 py-2 rounded-lg transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-gray-700 dark:text-gray-300 truncate ${
+                      chatId === (chat._id || chat.id)
+                        ? "bg-gray-300 dark:bg-[#303030]"
+                        : ""
                     }`}
                   >
                     {chat.title}
@@ -248,7 +250,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
           <div className="relative">
             <button
               onClick={() => setShowProfileMenu(!showProfileMenu)}
-              className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+              className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2 rounded-lg transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
             >
               <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
                 <span className="text-white text-sm font-medium">
@@ -290,7 +292,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
                       setShowLogoutPopup((state) => !state);
                       setShowProfileMenu(!showProfileMenu);
                     }}
-                    className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-black dark:text-white"
+                    className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
                   >
                     Logout
                   </button>
@@ -299,7 +301,7 @@ const Sidebar = ({ isOpen, onToggle }) => {
                       setshowDelAccPopup((state) => !state);
                       setShowProfileMenu(!showProfileMenu);
                     }}
-                    className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-100 dark:hover:bg-[#303030] text-red-600 dark:text-red-400"
+                    className="w-full cursor-pointer text-left px-3 py-2 text-sm transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-red-600 dark:text-red-400"
                   >
                     Delete Account
                   </button>
