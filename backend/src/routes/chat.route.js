@@ -4,6 +4,8 @@ import {
 	createChatController,
 	deleteChatController,
 	getAllChatsController,
+	getChatMessagesController,
+	getOneMessageController,
 	messageLoveController,
 } from '../controllers/chat.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
@@ -27,5 +29,7 @@ router.delete('/delete/:id', authMiddleware, deleteChatController);
 router.get('/all', authMiddleware, getAllChatsController);
 router.get('/:id', authMiddleware, chatMessagesController);
 router.patch('/love/:id', authMiddleware, messageLoveController);
+router.get('/read/c/:id', getChatMessagesController);
+router.get('/read/m/:id', getOneMessageController);
 
 export default router;

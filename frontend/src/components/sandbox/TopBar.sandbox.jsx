@@ -11,7 +11,6 @@ const TopBarSandbox = ({
   isReading,
 }) => {
   const [showModelDropdown, setShowModelDropdown] = useState(false);
-  console.log(isReading);
 
   const handleModelSelection = (id) => {
     if (id === "zen-1.5") return;

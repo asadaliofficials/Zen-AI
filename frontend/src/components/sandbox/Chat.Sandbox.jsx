@@ -31,7 +31,6 @@ import axiosInstance from "../../services/axios.service";
 
 const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
   const { id } = useParams();
-  console.log(id);
 
   const Navigate = useNavigate();
 
@@ -46,7 +45,6 @@ const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
   const [isInitialLoad, setIsInitialLoad] = useState(true);
   const lastFetchedRef = useRef(null); // 🧠 Track last fetched chatId
   const messagesContainerRef = useRef(null);
-  const [chatAuthor, setchatAuthor] = useState(true);
 
   const cancelRef = useRef(null);
 
@@ -100,22 +98,22 @@ const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
 
       setTimeout(() => scrollToFullBottom(), 100);
 
-      if (!sandboxSocket.connected) {
-        setTimeout(() => {
-          dispatch(
-            addMessage({
-              role: "model",
-              content:
-                "Failed to connect with server, check you internet connection or try again later!",
-            })
-          );
-          scrollToFullBottom();
-          dispatch(setTyping(false));
-          dispatch(setWaiting(false));
-          dispatch(setCancelRequestId(null));
-        }, 1000);
-        return;
-      }
+      // if (!sandboxSocket.connected) {
+      //   setTimeout(() => {
+      //     dispatch(
+      //       addMessage({
+      //         role: "model",
+      //         content:
+      //           "Failed to connect with server, check you internet connection or try again later!",
+      //       })
+      //     );
+      //     scrollToFullBottom();
+      //     dispatch(setTyping(false));
+      //     dispatch(setWaiting(false));
+      //     dispatch(setCancelRequestId(null));
+      //   }, 1000);
+      //   return;
+      // }
       sandboxSocket.connect();
       sandboxSocket.emit(
         "message",
@@ -171,15 +169,61 @@ const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
     setModel: (modelId) => dispatch(setSelectedModel(modelId)),
   };
 
-  const getChatMessages = async (id, start = 0, append = false) => {
+  const getOneMessage = async (id, append = false) => {
     try {
-      const response = await axiosInstance.get(`/chat/${id}?start=${start}`, {
+      const response = await axiosInstance.get(`/chat/read/m/${id}`, {
         withCredentials: true,
       });
       console.log(response.data);
+      const contents = response.data.messages.contents;
+
+      const msg = [
+        { role: "user", content: contents.userMessage },
+        {
+          loved: contents.loved,
+          id: contents._id,
+          role: "model",
+          content: contents.aiResponse,
+        },
+      ];
+
+      if (append) {
+        // Prepend older messages to the beginning
+        dispatch(setMessages(msg));
+      } else {
+        // Initial load - replace all messages
+        dispatch(setMessages(msg));
+        setCurrentStart(0);
+        setIsInitialLoad(true);
+        setTimeout(() => {
+          scrollToFullBottom();
+          // Enable scroll listener after animation completes
+          setTimeout(() => setIsInitialLoad(false), 500);
+        }, 100);
+      }
+    } catch (error) {
+      console.error("Error fetching chat messages:", error);
+      toast.error("Failed to load chat messages");
+      Navigate("/");
+    }
+  };
+
+  const getChatMessages = async (id, start = 0, append = false) => {
+    console.log(isReadingChat, isReadingMessage);
+
+    try {
+      const response = await axiosInstance.get(
+        `/chat/read/c/${id}?start=${start}`,
+        {
+          withCredentials: true,
+          params: {
+            isReading: isReadingChat || isReadingMessage ? "true" : "false",
+          },
+        }
+      );
+      console.log(response.data);
 
       const chat = response.data.chat;
-      setchatAuthor(chat.author);
       const contents = response.data.messages.contents;
       const hasMoreMessages = response.data.messages.hasMore;
 
@@ -267,8 +311,29 @@ const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
     if (!id) return;
     if (lastFetchedRef.current === id) return;
     lastFetchedRef.current = id;
-    getChatMessages(id);
+
+    if (isReadingChat == true) {
+      console.log("is reading chat calling");
+
+      getChatMessages(id);
+    } else if (isReadingMessage == true) {
+      console.log("is reading msg calling");
+
+      getOneMessage(id, true);
+    }
   };
+
+  useEffect(() => {
+    if (isReadingMessage == true) {
+      getOneMessage(id, true);
+    }
+  }, [isReadingMessage]);
+
+  useEffect(() => {
+    if (isReadingChat == true) {
+      getChatMessages(id);
+    }
+  }, [isReadingChat]);
 
   // 🟢 On first mount → use URL param
   useEffect(() => {
@@ -276,16 +341,7 @@ const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
       setChatId(id);
       safeGetChatMessages(id);
     }
-  }, []); // Run only once on mount
-
-  useEffect(() => {
-    if (!isReadingChat || !isReadingMessage) {
-      return;
-    }
-    const response = getChatMessages(chatId);
-    console.log(response);
-  }, [isReadingChat, isReadingMessage]);
-
+  }, []);
   return (
     <div className={`flex-1 flex flex-col h-screen dark:bg-[#212121] bg-white`}>
       <TopBarSandbox
@@ -308,7 +364,6 @@ const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
         uiState={ui}
         onScroll={handleScroll}
         isReading={isReadingMessage || isReadingChat}
-        author={chatAuthor}
       />
 
       <Input

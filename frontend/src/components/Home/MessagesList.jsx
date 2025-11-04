@@ -25,7 +25,6 @@ const MessagesList = ({
   onScroll,
   containerRef,
   isReading,
-  author,
 }) => {
   const playSound = () => {
     const audio = new Audio(screenShotAudio);
@@ -167,8 +166,7 @@ const MessagesList = ({
           {/* credit to chat owner */}
           {isReading && (
             <div className="text-lg text-center text-gray-500 dark:text-gray-400 mt-18">
-              This is read-only chat shared by{" "}
-              <span className="font-bold">{author}</span>
+              This is read-only chat shared by someone!
             </div>
           )}
         </AnimatePresence>

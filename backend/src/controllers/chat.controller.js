@@ -269,3 +269,65 @@ export const chatMessagesController = async (req, res) => {
 			.json({ success: false, statusCode: 500, message: error.message || 'Internal server error' });
 	}
 };
+export const getChatMessagesController = async (req, res) => {
+	const { id } = req.params;
+	// const { id: userId, name } = req.user;
+	const start = parseInt(req.query.start) || 0;
+	const limit = 20; // fixed limit for pagination
+
+	try {
+		// Verify chat ownership
+		const chat = await chatModel.findOne({ _id: id }).select('title');
+		if (!chat)
+			return res
+				.status(404)
+				.json({ success: false, statusCode: 404, message: 'Chat not found or unauthorized' });
+
+		const messages = await messageModel
+			.find({ chatId: id })
+			.sort({ createdAt: -1 })
+			.skip(start)
+			.limit(limit + 1);
+		const hasMore = messages.length > limit;
+		const contents = hasMore ? messages.slice(0, limit) : messages;
+
+		return res.status(200).json({
+			success: true,
+			statusCode: 200,
+			chat: { id: chat._id, title: chat.title },
+			messages: {
+				contents: contents.reverse(), // reverse to maintain chronological order
+				count: messages.length,
+				hasMore: hasMore,
+			},
+		});
+	} catch (error) {
+		return res
+			.status(error.statusCode || 500)
+			.json({ success: false, statusCode: 500, message: error.message || 'Internal server error' });
+	}
+};
+export const getOneMessageController = async (req, res) => {
+	const { id } = req.params;
+
+	try {
+		const message = await messageModel.findOne({ _id: id });
+
+		if (!message)
+			return res
+				.status(404)
+				.json({ success: false, statusCode: 404, message: 'Message not found or unauthorized' });
+
+		return res.status(200).json({
+			success: true,
+			statusCode: 200,
+			messages: {
+				contents: message, // reverse to maintain chronological order
+			},
+		});
+	} catch (error) {
+		return res
+			.status(error.statusCode || 500)
+			.json({ success: false, statusCode: 500, message: error.message || 'Internal server error' });
+	}
+};
