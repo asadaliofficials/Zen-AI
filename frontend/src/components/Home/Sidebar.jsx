@@ -10,7 +10,7 @@ import { setChatId, setTempChat } from "../../features/chats/chatSlice";
 import { clearMessages } from "../../features/messages/messagesSlice";
 import axiosInstance from "../../services/axios.service";
 // import '../../css/chat.css';
-const Sidebar = ({ isOpen, onToggle , theme }) => {
+const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
   const [showProfileMenu, setShowProfileMenu] = useState(false);
   const chats = useSelector((state) => state.chats.chats);
   const dispatch = useDispatch();
@@ -20,6 +20,7 @@ const Sidebar = ({ isOpen, onToggle , theme }) => {
   const chatId = useSelector((state) => state.chats.chatId);
   const Navigate = useNavigate();
   const handleNewChat = () => {
+    setSidebarOpen(false);
     dispatch(setChatId(null));
     dispatch(clearMessages());
     dispatch(setTempChat(false));
@@ -60,11 +61,14 @@ const Sidebar = ({ isOpen, onToggle , theme }) => {
   };
 
   const handleChatClick = (id) => {
+    setSidebarOpen(false);
     dispatch(setTempChat(false));
     dispatch(setChatId(id));
   };
 
   const handleTempChat = () => {
+    setSidebarOpen(false);
+
     dispatch(setChatId(null));
     dispatch(clearMessages());
     dispatch(setTempChat(true));
@@ -169,6 +173,8 @@ const Sidebar = ({ isOpen, onToggle , theme }) => {
           </button>
           <button
             onClick={() => {
+              setSidebarOpen(false);
+
               toast.error("Feature not implemented yet!");
             }}
             className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
@@ -191,6 +197,8 @@ const Sidebar = ({ isOpen, onToggle , theme }) => {
 
           <button
             onClick={() => {
+              setSidebarOpen(false);
+
               toast.error("Feature not implemented yet!");
             }}
             className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
