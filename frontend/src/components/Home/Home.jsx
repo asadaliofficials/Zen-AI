@@ -35,6 +35,12 @@ const Home = () => {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
+  useEffect(() => {
+    if (window.innerWidth >= 1024) {
+      setSidebarOpen(true);
+    }
+  }, [sidebarOpen]);
+
   return (
     <div className={`flex h-screen dark:bg-[#181818] bg-white`}>
       <Sidebar

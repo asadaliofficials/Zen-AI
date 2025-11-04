@@ -144,8 +144,8 @@ const Chat = () => {
   // 🧩 Prevent double fetching
   const safeGetChatMessages = (id) => {
     if (!id) return;
-    if (lastFetchedRef.current === id) return;
-    lastFetchedRef.current = id;
+    // if (lastFetchedRef.current === id) return;
+    // lastFetchedRef.current = id;
     if (!isNewChat) {
       getChatMessages(id);
     }

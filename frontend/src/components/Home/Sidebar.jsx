@@ -20,7 +20,9 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
   const chatId = useSelector((state) => state.chats.chatId);
   const Navigate = useNavigate();
   const handleNewChat = () => {
-    setSidebarOpen(false);
+    if (window.innerWidth <= 1024) {
+      setSidebarOpen(false);
+    }
     dispatch(setChatId(null));
     dispatch(clearMessages());
     dispatch(setTempChat(false));
@@ -61,13 +63,17 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
   };
 
   const handleChatClick = (id) => {
-    setSidebarOpen(false);
+    if (window.innerWidth <= 1024) {
+      setSidebarOpen(false);
+    }
     dispatch(setTempChat(false));
     dispatch(setChatId(id));
   };
 
   const handleTempChat = () => {
-    setSidebarOpen(false);
+    if (window.innerWidth <= 1024) {
+      setSidebarOpen(false);
+    }
 
     dispatch(setChatId(null));
     dispatch(clearMessages());
@@ -173,9 +179,11 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
           </button>
           <button
             onClick={() => {
-              setSidebarOpen(false);
+              if (window.innerWidth <= 1024) {
+                setSidebarOpen(false);
+              }
 
-              toast.error("Feature not implemented yet!");
+              toast.error("Feature is Under Development!");
             }}
             className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
           >
@@ -197,9 +205,11 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
 
           <button
             onClick={() => {
-              setSidebarOpen(false);
+              if (window.innerWidth <= 1024) {
+                setSidebarOpen(false);
+              }
 
-              toast.error("Feature not implemented yet!");
+              toast.error("Feature is Under Development!");
             }}
             className="w-full cursor-pointer flex items-center space-x-3 px-3 py-2.5 rounded-lg text-left transition-colors hover:bg-gray-300 dark:hover:bg-[#303030] text-black dark:text-white"
           >
