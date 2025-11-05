@@ -28,4 +28,14 @@ const geminiService = async (contents, isNewChat) => {
 	}
 };
 
+export const generateVectors = contents => {
+	const response = gemini.models.embedContent({
+		model: 'gemini-embedding-001',
+		content: contents,
+		config: {
+			outputDimensionality: 728,
+		},
+	});
+};
+
 export default geminiService;

@@ -3,7 +3,7 @@ import chatModel from '../models/chat.model.js';
 import messageModel from '../models/message.model.js';
 import sandboxLogModel from '../models/sandboxLog.model.js';
 import { createChat, deleteChat, saveDeletes } from '../services/db.service.js';
-import geminiService from '../services/gemini.service.js';
+import geminiService, { generateVectors } from '../services/gemini.service.js';
 
 export const getAllChatsController = async (req, res) => {
 	const { id: userId } = req.user;
@@ -90,6 +90,9 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 				aiResponse: text,
 				loved: false,
 			});
+
+			const vectors = generateVectors(msg);
+			console.log(vectors);
 		} else {
 			await sandboxLogModel.create({
 				chatId: chatId,
