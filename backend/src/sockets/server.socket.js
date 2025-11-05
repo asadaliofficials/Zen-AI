@@ -59,7 +59,10 @@ export function setupSocket(server) {
 					return;
 				}
 
-				const tempChat = socket.handshake.query.temp;
+				const tempChat = socket.handshake.query.temp === 'true' ? true : false;
+				console.log(tempChat);
+				console.log(false);
+
 				if (isNewChat && tempChat) chatId = nanoid(20);
 
 				chatController(socket, message, chatId, userId, isNewChat, tempChat);

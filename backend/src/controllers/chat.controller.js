@@ -4,6 +4,7 @@ import messageModel from '../models/message.model.js';
 import sandboxLogModel from '../models/sandboxLog.model.js';
 import { createChat, deleteChat, saveDeletes } from '../services/db.service.js';
 import geminiService, { generateVectors } from '../services/gemini.service.js';
+import { addVectors } from '../services/vectors.service.js';
 
 export const getAllChatsController = async (req, res) => {
 	const { id: userId } = req.user;
@@ -90,9 +91,6 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 				aiResponse: text,
 				loved: false,
 			});
-
-			const vectors = generateVectors(msg);
-			console.log(vectors);
 		} else {
 			await sandboxLogModel.create({
 				chatId: chatId,
@@ -112,6 +110,19 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 				...(title && { title }),
 			},
 		});
+
+		// save vectors on pinecone db
+		if (!tempChat) {
+			const vectors = await generateVectors([msg, text]);
+			const userMessageVector = vectors[0].values;
+			const aiResponseVector = vectors[1].values;
+
+			// Store user message vector
+			await addVectors(`${chatId}-user`, { chatId, role: 'user', text: msg.slice(0, 100)}, userMessageVector);
+
+			// Store AI response vector
+			await addVectors(`${chatId}-ai`, { chatId, role: 'model', text: text.slice(0, 100) }, aiResponseVector);
+		}
 	} catch (error) {
 		socket.emit('response', {
 			success: false,

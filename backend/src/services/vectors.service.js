@@ -1,12 +1,12 @@
 // Import the Pinecone library
 import { Pinecone } from '@pinecone-database/pinecone';
-import { PINECONE_API_KEY } from '../config/env.config';
+import { PINECONE_API_KEY } from '../config/env.config.js';
 
 // Initialize a Pinecone client with your API key
 const pc = new Pinecone({ apiKey: PINECONE_API_KEY });
 
 // Create a dense index with integrated embedding
-const zenAiIndex = pc.index('zen-ai-index');
+const zenAiIndex = pc.index('zen-ai');
 
 export const addVectors = async (id, metadata, vectors) => {
 	try {

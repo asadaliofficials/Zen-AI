@@ -231,6 +231,8 @@ const Chat = () => {
       userSocket.io.opts.query = { temp: isTemp ? "true" : "false" };
 
       userSocket.connect();
+      console.log("emiting message", chatId);
+
       userSocket.emit(
         "message",
         JSON.stringify({ message: content, chatId: chatId || "null" })

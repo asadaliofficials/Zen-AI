@@ -28,14 +28,24 @@ const geminiService = async (contents, isNewChat) => {
 	}
 };
 
-export const generateVectors = contents => {
-	const response = gemini.models.embedContent({
-		model: 'gemini-embedding-001',
-		content: contents,
-		config: {
-			outputDimensionality: 728,
-		},
-	});
+export const generateVectors = async contents => {
+	console.log(contents);
+
+	try {
+		const response = await gemini.models.embedContent({
+			model: 'gemini-embedding-001',
+			contents,
+			config: {
+				outputDimensionality: 768,
+			},
+		});
+
+		// Return the actual embedding vector
+		return response.embeddings;
+	} catch (err) {
+		console.error('Embedding error:', err);
+		throw err;
+	}
 };
 
 export default geminiService;
