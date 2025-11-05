@@ -47,8 +47,9 @@ app.use('/api/v1/chat', chatRouter);
 
 // serve the frontend
 if (NODE_ENV === 'production') {
-	app.use(express.static(path.join(__dirname, '../frontend/dist')));
+	const frontendPath = path.join(__dirname, '../frontend/dist');
 
+	app.use(express.static(frontendPath));
 	// Serve root explicitly
 	app.get('/', (req, res) => {
 		res.sendFile(path.join(frontendPath, 'index.html'));
