@@ -1,5 +1,6 @@
 import gemini from '../config/gemini.config.js';
 import customError from '../utils/customError.util.js';
+
 const geminiService = async (contents, isNewChat) => {
 	try {
 		const response = await gemini.models.generateContent({
