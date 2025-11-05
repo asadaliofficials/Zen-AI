@@ -18,11 +18,10 @@ const app = express();
 app.set('trust proxy', 1);
 
 // Middleware setup
-// origin: NODE_ENV === 'production' ? 'https://zen-ai.onrender.com' : 'http://localhost:5173',
 
 app.use(
 	cors({
-		origin: true,
+		origin: NODE_ENV === 'production' ? 'https://zen-ai.up.railway.app' : 'http://localhost:5173',
 		credentials: true,
 	})
 );
