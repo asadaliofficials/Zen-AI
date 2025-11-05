@@ -1,6 +1,11 @@
 import { Router } from 'express';
 
-import { deleteUserController, loginController, logoutController, registerController } from '../controllers/auth.controller.js';
+import {
+	deleteUserController,
+	loginController,
+	logoutController,
+	registerController,
+} from '../controllers/auth.controller.js';
 import { registerValidator } from '../validators/register.validator.js';
 import { reqValidationResult } from '../middlewares/reqValidationResult.middleware.js';
 import { loginValidator } from '../validators/login.validator.js';

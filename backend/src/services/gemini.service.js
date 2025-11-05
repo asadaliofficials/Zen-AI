@@ -41,7 +41,7 @@ export const generateVectors = async contents => {
 		});
 
 		// Return the actual embedding vector
-		return response.embeddings;
+		return response.embeddings[0].values;
 	} catch (err) {
 		console.error('Embedding error:', err);
 		throw err;

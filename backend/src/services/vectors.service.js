@@ -24,17 +24,17 @@ export const addVectors = async (id, metadata, vectors) => {
 	}
 };
 
-export const searchVectors = async (query, limit = 5, metadata) => {
+export const searchVectors = async (queryVector, limit = 5, metadataFilter) => {
 	try {
 		const response = await zenAiIndex.query({
-			query,
+			vector: queryVector, // ✅ correct key
 			topK: limit,
 			includeMetadata: true,
-			filter: metadata ? { metadata } : undefined,
+			filter: metadataFilter || undefined,
 		});
 		return response.matches;
 	} catch (error) {
-		console.log(error);
+		console.error('Error querying Pinecone:', error);
 		return [];
 	}
 };

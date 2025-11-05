@@ -4,7 +4,7 @@ import messageModel from '../models/message.model.js';
 import sandboxLogModel from '../models/sandboxLog.model.js';
 import { createChat, deleteChat, saveDeletes } from '../services/db.service.js';
 import geminiService, { generateVectors } from '../services/gemini.service.js';
-import { addVectors } from '../services/vectors.service.js';
+import { addVectors, searchVectors } from '../services/vectors.service.js';
 
 export const getAllChatsController = async (req, res) => {
 	const { id: userId } = req.user;
@@ -37,29 +37,6 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 			],
 		});
 
-		if (!isNewChat) {
-			let response;
-			if (!tempChat) {
-				response = (
-					await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
-				).reverse();
-			} else {
-				response = (
-					await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
-				).reverse();
-			}
-
-			if (response.length > 0) {
-				response.forEach(item => {
-					contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
-					contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
-				});
-			}
-		}
-
-		// Add current user message
-		contents.push({ role: 'user', parts: [{ text: msg }] });
-
 		// Add system prompt for title generation if it's a new chat
 		if (isNewChat && !tempChat) {
 			contents.unshift({
@@ -76,6 +53,63 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 			});
 		}
 
+		let fetchedMessagesIds = [];
+		if (!isNewChat) {
+			let response;
+			if (!tempChat) {
+				response = (
+					await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5)
+				).reverse();
+			} else {
+				response = (
+					await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5)
+				).reverse();
+			}
+
+			if (response.length > 0) {
+				response.forEach(item => {
+					contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
+					contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
+					fetchedMessagesIds.push(item._id.toString());
+				});
+			}
+		}
+
+		// generate vectors of user message and search for similar messages in the pinecone database
+		let userMessageVectors;
+		if (!tempChat) {
+			userMessageVectors = await generateVectors(msg);
+
+			// search vectores
+		const similarMessages = await searchVectors(userMessageVectors, 3, {userId});
+			if (similarMessages.length > 0) {
+				similarMessages.forEach(item => {
+					console.log(item.metadata.messageId);
+
+					if (!fetchedMessagesIds.includes(item.metadata.messageId)) {
+						contents.push({
+							role: item.metadata.role,
+							parts: [
+								{ text: `Context memory:\n${item.metadata.text}\nUse this context if relevant.` },
+							],
+						});
+					}
+				});
+			}
+		}
+
+		// Add current user message
+		contents.push({ role: 'user', parts: [{ text: msg }] });
+
+		// log contents
+		console.log(fetchedMessagesIds);
+
+		contents.forEach(item => {
+			console.log(`${item.role}: ${item.parts[0].text}`);
+		});
+
+		// socket.emit('response', { success: true, message: 'Generating response...' });
+		// return;
 		const { text, title } = await geminiService(contents, isNewChat);
 
 		// If it's a new chat, create it and get the chatId
@@ -83,8 +117,9 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 			const newChat = await createChat(title || 'New Chat', userId);
 			chatId = newChat._id;
 		}
+		let newMessage;
 		if (!tempChat) {
-			await messageModel.create({
+			newMessage = await messageModel.create({
 				chatId: chatId,
 				userId: userId,
 				userMessage: msg,
@@ -113,15 +148,21 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 
 		// save vectors on pinecone db
 		if (!tempChat) {
-			const vectors = await generateVectors([msg, text]);
-			const userMessageVector = vectors[0].values;
-			const aiResponseVector = vectors[1].values;
+			const aiResponseVectors = await generateVectors(text);
 
 			// Store user message vector
-			await addVectors(`${chatId}-user`, { chatId, role: 'user', text: msg.slice(0, 100)}, userMessageVector);
+			await addVectors(
+				`${newMessage._id}-user`,
+				{ chatId, messageId: newMessage._id, userId, role: 'user', text: msg },
+				userMessageVectors
+			);
 
 			// Store AI response vector
-			await addVectors(`${chatId}-ai`, { chatId, role: 'model', text: text.slice(0, 100) }, aiResponseVector);
+			await addVectors(
+				`${newMessage._id}-ai`,
+				{ chatId, messageId: newMessage._id, userId, role: 'model', text: text },
+				aiResponseVectors
+			);
 		}
 	} catch (error) {
 		socket.emit('response', {

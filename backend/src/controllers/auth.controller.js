@@ -2,8 +2,8 @@ import { createUser, deleteUser, saveDeletes } from '../services/db.service.js';
 import getToken from '../utils/jwtToken.util.js';
 import { NODE_ENV } from '../config/env.config.js';
 import { loginUserService } from '../services/db.service.js';
-import chatModel from '../models/chat.model.js';
 import messageModel from '../models/message.model.js';
+import chatModel from '../models/chat.model.js';
 
 export const registerController = async (req, res) => {
 	const { name, email, password } = req.body;
