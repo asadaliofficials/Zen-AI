@@ -49,8 +49,14 @@ app.use('/api/v1/chat', chatRouter);
 if (NODE_ENV === 'production') {
 	app.use(express.static(path.join(__dirname, '../frontend/dist')));
 
+	// Serve root explicitly
+	app.get('/', (req, res) => {
+		res.sendFile(path.join(frontendPath, 'index.html'));
+	});
+
+	// Catch-all for React Router paths
 	app.get('/*splat', (req, res) => {
-		res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+		res.sendFile(path.join(frontendPath, 'index.html'));
 	});
 }
 
