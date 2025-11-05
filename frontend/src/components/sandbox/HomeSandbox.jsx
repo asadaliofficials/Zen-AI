@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import ChatSandbox from "./Chat.sandbox";
+import ChatSandbox from "./ChatSandbox";
 
 const HomeSandbox = () => {
   const [isReadingChat, setIsReadingChat] = useState(false);

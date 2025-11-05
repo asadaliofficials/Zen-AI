@@ -1,53 +1,53 @@
-import React, { useEffect, useState } from "react";
-import HomeSandbox from "./sandbox/Home.sandbox";
-import Home from "./home/Home";
-import { addChats } from "../features/chats/chatSlice";
-import { useDispatch } from "react-redux";
-import { addUser } from "../features/user/userSlice";
-import axiosInstance from "../services/axios.service";
+import React, { useEffect, useState } from 'react';
+import HomeSandbox from './sandbox/HomeSandbox';
+import Home from './home/Home';
+import { addChats } from '../features/chats/chatSlice';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../features/user/userSlice';
+import axiosInstance from '../services/axios.service';
 
 const HomeWrapper = () => {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
-  const [response, setResponse] = useState(null);
-  const dispatch = useDispatch();
+	const [isLoggedIn, setIsLoggedIn] = useState(null);
+	const [response, setResponse] = useState(null);
+	const dispatch = useDispatch();
 
-  useEffect(() => {
-    let retryTimer;
+	useEffect(() => {
+		let retryTimer;
 
-    const fetchData = async () => {
-      try {
-        const response = await axiosInstance.get("/chat/all", {
-          withCredentials: true,
-        });
+		const fetchData = async () => {
+			try {
+				const response = await axiosInstance.get('/chat/all', {
+					withCredentials: true,
+				});
 
-        if (!response.data.success) {
-          setIsLoggedIn(false);
-        } else {
-          setResponse(response.data);
-          dispatch(addChats(response.data.chats.contents.reverse()));
+				if (!response.data.success) {
+					setIsLoggedIn(false);
+				} else {
+					setResponse(response.data);
+					dispatch(addChats(response.data.chats.contents.reverse()));
 
-          dispatch(addUser(response.data.user));
-          setIsLoggedIn(true);
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error);
-        if (error.response.data.statusCode == "401") {
-          setIsLoggedIn(false);
-        }
-      }
-    };
+					dispatch(addUser(response.data.user));
+					setIsLoggedIn(true);
+				}
+			} catch (error) {
+				console.error('Error fetching data:', error);
+				if (error.response.data.statusCode == '401') {
+					setIsLoggedIn(false);
+				}
+			}
+		};
 
-    fetchData();
+		fetchData();
 
-    return () => clearTimeout(retryTimer);
-  }, []);
+		return () => clearTimeout(retryTimer);
+	}, []);
 
-  // Loader while waiting
-  if (isLoggedIn === null) {
-    return (
-      <>
-        <style>
-          {`
+	// Loader while waiting
+	if (isLoggedIn === null) {
+		return (
+			<>
+				<style>
+					{`
             .loader {
               display: block;
               max-width: 180px;
@@ -83,13 +83,13 @@ const HomeWrapper = () => {
               }
             }
           `}
-        </style>
-        <div className="loader bg-gray-400 dark:bg-[#333]" />
-      </>
-    );
-  }
+				</style>
+				<div className="loader bg-gray-400 dark:bg-[#333]" />
+			</>
+		);
+	}
 
-  return isLoggedIn ? <Home response={response} /> : <HomeSandbox />;
+	return isLoggedIn ? <Home response={response} /> : <HomeSandbox />;
 };
 
 export default HomeWrapper;

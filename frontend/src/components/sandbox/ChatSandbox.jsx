@@ -21,7 +21,7 @@ import {
 	setReadingMessage,
 	setSelectedModel,
 } from '../../features/ui/uiSlice';
-import TopBarSandbox from './TopBar.sandbox';
+import TopBarSandbox from './TopBarSandbox';
 import { sandboxSocket } from '../../sockets/client.socket';
 import { toast } from 'react-toastify';
 import mdToPlainText from '../../utils/mdToText.util';
