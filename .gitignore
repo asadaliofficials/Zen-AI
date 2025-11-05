@@ -4,3 +4,5 @@ tasks.md
 todo.todo
 package-lock.json
 api.http
+logs
+logs/app.log
