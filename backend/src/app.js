@@ -1,20 +1,29 @@
+// Dependencies Imports
 import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
 import requestLogger from './middlewares/reqLogger.middleware.js';
 import authRouter from './routes/auth.route.js';
 import chatRouter from './routes/chat.route.js';
 import { apiLimiter } from './middlewares/rateLimiter.middleware.js';
+import { NODE_ENV } from './config/env.config.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 
 // Middleware setup
 app.use(
 	cors({
-		origin: 'http://localhost:5173',
+		origin: NODE_ENV === 'production' ? 'https://zen-ai.onrender.com' : 'http://localhost:5173',
 		credentials: true,
 	})
 );
+
 app.use(express.json());
 app.use(cookieParser());
 
@@ -24,8 +33,22 @@ app.use(requestLogger);
 // Rate Limiter - Middleware
 app.use(apiLimiter);
 
+// test route
+app.get('/api/v1/health', (req, res) => {
+	res.json({ success: true, statusCode: 200, message: 'Server running fine 🚀' });
+});
+
 // Routers
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/chat', chatRouter);
+
+// serve the frontend
+if (NODE_ENV === 'production') {
+	app.use(express.static(path.join(__dirname, '../frontend/dist')));
+
+	app.get('*', (req, res) => {
+		res.sendFile(path.join(__dirname, '../frontend/dist', 'index.html'));
+	});
+}
 
 export default app;

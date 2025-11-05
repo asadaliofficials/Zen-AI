@@ -6,3 +6,5 @@ package-lock.json
 api.http
 logs
 logs/app.log
+frontend/dist
+dist
