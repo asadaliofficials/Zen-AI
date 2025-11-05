@@ -2,8 +2,8 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import '../../css/chat.css';
-import MessagesList from '../home/MessagesList';
-import Input from '../home/Input';
+import MessagesList from '../main/MessagesList';
+import Input from '../main/Input';
 import screenShotAudio from '../../assets/sound/screenshot.mp3';
 
 import {

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import HomeSandbox from './sandbox/HomeSandbox';
-import Home from './home/Home';
+import Home from './main/Home';
 import { addChats } from '../features/chats/chatSlice';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../features/user/userSlice';
