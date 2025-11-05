@@ -15,11 +15,14 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
+app.set('trust proxy', 1);
 
 // Middleware setup
+// origin: NODE_ENV === 'production' ? 'https://zen-ai.onrender.com' : 'http://localhost:5173',
+
 app.use(
 	cors({
-		origin: NODE_ENV === 'production' ? 'https://zen-ai.onrender.com' : 'http://localhost:5173',
+		origin: true,
 		credentials: true,
 	})
 );
