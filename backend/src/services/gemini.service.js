@@ -29,7 +29,6 @@ const geminiService = async (contents, isNewChat) => {
 };
 
 export const generateVectors = async contents => {
-	console.log(contents);
 
 	try {
 		const response = await gemini.models.embedContent({

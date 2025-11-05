@@ -84,7 +84,6 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		const similarMessages = await searchVectors(userMessageVectors, 3, {userId});
 			if (similarMessages.length > 0) {
 				similarMessages.forEach(item => {
-					console.log(item.metadata.messageId);
 
 					if (!fetchedMessagesIds.includes(item.metadata.messageId)) {
 						contents.push({
@@ -101,12 +100,7 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		// Add current user message
 		contents.push({ role: 'user', parts: [{ text: msg }] });
 
-		// log contents
-		console.log(fetchedMessagesIds);
 
-		contents.forEach(item => {
-			console.log(`${item.role}: ${item.parts[0].text}`);
-		});
 
 		// socket.emit('response', { success: true, message: 'Generating response...' });
 		// return;

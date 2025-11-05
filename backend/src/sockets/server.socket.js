@@ -30,10 +30,8 @@ export function setupSocket(server) {
 	);
 
 	userNamespace.on('connection', socket => {
-		console.log(`logged in user connected: ${socket.id}`);
 
 		socket.on('message', obj => {
-			console.log('message received at logged-in socket');
 			try {
 				const userId = getTokenFromSocket(socket);
 				if (!userId) {
@@ -60,8 +58,6 @@ export function setupSocket(server) {
 				}
 
 				const tempChat = socket.handshake.query.temp === 'true' ? true : false;
-				console.log(tempChat);
-				console.log(false);
 
 				if (isNewChat && tempChat) chatId = nanoid(20);
 
@@ -90,10 +86,8 @@ export function setupSocket(server) {
 	);
 
 	sandboxNamespace.on('connection', socket => {
-		console.log(`🧪 Sandbox user connected: ${socket.id}`);
 
 		socket.on('message', obj => {
-			console.log('message received at sandbox socket');
 			let { message, chatId } = JSON.parse(obj);
 			const isNewChat = chatId === 'null';
 

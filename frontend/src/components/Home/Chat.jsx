@@ -183,7 +183,6 @@ const Chat = () => {
           addMessage({ id: data.id, role: "model", content: data.content.text })
         );
 
-        console.log(data);
 
         if (data.isNewChat && !data.tempChat) {
           dispatch(
@@ -231,7 +230,6 @@ const Chat = () => {
       userSocket.io.opts.query = { temp: isTemp ? "true" : "false" };
 
       userSocket.connect();
-      console.log("emiting message", chatId);
 
       userSocket.emit(
         "message",

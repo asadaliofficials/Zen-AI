@@ -15,7 +15,6 @@ const ResponseActions = ({
   const [isScreenshotTaken, setIsScreenshotTaken] = useState(false);
   const readingMessageId = useSelector((state) => state.ui.readingMessageId);
   const isTemp = useSelector((state) => state.chats.isTemp);
-  console.log(isSandbox);
 
   const handleCopy = () => {
     handlers.copyMessage(message.content, message.id);
