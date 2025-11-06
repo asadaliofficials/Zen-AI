@@ -1,14 +1,21 @@
 import React, { useState, useEffect } from 'react';
 // eslint-disable-next-line no-unused-vars
 import { motion, AnimatePresence } from 'framer-motion';
+import { REACT_ENV } from '../constants/react';
 
 const SharePopup = ({ show, id, onClose, sharing }) => {
 	const [isLoading, setIsLoading] = useState(true);
 	const [countdown, setCountdown] = useState(2);
 	const [copied, setCopied] = useState(false);
 
-	const chatUrl = `https://zen-ai.up.railway.app/c/read/${id}`;
-	const msgUrl = `https://zen-ai.up.railway.app/m/read/${id}`;
+	const chatUrl =
+		REACT_ENV === 'development'
+			? `http://localhost:5173/c/read/${id}`
+			: `https://zen-ai.up.railway.app/c/read/${id}`;
+	const msgUrl =
+		REACT_ENV === 'development'
+			? `http://localhost:5173/m/read/${id}`
+			: `https://zen-ai.up.railway.app/m/read/${id}`;
 
 	useEffect(() => {
 		if (show) {

@@ -308,6 +308,7 @@ const Chat = () => {
 				isLoadingMore={isLoadingMore}
 				onScroll={handleScroll}
 				containerRef={messagesContainerRef}
+				isTemp={isTemp}
 			/>
 
 			<Input

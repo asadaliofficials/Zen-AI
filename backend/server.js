@@ -10,6 +10,6 @@ const httpServer = http.createServer(app);
 setupSocket(httpServer);
 
 httpServer.listen(PORT, () => {
-	console.log(`server is listening on https://zen-ai.up.railway.app/`);
+	console.log(`server is listening...`);
 	connectToDB();
 });

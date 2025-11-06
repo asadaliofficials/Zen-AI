@@ -21,7 +21,8 @@ app.set('trust proxy', 1);
 
 app.use(
 	cors({
-		origin: NODE_ENV === 'production' ? 'https://zen-ai.up.railway.app' : 'http://localhost:5173',
+		// origin: NODE_ENV === 'production' ? 'https://zen-ai.up.railway.app' : 'http://localhost:5173',
+		origin: true,
 		credentials: true,
 	})
 );
