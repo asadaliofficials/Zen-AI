@@ -25,7 +25,7 @@ const MessagesList = ({
 	onScroll,
 	containerRef,
 	isReading,
-	isTemp
+	isTemp,
 }) => {
 	const playSound = () => {
 		const audio = new Audio(screenShotAudio);
@@ -90,13 +90,19 @@ const MessagesList = ({
 
 				<AnimatePresence mode="wait" initial={false}>
 					{messages.length < 1 ? (
-						<p className="absolute top-[50%] left-[50%] sm:text-3xl -translate-[50%] text-xl text-black dark:text-white font-bold">
-							What can I help with?
-						</p>
-				{	isTemp ? (<p className="absolute top-[60%] left-[50%] sm:text-xl -translate-x-[50%] -translate-y-[50%] text-md text-black dark:text-white font-bold">
-							(Temporary Chat!)
-						</p>) : ('')}
-					)  : (
+						<>
+							<p className="absolute top-[50%] left-[50%] sm:text-3xl -translate-[50%] text-xl text-black dark:text-white font-bold">
+								What can I help with?
+							</p>
+							{isTemp ? (
+								<p className="absolute top-[54%] left-[50%] sm:text-xl -translate-[50%] text-md text-black dark:text-white ">
+									( Temporary Chat! )
+								</p>
+							) : (
+								''
+							)}{' '}
+						</>
+					) : (
 						<motion.div
 							key={chatId}
 							initial={{ opacity: 0 }}

@@ -178,7 +178,9 @@ const Chat = () => {
 					throw new Error(data.message);
 				}
 
-				dispatch(addMessage({ id: data.id, role: 'model', content: data.content.text }));
+				console.log(data);
+
+				dispatch(addMessage({ id: data.id, loved: data.loved, role: 'model', content: data.content.text }));
 
 				if (data.isNewChat && !data.tempChat) {
 					dispatch(addOneChat({ title: data.content.title, id: data.content.chatId }));

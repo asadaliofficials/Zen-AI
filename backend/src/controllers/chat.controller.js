@@ -81,10 +81,9 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 			userMessageVectors = await generateVectors(msg);
 
 			// search vectores
-		const similarMessages = await searchVectors(userMessageVectors, 3, {userId});
+			const similarMessages = await searchVectors(userMessageVectors, 3, { userId });
 			if (similarMessages.length > 0) {
 				similarMessages.forEach(item => {
-
 					if (!fetchedMessagesIds.includes(item.metadata.messageId)) {
 						contents.push({
 							role: item.metadata.role,
@@ -99,8 +98,6 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 
 		// Add current user message
 		contents.push({ role: 'user', parts: [{ text: msg }] });
-
-
 
 		// socket.emit('response', { success: true, message: 'Generating response...' });
 		// return;
@@ -130,6 +127,8 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		socket.emit('response', {
 			success: true,
 			message: 'Response generated successfully',
+			id: newMessage._id,
+			loved: false,
 			statusCode: 200,
 			isNewChat: isNewChat,
 			tempChat: tempChat || false,
