@@ -1,14 +1,6 @@
 // lib/socketRateLimiter.js
 const userMessageCounts = new Map();
 
-/**
- * Rate limiter middleware for Socket.IO
- * @param {Object} options - Config object
- * @param {number} options.limit - Number of allowed events
- * @param {number} options.interval - Time window in milliseconds
- * @param {string} [options.eventName='rateLimit'] - Event name to emit when limited
- * @returns {Function} - A wrapper function to limit socket events
- */
 export function socketRateLimiter({ limit, interval, eventName = 'rateLimit' }) {
 	return function (socket, next) {
 		if (!userMessageCounts.has(socket.id)) {

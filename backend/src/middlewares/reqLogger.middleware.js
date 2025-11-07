@@ -11,13 +11,21 @@ const requestLogger = pinoHttp({
 	},
 
 	customSuccessMessage(res) {
-		if (res.statusCode === 304) return 'Not Modified';
-		if (res.statusCode === 200) return 'OK';
-		return `Request completed with status ${res.statusCode}`;
+		const status =
+			typeof res?.statusCode !== 'undefined' && res.statusCode !== null
+				? res.statusCode
+				: 'unknown';
+		if (status === 304) return 'Not Modified';
+		if (status === 200) return 'OK';
+		return `Request completed with status ${status}`;
 	},
 
 	customErrorMessage(error, res) {
-		return `Request failed with status ${res?.statusCode || 'unknown'}: ${error.message}`;
+		const status =
+			typeof res?.statusCode !== 'undefined' && res.statusCode !== null
+				? res.statusCode
+				: 'unknown';
+		return `Request failed with status ${status}: ${error.message}`;
 	},
 
 	serializers: {

@@ -178,7 +178,6 @@ const Chat = () => {
 					throw new Error(data.message);
 				}
 
-				console.log(data);
 
 				dispatch(addMessage({ id: data.id, loved: data.loved, role: 'model', content: data.content.text }));
 

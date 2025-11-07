@@ -86,7 +86,6 @@ const ResponseActions = ({ message, handlers, isSandbox, handleScreenshot, isRea
 
 			<button
 				onClick={() => {
-					console.log('sandbox:', isSandbox, 'reading:', isReading);
 
 					if (isSandbox == true) return toast.error('Please login to use this Feature!');
 					if (isReading) return toast.error('This is readonly Chat!');

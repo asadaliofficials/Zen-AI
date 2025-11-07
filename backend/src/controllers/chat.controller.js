@@ -27,17 +27,14 @@ export const getAllChatsController = async (req, res) => {
 
 export const chatController = async (socket, msg, chatId, userId, isNewChat, tempChat) => {
 	try {
-		const contents = [];
-		contents.push({
-			role: 'user',
-			parts: [
-				{
-					text: generalInstructions,
-				},
-			],
-		});
+		const contents = [
+			{
+				role: 'user',
+				parts: [{ text: generalInstructions }],
+			},
+		];
 
-		// Add system prompt for title generation if it's a new chat
+		// Add title prompt for new permanent chats
 		if (isNewChat && !tempChat) {
 			contents.unshift({
 				role: 'user',
@@ -53,123 +50,92 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 			});
 		}
 
-		let fetchedMessagesIds = [];
-		if (!isNewChat) {
-			let response;
-			if (!tempChat) {
-				response = (
-					await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5).lean()
-				).reverse();
-			} else {
-				response = (
-					await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5).lean()
-				).reverse();
-			}
+		const fetchedMessagesIds = [];
 
-			if (response.length > 0) {
-				response.forEach(item => {
-					contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
-					contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
-					fetchedMessagesIds.push(item._id.toString());
-				});
-			}
+		// Fetch previous messages for context
+		if (!isNewChat) {
+			const model = tempChat ? sandboxLogModel : messageModel;
+			const recentMessages = (
+				await model.find({ chatId }).sort({ createdAt: -1 }).limit(5).lean()
+			).reverse();
+
+			recentMessages.forEach(item => {
+				contents.push({ role: 'user', parts: [{ text: item.userMessage }] });
+				contents.push({ role: 'model', parts: [{ text: item.aiResponse }] });
+				fetchedMessagesIds.push(item._id.toString());
+			});
 		}
 
-		// generate vectors of user message and search for similar messages in the pinecone database
 		let userMessageVectors;
 		if (!tempChat) {
+			// Generate user vector
 			userMessageVectors = await generateVectors(msg);
 
-			// 🔍 Search vectors from Pinecone
+			// Search for similar messages in Pinecone
 			const similarMessages = await searchVectors(userMessageVectors, 5, { userId });
-
-			console.log('Similar messages:', similarMessages);
-
-			// ⚙️ New: Filter low-score matches & sort by score
 			const SIMILARITY_THRESHOLD = 0.5;
+
 			const relevantMessages = similarMessages
 				.filter(item => item.score >= SIMILARITY_THRESHOLD)
 				.sort((a, b) => b.score - a.score)
-				.slice(0, 2); //  keep only top 2 most relevant
+				.slice(0, 2);
 
-			console.log('Relevant messages:', relevantMessages);
-
-			if (relevantMessages.length > 0) {
-				relevantMessages.forEach(item => {
-					if (!fetchedMessagesIds.includes(item.metadata.messageId)) {
-						contents.push({
-							role: item.metadata.role,
-							parts: [
-								{
-									text: `Context memory:\n${item.metadata.text}\nUse this context if relevant.`,
-								},
-							],
-						});
-					}
-				});
-			}
+			relevantMessages.forEach(item => {
+				if (!fetchedMessagesIds.includes(item.metadata.messageId)) {
+					contents.push({
+						role: item.metadata.role,
+						parts: [
+							{ text: `Context memory:\n${item.metadata.text}\nUse this context if relevant.` },
+						],
+					});
+				}
+			});
 		}
 
-		// Add current user message
 		contents.push({ role: 'user', parts: [{ text: msg }] });
 
-		// socket.emit('response', { success: true, message: 'Generating response...' });
-		// return;
 		const { text, title } = await geminiService(contents, isNewChat);
 
-		// If it's a new chat, create it and get the chatId
+		// Create chat if new permanent chat
 		if (isNewChat && !tempChat) {
 			const newChat = await createChat(title || 'New Chat', userId);
 			chatId = newChat._id;
 		}
+
 		let newMessage;
 		if (!tempChat) {
 			newMessage = await messageModel.create({
-				chatId: chatId,
-				userId: userId,
+				chatId,
+				userId,
 				userMessage: msg,
 				aiResponse: text,
 				loved: false,
 			});
 		} else {
-			await sandboxLogModel.create({
-				chatId: chatId,
-				userMessage: msg,
-				aiResponse: text,
-			});
+			await sandboxLogModel.create({ chatId, userMessage: msg, aiResponse: text });
 		}
+
 		socket.emit('response', {
 			success: true,
 			message: 'Response generated successfully',
-			id: newMessage._id,
+			id: newMessage?._id,
 			loved: false,
 			statusCode: 200,
-			isNewChat: isNewChat,
+			isNewChat,
 			tempChat: tempChat || false,
-			content: {
-				text,
-				chatId,
-				...(title && { title }),
-			},
+			content: { text, chatId, ...(title && { title }) },
 		});
 
-		// save vectors on pinecone db
+		// Save vectors in Pinecone for permanent chats
 		if (!tempChat) {
 			const aiResponseVectors = await generateVectors(text);
+			const userMeta = { chatId, messageId: newMessage._id, userId, role: 'user', text: msg };
+			const aiMeta = { chatId, messageId: newMessage._id, userId, role: 'model', text };
 
-			// Store user message vector
-			await addVectors(
-				`${newMessage._id}-user`,
-				{ chatId, messageId: newMessage._id, userId, role: 'user', text: msg },
-				userMessageVectors
-			);
-
-			// Store AI response vector
-			await addVectors(
-				`${newMessage._id}-ai`,
-				{ chatId, messageId: newMessage._id, userId, role: 'model', text: text },
-				aiResponseVectors
-			);
+			await Promise.all([
+				addVectors(`${newMessage._id}-user`, userMeta, userMessageVectors),
+				addVectors(`${newMessage._id}-ai`, aiMeta, aiResponseVectors),
+			]);
 		}
 	} catch (error) {
 		socket.emit('response', {
@@ -179,7 +145,6 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 				: 'AI model is busy. Please try again later.',
 			statusCode: 503,
 		});
-
 		console.error('Error in chatController:', error);
 	}
 };
@@ -324,7 +289,7 @@ export const chatMessagesController = async (req, res) => {
 			statusCode: 200,
 			chat: { id: chat._id, title: chat.title, author: name },
 			messages: {
-				contents: contents.reverse(), // reverse to maintain chronological order
+				contents: contents.reverse(), 
 				count: contents.length,
 				hasMore: hasMore,
 			},
@@ -337,7 +302,6 @@ export const chatMessagesController = async (req, res) => {
 };
 export const getChatMessagesController = async (req, res) => {
 	const { id } = req.params;
-	// const { id: userId, name } = req.user;
 	const start = parseInt(req.query.start) || 0;
 	const limit = 20; // fixed limit for pagination
 
@@ -389,7 +353,6 @@ export const getOneMessageController = async (req, res) => {
 			success: true,
 			statusCode: 200,
 			messages: {
-				contents: message, // reverse to maintain chronological order
 			},
 		});
 	} catch (error) {
