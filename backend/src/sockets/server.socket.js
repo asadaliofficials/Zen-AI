@@ -30,7 +30,6 @@ export function setupSocket(server) {
 	);
 
 	userNamespace.on('connection', socket => {
-
 		socket.on('message', obj => {
 			try {
 				const userId = getTokenFromSocket(socket);
@@ -44,7 +43,8 @@ export function setupSocket(server) {
 				}
 
 				let { message, chatId } = JSON.parse(obj);
-				const isNewChat = chatId === 'null';
+				// const isNewChat = chatId === 'null';
+				const isNewChat = !chatId || chatId === 'null';
 
 				const errors = messageValidator(message, chatId);
 				if (errors.length > 0) {
@@ -86,7 +86,6 @@ export function setupSocket(server) {
 	);
 
 	sandboxNamespace.on('connection', socket => {
-
 		socket.on('message', obj => {
 			let { message, chatId } = JSON.parse(obj);
 			const isNewChat = chatId === 'null';

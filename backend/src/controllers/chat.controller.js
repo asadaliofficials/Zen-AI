@@ -58,11 +58,11 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 			let response;
 			if (!tempChat) {
 				response = (
-					await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5)
+					await messageModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5).lean()
 				).reverse();
 			} else {
 				response = (
-					await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5)
+					await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(5).lean()
 				).reverse();
 			}
 
@@ -109,14 +109,6 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 				});
 			}
 		}
-
-		// log contents for debugging
-		console.log('Contents:', contents);
-		contents.forEach(item => {
-			console.log(item.role);
-			console.log(item.parts);
-			console.log(item.parts.text);
-		});
 
 		// Add current user message
 		contents.push({ role: 'user', parts: [{ text: msg }] });
@@ -228,7 +220,7 @@ export const sandboxChatController = async (socket, msg, chatId) => {
 		});
 
 		const response = (
-			await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10)
+			await sandboxLogModel.find({ chatId: chatId }).sort({ createdAt: -1 }).limit(10).lean()
 		).reverse();
 
 		if (response.length > 0) {
@@ -322,7 +314,8 @@ export const chatMessagesController = async (req, res) => {
 			.find({ chatId: id })
 			.sort({ createdAt: -1 })
 			.skip(start)
-			.limit(limit + 1);
+			.limit(limit + 1)
+			.lean();
 		const hasMore = messages.length > limit;
 		const contents = hasMore ? messages.slice(0, limit) : messages;
 
@@ -332,7 +325,7 @@ export const chatMessagesController = async (req, res) => {
 			chat: { id: chat._id, title: chat.title, author: name },
 			messages: {
 				contents: contents.reverse(), // reverse to maintain chronological order
-				count: messages.length,
+				count: contents.length,
 				hasMore: hasMore,
 			},
 		});
@@ -360,7 +353,8 @@ export const getChatMessagesController = async (req, res) => {
 			.find({ chatId: id })
 			.sort({ createdAt: -1 })
 			.skip(start)
-			.limit(limit + 1);
+			.limit(limit + 1)
+			.lean();
 		const hasMore = messages.length > limit;
 		const contents = hasMore ? messages.slice(0, limit) : messages;
 
@@ -370,7 +364,7 @@ export const getChatMessagesController = async (req, res) => {
 			chat: { id: chat._id, title: chat.title },
 			messages: {
 				contents: contents.reverse(), // reverse to maintain chronological order
-				count: messages.length,
+				count: contents.length,
 				hasMore: hasMore,
 			},
 		});

@@ -5,7 +5,11 @@ import rateLimit from 'express-rate-limit';
 export const apiLimiter = rateLimit({
 	windowMs: 1 * 60 * 1000, // 1 minutes
 	max: 100, // limit each IP to 100 requests per windowMs
-	message: { error: 'Too many requests, please try again later.' },
+	message: {
+		success: false,
+		statusCode: 429,
+		message: 'Too many requests, please try again later.',
+	},
 	standardHeaders: true, // Return rate limit info in RateLimit-* headers
 	legacyHeaders: false,
 });

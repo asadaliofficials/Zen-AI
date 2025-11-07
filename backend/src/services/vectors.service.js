@@ -1,6 +1,7 @@
 // Import the Pinecone library
 import { Pinecone } from '@pinecone-database/pinecone';
 import { PINECONE_API_KEY } from '../config/env.config.js';
+import customError from '../utils/customError.util.js';
 
 // Initialize a Pinecone client with your API key
 const pc = new Pinecone({ apiKey: PINECONE_API_KEY });

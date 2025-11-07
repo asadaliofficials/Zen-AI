@@ -21,20 +21,20 @@ app.set('trust proxy', 1);
 
 app.use(
 	cors({
-		// origin: NODE_ENV === 'production' ? 'https://zen-ai.up.railway.app' : 'http://localhost:5173',
-		origin: true,
+		origin: NODE_ENV === 'production' ? 'https://zen-ai.up.railway.app' : 'http://localhost:5173',
+		// origin: true,
 		credentials: true,
 	})
 );
+
+// Rate Limiter - Middleware
+app.use(apiLimiter);
 
 app.use(express.json());
 app.use(cookieParser());
 
 // Request logging middleware
 app.use(requestLogger);
-
-// Rate Limiter - Middleware
-app.use(apiLimiter);
 
 // test route
 app.get('/api/v1/health', (req, res) => {
@@ -56,5 +56,16 @@ if (NODE_ENV === 'production') {
 		res.sendFile(path.join(frontendPath, 'index.html'));
 	});
 }
+
+// ✅ 404 Handler (after all routes)
+app.use((req, res) => {
+	res.status(404).json({ success: false, statusCode: 404, message: 'Route not found' });
+});
+
+// ✅ Error Handler (last middleware in file)
+app.use((err, req, res, next) => {
+	console.error('Unhandled Error:', err);
+	res.status(500).json({ success: false, statusCode: 500, message: 'Internal Server Error' });
+});
 
 export default app;
