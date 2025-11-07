@@ -162,23 +162,23 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		});
 
 		// save vectors on pinecone db
-		// if (!tempChat) {
-		// 	const aiResponseVectors = await generateVectors(text);
+		if (!tempChat) {
+			const aiResponseVectors = await generateVectors(text);
 
-		// 	// Store user message vector
-		// 	await addVectors(
-		// 		`${newMessage._id}-user`,
-		// 		{ chatId, messageId: newMessage._id, userId, role: 'user', text: msg },
-		// 		userMessageVectors
-		// 	);
+			// Store user message vector
+			await addVectors(
+				`${newMessage._id}-user`,
+				{ chatId, messageId: newMessage._id, userId, role: 'user', text: msg },
+				userMessageVectors
+			);
 
-		// 	// Store AI response vector
-		// 	await addVectors(
-		// 		`${newMessage._id}-ai`,
-		// 		{ chatId, messageId: newMessage._id, userId, role: 'model', text: text },
-		// 		aiResponseVectors
-		// 	);
-		// }
+			// Store AI response vector
+			await addVectors(
+				`${newMessage._id}-ai`,
+				{ chatId, messageId: newMessage._id, userId, role: 'model', text: text },
+				aiResponseVectors
+			);
+		}
 	} catch (error) {
 		socket.emit('response', {
 			success: false,
