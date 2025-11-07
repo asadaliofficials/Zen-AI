@@ -9,11 +9,12 @@ const ConfirmPopup = ({
   onCancel,
   onConfirm,
   confirmLabel = "Confirm",
+  isProcessing
 }) => {
-  const [isProcessing, setIsProcessing] = useState(false);
+  // const [isProcessing, setIsProcessing] = useState(false);
 
   const handleConfirmClick = () => {
-    setIsProcessing(true);
+    // setIsProcessing(true);
     onConfirm();
   };
 
