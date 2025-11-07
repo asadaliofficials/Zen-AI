@@ -289,7 +289,7 @@ export const chatMessagesController = async (req, res) => {
 			statusCode: 200,
 			chat: { id: chat._id, title: chat.title, author: name },
 			messages: {
-				contents: contents.reverse(), 
+				contents: contents.reverse(),
 				count: contents.length,
 				hasMore: hasMore,
 			},
@@ -353,6 +353,12 @@ export const getOneMessageController = async (req, res) => {
 			success: true,
 			statusCode: 200,
 			messages: {
+				contents: {
+					userMessage: message.userMessage,
+					aiResponse: message.aiResponse,
+					loved: message.loved,
+					id: message._id,
+				},
 			},
 		});
 	} catch (error) {
