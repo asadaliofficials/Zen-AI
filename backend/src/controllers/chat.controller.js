@@ -80,21 +80,43 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		if (!tempChat) {
 			userMessageVectors = await generateVectors(msg);
 
-			// search vectores
-			const similarMessages = await searchVectors(userMessageVectors, 3, { userId });
-			if (similarMessages.length > 0) {
-				similarMessages.forEach(item => {
+			// 🔍 Search vectors from Pinecone
+			const similarMessages = await searchVectors(userMessageVectors, 5, { userId });
+
+			console.log('Similar messages:', similarMessages);
+
+			// ⚙️ New: Filter low-score matches & sort by score
+			const SIMILARITY_THRESHOLD = 0.5;
+			const relevantMessages = similarMessages
+				.filter(item => item.score >= SIMILARITY_THRESHOLD)
+				.sort((a, b) => b.score - a.score)
+				.slice(0, 2); //  keep only top 2 most relevant
+
+			console.log('Relevant messages:', relevantMessages);
+
+			if (relevantMessages.length > 0) {
+				relevantMessages.forEach(item => {
 					if (!fetchedMessagesIds.includes(item.metadata.messageId)) {
 						contents.push({
 							role: item.metadata.role,
 							parts: [
-								{ text: `Context memory:\n${item.metadata.text}\nUse this context if relevant.` },
+								{
+									text: `Context memory:\n${item.metadata.text}\nUse this context if relevant.`,
+								},
 							],
 						});
 					}
 				});
 			}
 		}
+
+		// log contents for debugging
+		console.log('Contents:', contents);
+		contents.forEach(item => {
+			console.log(item.role);
+			console.log(item.parts);
+			console.log(item.parts.text);
+		});
 
 		// Add current user message
 		contents.push({ role: 'user', parts: [{ text: msg }] });
@@ -140,29 +162,32 @@ export const chatController = async (socket, msg, chatId, userId, isNewChat, tem
 		});
 
 		// save vectors on pinecone db
-		if (!tempChat) {
-			const aiResponseVectors = await generateVectors(text);
+		// if (!tempChat) {
+		// 	const aiResponseVectors = await generateVectors(text);
 
-			// Store user message vector
-			await addVectors(
-				`${newMessage._id}-user`,
-				{ chatId, messageId: newMessage._id, userId, role: 'user', text: msg },
-				userMessageVectors
-			);
+		// 	// Store user message vector
+		// 	await addVectors(
+		// 		`${newMessage._id}-user`,
+		// 		{ chatId, messageId: newMessage._id, userId, role: 'user', text: msg },
+		// 		userMessageVectors
+		// 	);
 
-			// Store AI response vector
-			await addVectors(
-				`${newMessage._id}-ai`,
-				{ chatId, messageId: newMessage._id, userId, role: 'model', text: text },
-				aiResponseVectors
-			);
-		}
+		// 	// Store AI response vector
+		// 	await addVectors(
+		// 		`${newMessage._id}-ai`,
+		// 		{ chatId, messageId: newMessage._id, userId, role: 'model', text: text },
+		// 		aiResponseVectors
+		// 	);
+		// }
 	} catch (error) {
 		socket.emit('response', {
 			success: false,
-			message: 'AI Model is overloaded, Please try again later!',
+			message: error.message.includes('Pinecone')
+				? 'Memory service unavailable.'
+				: 'AI model is busy. Please try again later.',
 			statusCode: 503,
 		});
+
 		console.error('Error in chatController:', error);
 	}
 };
