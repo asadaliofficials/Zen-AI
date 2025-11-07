@@ -1,8 +1,7 @@
-// logger.js
 import pino from 'pino';
 import fs from 'fs';
 import path from 'path';
-import rfs from 'rotating-file-stream';
+import * as rfs from 'rotating-file-stream';
 
 // Resolve logs directory safely
 const logDir = path.resolve('logs');
