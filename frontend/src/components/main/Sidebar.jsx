@@ -35,6 +35,7 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
   const sidebarVariants = {
     open: { x: 0, transition: { duration: 0.3, ease: 'easeOut' } },
     closed: { x: '-100%', transition: { duration: 0.3, ease: 'easeIn' } },
+    initial: { x: '-100%' },
   };
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const [showDelAccPopup, setshowDelAccPopup] = useState(false);
@@ -111,6 +112,7 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
       {/* Sidebar */}
       <motion.div
         variants={sidebarVariants}
+        initial='initial'
         animate={isOpen ? 'open' : 'closed'}
         className='fixed  lg:relative top-0 left-0 h-full w-72 z-50 bg-[#F9F9F9] dark:bg-[#181818] flex flex-col'
       >

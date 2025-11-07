@@ -3,9 +3,14 @@ import Sidebar from './Sidebar';
 import Chat from './Chat';
 
 const Home = () => {
-  const [sidebarOpen, setSidebarOpen] = useState(
-    () => window.innerWidth > 1024
-  );
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  // Initialize sidebar state based on screen size
+  useEffect(() => {
+    if (window.innerWidth > 1024) {
+      setSidebarOpen(true);
+    }
+  }, []);
 
   // on anywhere click close sidebar
   useEffect(() => {
