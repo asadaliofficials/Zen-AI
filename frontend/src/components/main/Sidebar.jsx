@@ -67,6 +67,8 @@ const Sidebar = ({ isOpen, setSidebarOpen, onToggle, theme }) => {
     if (window.innerWidth <= 1024) {
       setSidebarOpen(false);
     }
+    // Clear messages immediately to prevent showing old chat messages
+    dispatch(clearMessages());
     dispatch(setTempChat(false));
     dispatch(setChatId(id));
   };
