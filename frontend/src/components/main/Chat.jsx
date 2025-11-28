@@ -285,7 +285,7 @@ const Chat = () => {
 	};
 
 	return (
-		<div className="flex-1 flex flex-col h-screen dark:bg-[#212121] bg-white overflow-hidden">
+		<div className="flex-1 flex flex-col h-[100dvh] dark:bg-[#212121] bg-white overflow-hidden">
 			<TopBar
 				setShowModel={() => {}}
 				models={[

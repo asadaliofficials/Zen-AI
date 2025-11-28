@@ -70,14 +70,14 @@ const Home = () => {
   }, [sidebarOpen]);
 
   return (
-    <div className={`flex h-screen dark:bg-[#181818] bg-white`}>
+    <div className={`flex h-[100dvh] dark:bg-[#181818] bg-white`}>
       <Sidebar
         isOpen={sidebarOpen}
         setSidebarOpen={setSidebarOpen}
         onToggle={toggleSidebar}
         theme={theme}
       />
-      <div className='flex-1 flex flex-col min-w-0 h-screen overflow-hidden'>
+      <div className='flex-1 flex flex-col min-w-0 h-[100dvh] overflow-hidden'>
         <div className='lg:hidden  flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700'>
           <button
             onClick={toggleSidebar}
