@@ -322,7 +322,7 @@ const ChatSandbox = ({ isReadingChat, isReadingMessage }) => {
     }
   }, []);
   return (
-    <div className={`flex-1 flex flex-col h-screen dark:bg-[#212121] bg-white`}>
+    <div className={`flex-1 flex flex-col h-screen dark:bg-[#212121] bg-white overflow-hidden`}>
       <TopBarSandbox
         setShowModel={() => {}}
         models={[
