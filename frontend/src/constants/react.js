@@ -1,1 +1,1 @@
-export const REACT_ENV = 'production';
+export const REACT_ENV = 'development';
